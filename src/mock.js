@@ -41,3 +41,22 @@ Mock.mock('/listFilterPH', 'post', [
     auditTime: 1,
   },
 ])
+Mock.mock('/detailDept', 'post', {
+  deptName: '计算机与软件学院',
+  zj: 100,
+  fj: 100,
+  zc: 100,
+  fc: 100,
+  uc: 100,
+  academician: 100,
+  tT: 100,
+  eT: 100,
+  zg: 100,
+  fg: 100,
+  middle: 100,
+  other: 100,
+  undergraduate: 100,
+  doctor: 100,
+  masterDegree: 100,
+  postdoctoral: 100,
+})

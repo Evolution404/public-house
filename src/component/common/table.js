@@ -87,6 +87,16 @@ const TableUtil = {
         return 'realArea'
       case '超额面积':
         return 'excessArea'
+      case '单位名称':
+        return 'companyName'
+      case '本科生':
+        return 'undergraduates'
+      case '硕士':
+        return 'masterDegree'
+      case '博士':
+        return 'doctor'
+      case '博士后':
+        return 'postdoctoral'
       default:
         return ''
     }
