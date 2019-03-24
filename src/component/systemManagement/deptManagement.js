@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Input, Button,Form, Row, Col, message, Modal} from 'antd'
+import {Input, Button,Form, Row, Col, message, Modal, Select, InputNumber} from 'antd'
 import {SButton} from '../common/button'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
@@ -7,6 +7,7 @@ import Table, {TableUtil}from '../common/table'
 import API from '../../api'
 const Item = Form.Item
 const confirm = Modal.confirm;
+const Option = Select.Option
 
 class DisplayLabel extends Component{
   render(){
@@ -61,7 +62,7 @@ class ButtonGroup extends Component{
     return (
       <Row style={{margin: '20px 0'}}>
         <Col span={13}>
-          <Col offset={1} span={4}><Button block type="primary">+新增</Button></Col>
+          <Col offset={1} span={4}><Button block onClick={this.props.onAdd} type="primary">+新增</Button></Col>
           <Col offset={1} span={4}><Button block type="primary">X删除</Button></Col>
           <Col offset={1} span={4}><Button block type="primary">从文件导入</Button></Col>
         </Col>
@@ -194,41 +195,423 @@ class DetailModal extends Component {
     )
   }
 }
+// {
+//    deptName(部门名称), zj(正局级), fj(副局级)
+//    zc(正处级), fc(副处级), uc(处级以下u-under)
+//    academician(院士), tT(高端人才, t-top T-talent)
+//    eT(优秀人才 e-excellent), zg(正高级), fg(副高级)
+//    middle(中级职称), other(其他职称), 
+//    undergraduate(本科生数), doctor(博士生数),
+//    masterDegree(硕士生数), postdoctoral(博士后数)
+// }
+
+class UpdateForm extends Component{
+  render(){
+    const { getFieldDecorator } = this.props.form
+    return (
+      <Form labelAlign='left'>
+        <Row style={{margin: '-20px 0'}}><Col>
+          <Item labelCol={{span:4}} wrapperCol={{span:4}} label="年份">
+            {getFieldDecorator('year',)(
+              <Select size="small">
+                <Option value="2019">2019</Option>
+              </Select>
+            )}
+          </Item>
+        </Col></Row>
+        <Row><Col style={{textAlign: 'center'}}>部处部门填写</Col></Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="副校级(正局级)">
+              {getFieldDecorator('zj',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="副校级(副局级)">
+              {getFieldDecorator('fj',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="正处级">
+              {getFieldDecorator('zc',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="副处级">
+              {getFieldDecorator('fc',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="处级以下">
+              {getFieldDecorator('uc',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row><Col style={{textAlign: 'center'}}>学院部门填写</Col></Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="院士数">
+              {getFieldDecorator('academician',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="高端人才">
+              {getFieldDecorator('tT',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="优秀人才">
+              {getFieldDecorator('eT',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="正高级职称">
+              {getFieldDecorator('zg',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="副高级职称">
+              {getFieldDecorator('fg',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="中级职称">
+              {getFieldDecorator('middle',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="其他职称">
+              {getFieldDecorator('other',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="本科生数">
+              {getFieldDecorator('undergraduate',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="博士生数">
+              {getFieldDecorator('doctor',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="硕士生数">
+              {getFieldDecorator('masterDegree',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="博士后数">
+              {getFieldDecorator('postdoctoral',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
+}
+const WrappedUpdateForm = Form.create({ name: 'updateform' })(UpdateForm)
+
 
 class UpdateModal extends Component {
   hideModal = () => {
     this.props.close()
   }
-  updata = ()=>{
-    let newData = {
-      index: this.props.index,
-      // other data
-    }
-    API.updateDept(newData)
-    .then(()=>{
-      message.success('更新成功')
-      this.hideModal()
+  update = ()=>{
+    const form = this.formRef.props.form
+    form.validateFields((err, values) => {
+      if (err) {
+        return
+      }
+      console.log('Received values of form: ', values)
+      let newData = {
+        index: this.props.index,
+        // other data
+        ...values,
+      }
+      API.updateDept(newData)
+      .then(()=>{
+        message.success('更新成功')
+        form.resetFields()
+        this.hideModal()
+      })
+      .catch(err=>{
+        console.log(err)
+        message.error('更新失败')
+      })
     })
-    .catch(err=>{
-      console.log(err)
-      message.success('更新失败')
-    })
+  }
+  saveFormRef = (formRef) => {
+    this.formRef = formRef;
   }
   render() {
     return (
       <Modal
         title="更新部门信息"
-        width="700px"
+        width="600px"
         visible={this.props.visible}
         closable={false}
-        onOk={this.updata}
+        onOk={this.update}
         onCancel={this.hideModal}
+        okText="确定"
+        cancelText="取消"
       >
-        <Form>
-          <Item>
+        <WrappedUpdateForm
+          wrappedComponentRef={this.saveFormRef}
+        />
+      </Modal>
+    )
+  }
+}
 
-          </Item>
-        </Form>
+class AddForm extends Component{
+  render(){
+    const { getFieldDecorator } = this.props.form
+    return (
+      <Form labelAlign='left'>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="部门名称">
+              {getFieldDecorator('deptName',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:10}} label="部门性质">
+              {getFieldDecorator('deptNature',)(
+                <Select size="small">
+                  <Option value="0">学院</Option>
+                  <Option value="1">部处</Option>
+                </Select>
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row><Col style={{textAlign: 'center'}}>部处部门填写</Col></Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="副校级(正局级)">
+              {getFieldDecorator('zj',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="副校级(副局级)">
+              {getFieldDecorator('fj',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="正处级">
+              {getFieldDecorator('zc',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="副处级">
+              {getFieldDecorator('fc',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="处级以下">
+              {getFieldDecorator('uc',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row><Col style={{textAlign: 'center'}}>学院部门填写</Col></Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="院士数">
+              {getFieldDecorator('academician',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="高端人才">
+              {getFieldDecorator('tT',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="优秀人才">
+              {getFieldDecorator('eT',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="正高级职称">
+              {getFieldDecorator('zg',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="副高级职称">
+              {getFieldDecorator('fg',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="中级职称">
+              {getFieldDecorator('middle',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="其他职称">
+              {getFieldDecorator('other',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="本科生数">
+              {getFieldDecorator('undergraduate',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="博士生数">
+              {getFieldDecorator('doctor',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="硕士生数">
+              {getFieldDecorator('masterDegree',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="博士后数">
+              {getFieldDecorator('postdoctoral',)(
+                <InputNumber size="small" />
+              )}
+            </Item>
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
+}
+const WrappedAddForm = Form.create({ name: 'addform' })(AddForm)
+
+class AddModal extends Component {
+  hideModal = () => {
+    this.props.close()
+  }
+  add = ()=>{
+    const form = this.formRef.props.form
+    form.validateFields((err, values) => {
+      if (err) {
+        return
+      }
+      console.log('Received values of form: ', values)
+      API.addDept(values)
+      .then(()=>{
+        message.success('添加成功')
+        form.resetFields()
+        this.hideModal()
+      })
+      .catch(err=>{
+        console.log(err)
+        message.error('添加失败')
+      })
+    })
+  }
+  saveFormRef = (formRef) => {
+    this.formRef = formRef;
+  }
+  render() {
+    return (
+      <Modal
+        title="新增部门信息"
+        width="600px"
+        visible={this.props.visible}
+        closable={false}
+        onOk={this.add}
+        onCancel={this.hideModal}
+        okText="确定"
+        cancelText="取消"
+      >
+        <WrappedAddForm
+          wrappedComponentRef={this.saveFormRef}
+        />
       </Modal>
     )
   }
@@ -247,6 +630,9 @@ class DeptManagement extends Component{
       updatemodal: {
         visible: false,
         index: 0,
+      },
+      addmodal: {
+        visible: false,
       },
     }
   }
@@ -287,6 +673,15 @@ class DeptManagement extends Component{
       onCancel() {},
     });
   }
+  closeDetailModal = ()=>{
+    this.setState({detailmodal: {visible: false, data:{}}})
+  }
+  closeUpdateModal = ()=>{
+    this.setState({updatemodal: {visible: false, index:0}})
+  }
+  closeAddModal = ()=>{
+    this.setState({addmodal: {visible: false}})
+  }
   detail = index=>{
     index = this.state.tableList[index].id
     API.detailDept(index)
@@ -298,15 +693,12 @@ class DeptManagement extends Component{
       message.error('获取详细信息失败')
     })
   }
-  closeDetailModal = ()=>{
-    this.setState({detailmodal: {visible: false, data:{}}})
-  }
-  closeUpdateModal = ()=>{
-    this.setState({updatemodal: {visible: false, index:0}})
-  }
   update = index=>{
     index = this.state.tableList[index].id
     this.setState({updatemodal: {visible: true, index}})
+  }
+  add = ()=>{
+    this.setState({addmodal: {visible: true}})
   }
   refresh = ()=>{
     API.searchDept(this.state.deptName)
@@ -327,7 +719,7 @@ class DeptManagement extends Component{
       部门管理
       <WrappedSearch onSearch={this.search}/>
       <Split/>
-      <ButtonGroup/>
+      <ButtonGroup onAdd={this.add}/>
       <Row>
         <Col span={20}>
           <DisplayTable data={this.state.tableList} onSelectedChange={this.selectedChange} {...tableHelper}/>
@@ -335,6 +727,7 @@ class DeptManagement extends Component{
       </Row>
       <DetailModal {...this.state.detailmodal} close={this.closeDetailModal}/>
       <UpdateModal {...this.state.updatemodal} close={this.closeUpdateModal}/>
+      <AddModal {...this.state.addmodal} close={this.closeAddModal}/>
     </MainContainer>
   }
 }
