@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
 import {Select, Button, Form, Row, Col} from 'antd'
-import {LButton} from '../common/button'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 const Item = Form.Item

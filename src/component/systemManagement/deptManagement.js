@@ -63,7 +63,7 @@ class ButtonGroup extends Component{
       <Row style={{margin: '20px 0'}}>
         <Col span={13}>
           <Col offset={1} span={4}><Button block onClick={this.props.onAdd} type="primary">+新增</Button></Col>
-          <Col offset={1} span={4}><Button block type="primary">X删除</Button></Col>
+          <Col offset={1} span={4}><Button block onClick={this.props.onDelete.bind(this, -1)} type="primary">X删除</Button></Col>
           <Col offset={1} span={4}><Button block type="primary">从文件导入</Button></Col>
         </Col>
       </Row>
@@ -622,7 +622,8 @@ class DeptManagement extends Component{
     super(props)
     this.state = {
       deptName: '',
-      tableList: [{id:1}],
+      selected: [],
+      tableList: [],
       detailmodal: {
         visible: false,
         data: [],
@@ -639,6 +640,16 @@ class DeptManagement extends Component{
   search = ({deptName})=>{
     this.setState({
       deptName,
+    })
+    API.searchDept(deptName)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('搜索失败')
     })
   }
   selectedChange = (newSelected)=>{
@@ -719,7 +730,7 @@ class DeptManagement extends Component{
       部门管理
       <WrappedSearch onSearch={this.search}/>
       <Split/>
-      <ButtonGroup onAdd={this.add}/>
+      <ButtonGroup onAdd={this.add} onDelete={this.delete}/>
       <Row>
         <Col span={20}>
           <DisplayTable data={this.state.tableList} onSelectedChange={this.selectedChange} {...tableHelper}/>

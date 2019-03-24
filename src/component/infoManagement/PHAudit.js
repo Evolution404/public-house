@@ -1,13 +1,11 @@
 import React, {Component} from 'react'
-import {Row, Col, Form, Select, Input, Button, Cascader, Checkbox, Upload, Icon, message} from 'antd'
+import {Row, Col, Form, Select, Button, message} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Table, {TableUtil} from '../common/table'
 import {SButton} from '../common/button'
 import API from '../../api'
 const {Item} = Form
 const Option = Select.Option
-const { TextArea } = Input
-const CheckboxGroup = Checkbox.Group
 
 class SearchForm extends Component{
   handleSubmit = (e) => {

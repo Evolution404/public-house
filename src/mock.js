@@ -60,3 +60,11 @@ Mock.mock('/detailDept', 'post', {
   masterDegree: 100,
   postdoctoral: 100,
 })
+Mock.mock('/updateDept', 'post', {code: 200})
+Mock.mock('/searchBuilding', 'post', [{
+  id: 1,
+  name: 1,
+  buildingArea: 1,
+  buildingTime: 1,
+  useArea: 1,
+}])

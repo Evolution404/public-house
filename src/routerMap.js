@@ -42,7 +42,7 @@ import AMonitorStatistics from './component/apamentManagement/aMonitorStatistics
 
 // 系统管理
 import DeptManagement from './component/systemManagement/deptManagement'
-import SystemParm from './component/systemManagement/systemParm'
+import ParmManagement from './component/systemManagement/parmManagement'
 import BuildingManagement from './component/systemManagement/buildingManagement'
 import TheUserManagement from './component/systemManagement/theUserManagement'
 import UserManagement from './component/systemManagement/userManagement'
@@ -190,9 +190,9 @@ const routerMap = {
     component: DeptManagement
   },
   SystemParm: {
-    path:'/SystemParm',
-    name:'系统参数',
-    component: SystemParm
+    path:'/ParmManagement',
+    name:'参数管理',
+    component: ParmManagement
   },
   BuildingManagement: {
     path:'/BuildingManagement',

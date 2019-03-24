@@ -77,7 +77,7 @@ const API = {
   // 删除公用房记录
   deletePH(indexList){
     return new Promise((resolve, reject)=>{
-      axios.post('/deletePH', indexList)
+      axios.post('/deletePH', {indexList})
       .then(rs=>{
         // 不需要传参数, 这里要确保是删除成功
         resolve()
@@ -102,7 +102,21 @@ const API = {
       })
     })
   },
-  // 删除部门
+  // 新增部门
+  addDept(data){
+    return new Promise((resolve, reject)=>{
+      axios.post('/addDept', data)
+      .then(rs=>{
+        // 不需要传参数, 这里要确保是添加成功
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  // 更新部门
   // {
   //    index: 1,
   //    其余信息
@@ -156,6 +170,98 @@ const API = {
         //    postdoctoral: 1,  博士后   
         // }
         resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  setBasementCoefficient(basementCoefficient){
+    return new Promise((resolve, reject)=>{
+      // 这里传入的是一个对象
+      // {
+      //    basementCoefficient: xxx,
+      // }
+      axios.post('/setBasementCoefficient', basementCoefficient)
+      .then(rs=>{
+        // 不需要传参数, 只需要确保成功的时候才调用
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  setBunkCoefficient(bunkCoefficient){
+    return new Promise((resolve, reject)=>{
+      // 这里传入的是一个对象
+      // {
+      //    bunkCoefficient: xxx,
+      // }
+      axios.post('/setBasementCoefficient', bunkCoefficient)
+      .then(rs=>{
+        // 不需要传参数, 只需要确保成功的时候才调用
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  searchBuilding(name){
+    return new Promise((resolve, reject)=>{
+      axios.post('/searchBuilding', {name})
+      .then(rs=>{
+        // {
+        //    id: xx,
+        //    name: xx,
+        //    buildingArea: xx,  建筑面积
+        //    buildingTime: xx,  建筑年代
+        //    useArea: xx,  使用面积
+        // }
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  addBuilding(data){
+    return new Promise((resolve, reject)=>{
+      axios.post('/addBuilding', data)
+      .then(rs=>{
+        // 成功时调用
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  deleteBuilding(indexList){
+    return new Promise((resolve, reject)=>{
+      axios.post('/deleteBuilding', indexList)
+      .then(rs=>{
+        // 成功时调用
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  updateBuilding(data){
+    return new Promise((resolve, reject)=>{
+      axios.post('/updateBuilding', data)
+      .then(rs=>{
+        // 成功时调用
+        resolve()
       })
       .catch(err=>{
         reject(err)

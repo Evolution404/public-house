@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Modal, message} from 'antd';
+import {message} from 'antd';
 import MainContainer from '../common/mainContainer'
 import Search from '../common/search'
 import {SButton} from '../common/button'

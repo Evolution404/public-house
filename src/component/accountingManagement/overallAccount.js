@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {Form, Select, Row, Col, Button} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
-import Table, {TableUtil} from '../common/table'
+import Table from '../common/table'
 import {SButton} from '../common/button'
 const Item = Form.Item
 const Option = Select.Option

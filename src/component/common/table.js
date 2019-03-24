@@ -97,6 +97,14 @@ const TableUtil = {
         return 'doctor'
       case '博士后':
         return 'postdoctoral'
+      case '名称':
+        return 'name'
+      case '建筑面积':
+        return 'buildingArea'
+      case '建筑年代':
+        return 'buildingTime'
+      case '使用面积':
+        return 'useArea'
       default:
         return ''
     }
