@@ -269,6 +269,144 @@ const API = {
       })
     })
   },
+  searchPersonnel(name){
+    return new Promise((resolve, reject)=>{
+      axios.post('/searchPersonnel', {name})
+      .then(rs=>{
+        // {
+        //    id: xx,
+        //    name: xx,
+        //    duty: xx,  职务
+        //    monad: xx,  单位
+        //    guideNum: xx,  指导研究生数量
+        // }
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  addPersonnel(data){
+    return new Promise((resolve, reject)=>{
+      axios.post('/addPersonnel', data)
+      .then(rs=>{
+        // 成功时调用
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  deletePersonnel(indexList){
+    return new Promise((resolve, reject)=>{
+      axios.post('/deletePersonnel', {indexList})
+      .then(rs=>{
+        // 成功时调用
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  changePersonnel(data){
+    return new Promise((resolve, reject)=>{
+      axios.post('/changePersonnel', data)
+      .then(rs=>{
+        // 成功时调用
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  detailPersonnel(index){
+    return new Promise((resolve, reject)=>{
+      axios.post('/detailPersonnel', index)
+      .then(rs=>{
+        // 处理成需要的部门信息
+        // {
+        //    工号: workNum
+        //    姓名: name
+        //    职务等级: dutyGrade
+        //    所属部门: dept
+        //    科研单位: scientificResearchUnits
+        //    类别: category
+        // }
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  searchUser(name){
+    return new Promise((resolve, reject)=>{
+      axios.post('/searchUser', {name})
+      .then(rs=>{
+        // 处理rs为包括如下对象的列表
+        // [{
+        //    id: xx,
+        //    name: xx,
+        //    loginAccount: xx, 登录账号
+        //    dept: xx,  所属部门
+        //    role: xx, 角色
+        // }]
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  addUser(data){
+    return new Promise((resolve, reject)=>{
+      axios.post('/addUser', data)
+      .then(rs=>{
+        // 成功时调用
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  deleteUser(indexList){
+    return new Promise((resolve, reject)=>{
+      axios.post('/deleteUser', {indexList})
+      .then(rs=>{
+        // 成功时调用
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  changeUser(data){
+    return new Promise((resolve, reject)=>{
+      axios.post('/changeUser', data)
+      .then(rs=>{
+        // 成功时调用
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
 }
 
 export default API

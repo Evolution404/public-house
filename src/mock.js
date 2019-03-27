@@ -68,3 +68,25 @@ Mock.mock('/searchBuilding', 'post', [{
   buildingTime: 1,
   useArea: 1,
 }])
+Mock.mock('/searchPersonnel', 'post', [{
+  id: 'xx',
+  name: 'xx',
+  duty: 'xx',
+  monad: 'xx',
+  guideNum: 'xx',
+}])
+Mock.mock('/detailPersonnel', 'post', {
+  workNum: 'xx',
+  name: 'xx',
+  dutyGrade: 'xx',
+  dept: 'xx',
+  scientificResearchUnits: 'xx',
+  category: 'xx',
+})
+Mock.mock('/searchUser', 'post', [{
+  id: 'xx',
+  name: 'xx',
+  loginAccount: 'xx',
+  dept: 'xx',
+  role: 'xx',
+}])

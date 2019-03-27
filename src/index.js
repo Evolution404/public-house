@@ -25,7 +25,7 @@ class App extends Component{
         </div>
         <div style={{float: "left",
           margin: "25px",
-          width: '80%',
+          width: '78%',
         }}>
           <Router>
             <div>

@@ -105,6 +105,20 @@ const TableUtil = {
         return 'buildingTime'
       case '使用面积':
         return 'useArea'
+      case '姓名':
+        return 'name'
+      case '职务':
+        return 'duty'
+      case '单位':
+        return 'monad'
+      case '指导研究生数量':
+        return 'guideNum'
+      case '登录账号':
+        return 'loginAccount'
+      case '所属部门':
+        return 'dept'
+      case '角色':
+        return 'role'
       default:
         return ''
     }

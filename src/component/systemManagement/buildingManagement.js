@@ -148,7 +148,7 @@ class AddModal extends Component {
           </Item>
           <Item style={{marginBottom: '0px'}}  label='楼宇层数'>
             {getFieldDecorator('buildingFloors', {initialValue: 0})(
-              <InputNumber onChange={this.onFloorsChange} min={0}/>
+              <InputNumber max={100} onChange={this.onFloorsChange} min={0}/>
             )}
           </Item>
           {picUploader}
