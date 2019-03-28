@@ -90,3 +90,5 @@ Mock.mock('/searchUser', 'post', [{
   dept: 'xx',
   role: 'xx',
 }])
+Mock.mock('/startReservation', 'post', {})
+Mock.mock('/agreeReservation', 'post', {})

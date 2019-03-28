@@ -189,9 +189,13 @@ class PHList extends Component{
   }
   render(){
     let changeListener = {
+      deptNameChange: this.deptNameChange,
+      usingNatureChange: this.usingNatureChange,
+      auditStatusChange: this.auditStatusChange,
+      userChange: this.userChange,
       buildingNameChange: this.buildingNameChange,
       roomNumChange: this.roomNumChange,
-      floorChange: this.floorChange,
+      houseStatus: this.houseStatusChange,
       search: this.refresh,
     }
     let tableHelper = {

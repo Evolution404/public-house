@@ -1,5 +1,7 @@
 import React, {Component} from 'react'
-import {Form, Select, Row, Col, Button, message, DatePicker, Checkbox} from 'antd'
+import
+  {Form, Select, Row, Col, Button, message, DatePicker, Checkbox, Modal, Input, notification}
+from 'antd'
 import API from '../../api'
 import {SButton} from '../common/button'
 import MainContainer from '../common/mainContainer'
@@ -11,12 +13,94 @@ const CheckboxGroup = Checkbox.Group
 const Item = Form.Item
 const Option = Select.Option
 
+class ReservationModal extends Component {
+  hideModal = () => {
+    this.props.close()
+  }
+
+  // 开始预约
+  submit = ()=>{
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+        let postData = {
+          id: this.props.id,
+          ...values,
+        }
+        API.startReservation(postData)
+        .then(()=>{
+          this.hideModal()
+          let content = <div>
+            <p>您已经预约</p>
+            <p>2019-02-24 星期日</p>
+            <p>上午8:00-10:00时段</p>
+            <p>研究院中517会议室</p>
+            <div></div>
+            <p>系统已给会议室管理人员发送了通知,请耐心等候审核结果</p>
+          </div>
+          notification.success({
+            message: '预约申请成功',
+            duration: 0,
+            description: content,
+          })
+        })
+        .catch(err=>{
+          message.error('预约失败')
+        })
+      }
+    })
+  }
+
+  render() {
+    const { getFieldDecorator } = this.props.form
+    return (
+      <Modal
+        title="预约登记"
+        width="500px"
+        visible={this.props.visible}
+        closable={false}
+        okText="开始预约"
+        onOk={this.submit}
+        cancelText="返回"
+        onCancel={this.hideModal}
+      >
+        <Form labelCol={{span: 5}} wrapperCol={{span:14}}>
+          <Item label="预约时段">
+            {getFieldDecorator('time',)(
+              <Input/>
+            )}
+          </Item>
+          <Item label="预约用途">
+            {getFieldDecorator('purpose',)(
+              <Input/>
+            )}
+          </Item>
+          <Item label="联系电话">
+            {getFieldDecorator('phone',)(
+              <Input/>
+            )}
+          </Item>
+        </Form>
+      </Modal>
+    )
+  }
+}
+
+const WrappedReservationModal = Form.create({ name: 'reservation_modal' })(ReservationModal)
+
 class MeetingRoomReservation extends Component{
   state = {
-    year: 0,
-    deptName: '',
-    tableList: [],
-    totalSchool: 0,
+    tableList: [{id:0}],
+    reservationModal: {
+      visible: false,
+      id: 0,
+    }
+  }
+  openReservationModal = id=>{
+    this.setState({reservationModal:{visible: true, id}})
+  }
+  closeReservationModal = ()=>{
+    this.setState({reservationModal:{visible: false, id: 0}})
   }
   search = ()=>{
     this.props.form.validateFields((err, values) => {
@@ -62,7 +146,7 @@ class MeetingRoomReservation extends Component{
               <SButton text='详细'/>
             </div>
             <div style={{display: 'inline-block', padding: '0 10px'}}>
-              <SButton text='开始预约'/>
+              <SButton onClick={this.openReservationModal.bind(this, record.id)} text='开始预约'/>
             </div>
           </div>
       )
@@ -123,6 +207,7 @@ class MeetingRoomReservation extends Component{
         </Col>
       </Row>
       <Table columns={columns} data={this.state.tableList}></Table>
+      <WrappedReservationModal {...this.state.reservationModal} close={this.closeReservationModal} />
     </MainContainer>
   }
 }

@@ -33,7 +33,7 @@ import MonitorStatistics from './component/dynamicMonitoring/monitorStatistics'
 // 会议室管理
 import MeetingRoomReservation from './component/meetingRoomManagement/meetingRoomReservation'
 import ReservationAudit from './component/meetingRoomManagement/reservationAudit'
-import MyAudit from './component/meetingRoomManagement/myAudit'
+import MyReservation from './component/meetingRoomManagement/myReservation'
 import UseStatistical from './component/meetingRoomManagement/useStatistical'
 
 // 公寓管理
@@ -164,10 +164,10 @@ const routerMap = {
     name:'预约审批',
     component: ReservationAudit
   },
-  MyAudit: {
-    path:'/MyAudit',
+  MyReservation: {
+    path:'/MyReservation',
     name:'我的预约',
-    component: MyAudit
+    component: MyReservation
   },
   UseStatistical: {
     path:'/UseStatistical',

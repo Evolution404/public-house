@@ -109,7 +109,7 @@ class Navigation extends Component{
       {
         img: "/images/6.png",
         text: "会议室管理",
-        list:[Map.MeetingRoomReservation, Map.ReservationAudit, Map.MyAudit, Map.UseStatistical]
+        list:[Map.MeetingRoomReservation, Map.ReservationAudit, Map.MyReservation, Map.UseStatistical]
       },
       {
         img: "/images/7.png",
