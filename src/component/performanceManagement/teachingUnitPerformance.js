@@ -119,7 +119,7 @@ class TeachingUnitPerformance extends Component{
         </Row>
       </Form>
       <Split/>
-      <div style={{ width:'80%', fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>教学单位公用房使用效益</div>
+      <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>教学单位公用房使用效益</div>
       <Table columns={columns} data={this.state.tableList}></Table>
     </MainContainer>
   }

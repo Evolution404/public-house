@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
 import {Form, Select, Row, Col, Button, message} from 'antd'
+import {SButton} from '../common/button'
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
@@ -8,17 +9,16 @@ import Table from '../common/table'
 const Item = Form.Item
 const Option = Select.Option
 
-class LabPerformance extends Component{
+class ScientificPerformance extends Component{
   state = {
     year: 0,
     deptName: '',
     tableList: [],
-    totalSchool: 0,
   }
   search = ()=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        API.searchLabPerformance(values)
+        API.searchScientificPerformance(values)
         .then(rs=>{
           this.setState({tableList: rs})
         })
@@ -37,31 +37,49 @@ class LabPerformance extends Component{
         sorter: (a, b) => a.id - b.id,
       },
       {
-        title: '部门',
-        dataIndex: 'dept',
+        title: '科研单位',
+        dataIndex: 'scientificUnit',
       },
       {
-        title: '实验室',
-        dataIndex: 'lab',
-        sorter: (a, b) => a.lab - b.lab,
+        title: '科研工作量',
+        dataIndex: 'scientificWorkLoad',
+        sorter: (a, b) => a.scientificWorkLoad - b.scientificWorkLoad,
       },
       {
-        title: '课程名',
-        dataIndex: 'courseName',
-        sorter: (a, b) => a.courseName - b.courseName,
+        title: '规范管理分',
+        dataIndex: 'specificationPoints',
+        sorter: (a, b) => a.specificationPoints - b.specificationPoints,
       },
       {
-        title: '学时数',
-        dataIndex: 'schoolNum',
-        sorter: (a, b) => a.schoolNum - b.schoolNum,
+        title: '公用房面积',
+        dataIndex: 'PHArea',
+        sorter: (a, b) => a.PHArea - b.PHArea,
+      },
+      {
+        title: '使用效益',
+        dataIndex: 'usePerformance',
+        sorter: (a, b) => a.usePerformance - b.usePerformance,
+      },
+      {
+        title: '米均效益',
+        dataIndex: 'averagePerformance',
+        sorter: (a, b) => a.averagePerformance - b.averagePerformance,
+      },
+      {
+        title: '操作',
+        render: (text, record, index)=>(
+            <div style={{display: 'inline-block', padding: '0 10px'}}>
+              <SButton onClick={this.props.delete.bind(this,index)} text='详细'/>
+            </div>
+        )
       },
     ]
     const { getFieldDecorator } = this.props.form
     return <MainContainer name="效益管理">
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
-          <Col span={3}>
-            <Item labelCol={{span:8}} wrapperCol={{span:15}} label="年份">
+          <Col span={4}>
+            <Item labelCol={{span:5}} wrapperCol={{span:18}} label="年份">
               {getFieldDecorator('year',)(
                 <Select>
                   <Option value="2019">2019</Option>
@@ -74,15 +92,6 @@ class LabPerformance extends Component{
               {getFieldDecorator('deptName',)(
                 <Select>
                   <Option value="部门1">部门1</Option>
-                </Select>
-              )}
-            </Item>
-          </Col>
-          <Col offset={1} span={4}>
-            <Item labelCol={{span:7}} wrapperCol={{span:16}} label="实验室">
-              {getFieldDecorator('deptName',)(
-                <Select>
-                  <Option value="实验室1">实验室1</Option>
                 </Select>
               )}
             </Item>
@@ -105,17 +114,12 @@ class LabPerformance extends Component{
         </Row>
       </Form>
       <Split/>
-      <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>实验室使用效益</div>
-      <Row>
-        <Col offset={1}>
-          <p style={{fontSize: '17px'}}>总学时数: {this.state.totalSchool}</p>
-        </Col>
-      </Row>
+      <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>科研公用房使用效益</div>
       <Table columns={columns} data={this.state.tableList}></Table>
     </MainContainer>
   }
 }
 
-const WrappedLabPerformance = Form.create({ name: 'lab_performance' })(LabPerformance);
+const WrappedScientificPerformance = Form.create({ name: 'seientific_performance' })(ScientificPerformance);
 
-export default WrappedLabPerformance
+export default WrappedScientificPerformance

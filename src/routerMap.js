@@ -21,7 +21,7 @@ import DepartmentAccount from './component/accountingManagement/departmentAccoun
 import DataImport from './component/performanceManagement/dataImport'
 import CheckWorkload from './component/performanceManagement/checkWorkload'
 import TeachingUnitPerformance from './component/performanceManagement/teachingUnitPerformance'
-import CyclePerformance from './component/performanceManagement/cyclePerformance'
+import ScientificPerformance from './component/performanceManagement/scientificPerformance'
 import BusinessPerformance from './component/performanceManagement/businessPerformance'
 import LabPerformance from './component/performanceManagement/labPerformance'
 import ClassroomPerformance from './component/performanceManagement/classroomPerformance'
@@ -124,10 +124,10 @@ const routerMap = {
     name:'教学单位绩效',
     component: TeachingUnitPerformance
   },
-  CyclePerformance: {
-    path:'/CyclePerformance',
-    name:'科研周转绩效',
-    component: CyclePerformance
+  ScientificPerformance: {
+    path:'/ScientificPerformance',
+    name:'科研单位绩效',
+    component: ScientificPerformance
   },
   BusinessPerformance: {
     path:'/BusinessPerformance',

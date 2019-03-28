@@ -99,7 +99,7 @@ class Navigation extends Component{
       {
         img: "/images/4.png",
         text: "绩效管理",
-        list:[Map.DataImport, Map.CheckWorkload, Map.TeachingUnitPerformance, Map.CyclePerformance, Map.BusinessPerformance, Map.LabPerformance, Map.ClassroomPerformance]
+        list:[Map.DataImport, Map.CheckWorkload, Map.TeachingUnitPerformance, Map.ScientificPerformance, Map.BusinessPerformance, Map.LabPerformance, Map.ClassroomPerformance]
       },
       {
         img: "/images/5.png",
