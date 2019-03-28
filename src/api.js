@@ -2,7 +2,116 @@ import axios from 'axios'
 // 引用假数据, 对接后删除
 import './mock'
 
+const FileUploadAPI = {
+  // 上传教学单位工作量
+  ULTeachingUnitWorkLoad(formData){
+    return new Promise((resolve, reject)=>{
+      axios({
+        url:'/upload',
+          method: 'post',
+          data: formData,
+          processData: false,  // 告诉axios不要去处理发送的数据(重要参数)
+          contentType: false,  // 告诉axios不要去设置Content-Type请求头
+      })
+      .then(rs=>{
+          console.log(rs)
+          // 上传成功执行
+          resolve()
+      })
+      .catch(err=>{
+        console.log(err)
+        reject(err)
+      })
+    })
+  },
+  // 上传科研单位工作量
+  ULScientificUnitWorkLoad(formData){
+    return new Promise((resolve, reject)=>{
+      axios({
+        url:'/upload',
+          method: 'post',
+          data: formData,
+          processData: false,  // 告诉axios不要去处理发送的数据(重要参数)
+          contentType: false,  // 告诉axios不要去设置Content-Type请求头
+      })
+      .then(rs=>{
+          console.log(rs)
+          // 上传成功执行
+          resolve()
+      })
+      .catch(err=>{
+        console.log(err)
+        reject(err)
+      })
+    })
+  },
+  // 上传规范分
+  ULSpecificationPoints(formData){
+    return new Promise((resolve, reject)=>{
+      axios({
+        url:'/upload',
+          method: 'post',
+          data: formData,
+          processData: false,  // 告诉axios不要去处理发送的数据(重要参数)
+          contentType: false,  // 告诉axios不要去设置Content-Type请求头
+      })
+      .then(rs=>{
+          console.log(rs)
+          // 上传成功执行
+          resolve()
+      })
+      .catch(err=>{
+        console.log(err)
+        reject(err)
+      })
+    })
+  },
+  // 上传商业用房数据
+  ULBusiness(formData){
+    return new Promise((resolve, reject)=>{
+      axios({
+        url:'/upload',
+          method: 'post',
+          data: formData,
+          processData: false,  // 告诉axios不要去处理发送的数据(重要参数)
+          contentType: false,  // 告诉axios不要去设置Content-Type请求头
+      })
+      .then(rs=>{
+          console.log(rs)
+          // 上传成功执行
+          resolve()
+      })
+      .catch(err=>{
+        console.log(err)
+        reject(err)
+      })
+    })
+  },
+  // 上传教室承担课程信息
+  ULClassroom(formData){
+    return new Promise((resolve, reject)=>{
+      axios({
+        url:'/upload',
+          method: 'post',
+          data: formData,
+          processData: false,  // 告诉axios不要去处理发送的数据(重要参数)
+          contentType: false,  // 告诉axios不要去设置Content-Type请求头
+      })
+      .then(rs=>{
+          console.log(rs)
+          // 上传成功执行
+          resolve()
+      })
+      .catch(err=>{
+        console.log(err)
+        reject(err)
+      })
+    })
+  },
+}
+
 const API = {
+  ...FileUploadAPI,
   // 公用房处理
   // 搜索公用房
   // 楼宇名称: buildingName 楼层:floor 房间号: roomNum
@@ -400,6 +509,53 @@ const API = {
       .then(rs=>{
         // 成功时调用
         resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  searchWorkLoad(deptName){
+    return new Promise((resolve, reject)=>{
+      axios.post('/searchWorkLoad', deptName)
+      .then(rs=>{
+        // 处理成tableList
+        // {
+        //    id: 1, 序号
+        //    dept: xx, 部门
+        //    teachingWorkLoad: xx, 教学工作量
+        //    scientificWorkLoad: xx, 科研工作量
+        // }
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  // 搜索教学单位公用房使用效益
+  searchTeachingUnitPHUsePerformance(info){
+    // {
+    //    year: xx,
+    //    deptName: xx,
+    // }
+    return new Promise((resolve, reject)=>{
+      axios.post('/searchTeachingUnitPHUsePerformance', info)
+      .then(rs=>{
+        // 处理成tableList
+        // {
+        //    id: 1, 序号
+        //    college: xx, 学院
+        //    teachingWorkLoad: xx, 教学工作量
+        //    scientificWorkLoad: xx, 科研工作量
+        //    specificationPoints: xx, 规范管理分
+        //    PHArea: xx, 公用房面积
+        //    usePerformance: xx, 使用效益
+        //    averagePerformance: xx, 米均效益
+        // }
+        resolve(rs.data)
       })
       .catch(err=>{
         reject(err)

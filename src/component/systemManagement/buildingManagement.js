@@ -1,13 +1,12 @@
 import React, {Component} from 'react'
 import MainContainer from '../common/mainContainer'
-import {Input, Button,Form, Row, Col, message, Modal, Select, InputNumber, Upload, Icon} from 'antd'
+import {Input, Button,Form, Row, Col, message, Modal, InputNumber, Upload, Icon} from 'antd'
 import {SButton} from '../common/button'
 import Split from '../common/split'
 import Table, {TableUtil}from '../common/table'
 import API from '../../api'
 const Item = Form.Item
 const confirm = Modal.confirm;
-const Option = Select.Option
 
 class Search extends Component{
   handleSubmit = (e) => {
