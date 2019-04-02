@@ -3,7 +3,6 @@ import {
   HashRouter as Router,
   Link
 } from "react-router-dom";
-import { browserHistory } from 'react-router'
 import Map from '../../routerMap'
 import {Modal, message} from 'antd';
 import API from '../../api'

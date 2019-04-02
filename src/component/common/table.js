@@ -128,11 +128,16 @@ const TableUtil = {
       case '状态':
         return (text) =>{
           switch(text){
+            case 0:
+              return <span style={{color:'#333'}}>未上报</span>
             case 1:
               return <span style={{color:'#008000'}}>已审核</span>
             case 2:
               return <span style={{color:'#ff0000'}}>已驳回</span>
-            case 0:
+            case 3:
+              return <span style={{color:'#008000'}}>已上报</span>
+            case 4:
+              return <span style={{color:'#ff0000'}}>已批准</span>
             default:
               return <span style={{color:'#333'}}>未上报</span>
           }

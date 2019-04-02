@@ -1,4 +1,9 @@
 import React, {Component} from 'react'
+import {
+  HashRouter as Router,
+  Link
+} from "react-router-dom";
+import Map from '../../routerMap'
 import {Row, Col, Form, Select, Button, message} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Table, {TableUtil} from '../common/table'
@@ -67,14 +72,19 @@ const WrappedSearchForm = Form.create({ name: 'search_form' })(SearchForm)
 class DisplayTable extends Component{
   render(){
     const columns = TableUtil.mapColumns([
-      '序号', '位置', '面积', '建立时间', '维护人'
+      '序号', '部门', '位置', '使用性质', '使用者', '填报时间', '状态',
+      '审批时间', '驳回原因'
     ])
     columns.push({
       title: '操作',
       render: (text, record, index)=>(
+        <Router>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton text='开始审批'/>
+            <Link to={Map.PHAuditDetail.path.replace(':id', record.id)}>
+              <SButton text='开始审批'/>
+            </Link>
           </div>
+        </Router>
       )
     })
     return <Table columns={columns} {...this.props}/>

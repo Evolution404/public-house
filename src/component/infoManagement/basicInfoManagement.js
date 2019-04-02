@@ -42,7 +42,7 @@ class ButtonGroup extends Component{
     return (
       <Router><div style={{marginTop: '10px'}}>
           <div style={{padding: '10px', display: 'inline-block'}}>
-            <Link to={Map.PHAdd.path}>
+            <Link to={Map.PHAddBrief.path}>
               <LButton text='+新增公用房'/>
             </Link>
           </div>
@@ -70,7 +70,11 @@ class DisplayTable extends Component{
             <SButton onClick={this.props.delete.bind(this,index)} text='X删除'/>
           </div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-             <SButton onClick={this.props.change.bind(this,index)} text='修改查看'/> 
+            <Router>
+              <Link to={Map.PHChangeBrief.path.replace(':id', record.id)}>
+                <SButton onClick={this.props.change.bind(this,index)} text='修改查看'/> 
+              </Link>
+            </Router>
           </div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
             <SButton onClick={this.props.upload.bind(this,index)} text='上传图纸'/>

@@ -4,8 +4,11 @@ import Home from './component/home'
 import BasicInfoManagement from './component/infoManagement/basicInfoManagement'
 import PHList from './component/infoManagement/PHList'
 import PHAdd from './component/infoManagement/PHAdd'
+import PHAddBrief from './component/infoManagement/PHAddBrief'
 import PHChange from './component/infoManagement/PHChange'
+import PHChangeBrief from './component/infoManagement/PHChangeBrief'
 import PHImport from './component/infoManagement/PHImport'
+import PHAuditDetail from './component/infoManagement/PHAuditDetail'
 import PHAudit from './component/infoManagement/PHAudit'
 import MyPH from './component/infoManagement/myPH'
 
@@ -69,15 +72,30 @@ const routerMap = {
     name:'公用房新增',
     component: PHAdd
   },
+  PHAddBrief: {
+    path:'/PHAddBrief',
+    name:'公用房新增',
+    component: PHAddBrief
+  },
   PHChange: {
     path:'/PHChange/:id',
     name:'公用房变更',
     component: PHChange
   },
+  PHChangeBrief: {
+    path:'/PHChangeBrief/:id',
+    name:'公用房变更',
+    component: PHChangeBrief
+  },
   PHImport: {
     path:'/PHImport',
     name:'公用房变更',
     component: PHImport
+  },
+  PHAuditDetail: {
+    path:'/PHAuditDetail/:id',
+    name:'公用房审批',
+    component: PHAuditDetail
   },
   PHAudit: {
     path:'/PHAudit',

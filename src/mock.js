@@ -111,3 +111,31 @@ let defaultFileList = [{
     url: 'http://www.baidu.com/zzz.png',
 }]
 Mock.mock('/changeFilterPH', 'post', {usingArea:24, peopleNum: "1", housePic:defaultFileList})
+Mock.mock('/auditFilterPH', 'post', [{id:1}])
+Mock.mock('/auditDetailPH', 'post', {
+  dept: '计算机科学与技术学院',
+  usingNature: '学院用房',
+  secondaryNature: '专业实验室',
+  building: '研学楼',
+  floor: '6楼',
+  roomNum: '604室',
+  usingArea: '100.4平方米',
+  user: ['张三', '李四'],
+  head: '张三',
+  fireHead: '张三',
+  drawings: ['https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg'],
+  housePic: ['https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg'],
+  houseDesc: 'this is houseDesc',
+  equipment: ['投影仪', '音响', '麦克风'],
+  peopleNum: '5-10人',
+  approvalDocument: '1.jpg',
+})
+Mock.mock('/briefChangeFilterPH', 'post', {
+  drawings: [{
+    uid: '1',
+    name: 'xxx.png',
+    status: 'done',
+    response: 'Server Error 500', // custom error message to show
+    url: 'http://www.baidu.com/xxx.png',
+  }],
+})
