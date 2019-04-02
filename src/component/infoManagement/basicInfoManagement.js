@@ -12,9 +12,7 @@ import Input from '../common/input'
 import Split from '../common/split'
 import Select from '../common/select'
 import Table, {TableUtil}from '../common/table'
-const Item = Form.Item
 const confirm = Modal.confirm;
-const Option = Select.Option
 
 
 class Search extends Component{
@@ -186,7 +184,6 @@ class UploadModal extends Component {
     })
   }
   render() {
-    const { getFieldDecorator } = this.props.form
     return (
       <Modal
         title="上传平面图"

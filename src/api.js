@@ -151,10 +151,247 @@ const FileUploadAPI = {
       })
     })
   },
+  // 导入部门信息
+  ULDept(formData){
+    return new Promise((resolve, reject)=>{
+      axios({
+        url:'/upload',
+          method: 'post',
+          data: formData,
+          processData: false,  // 告诉axios不要去处理发送的数据(重要参数)
+          contentType: false,  // 告诉axios不要去设置Content-Type请求头
+      })
+      .then(rs=>{
+          console.log(rs)
+          // 上传成功执行
+          resolve()
+      })
+      .catch(err=>{
+        console.log(err)
+        reject(err)
+      })
+    })
+  },
+  // 导入楼宇信息
+  ULBuildings(formData){
+    return new Promise((resolve, reject)=>{
+      axios({
+        url:'/upload',
+          method: 'post',
+          data: formData,
+          processData: false,  // 告诉axios不要去处理发送的数据(重要参数)
+          contentType: false,  // 告诉axios不要去设置Content-Type请求头
+      })
+      .then(rs=>{
+          console.log(rs)
+          // 上传成功执行
+          resolve()
+      })
+      .catch(err=>{
+        console.log(err)
+        reject(err)
+      })
+    })
+  },
+}
+
+const theUserManagementAPI = {
+  // 使用者管理
+  searchPersonnel(name){
+    return new Promise((resolve, reject)=>{
+      axios.get('/searchPersonnel', {
+        params: {
+          xingming: name,
+        }
+      })
+      .then(rs=>{
+        // {
+        //    id: xx,
+        //    name: xx,
+        //    duty: xx,  职务
+        //    monad: xx,  单位
+        //    guideNum: xx,  指导研究生数量
+        // }
+        let data = rs.data.map(item=>({
+          id: item.id,
+          name: item.xingming,
+          duty: item.zhiwujibie,
+          monad: item.bumen,
+          //guideNum: 
+        }))
+        resolve(data)
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  addPersonnel(data){
+    let mapData = {
+      gonghao: data.workNum,
+      xingming: data.name,
+      zhiwujibie: data.dutyGrade,
+      bumen: data.dept,
+      // data.scientificResearchUnits,
+      // data.category,
+    }
+    return new Promise((resolve, reject)=>{
+      axios.post('/addPersonnel', mapData)
+      .then(rs=>{
+        // 成功时调用
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  deletePersonnel(indexList){
+    return new Promise((resolve, reject)=>{
+      axios.post('/deletePersonnel', {ids: indexList})
+      .then(rs=>{
+        // 成功时调用
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  changePersonnel(data){
+    return new Promise((resolve, reject)=>{
+      axios.post('/changePersonnel', data)
+      .then(rs=>{
+        // 成功时调用
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  detailPersonnel(index){
+    return new Promise((resolve, reject)=>{
+      axios.post('/detailPersonnel', index)
+      .then(rs=>{
+        // 处理成需要的部门信息
+        // {
+        //    工号: workNum
+        //    姓名: name
+        //    职务等级: dutyGrade
+        //    所属部门: dept
+        //    科研单位: scientificResearchUnits
+        //    类别: category
+        // }
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+}
+
+const userManagementAPI = {
+  // 用户管理
+  addUser(data){
+    let mapData = {
+      dengluzhanghao: data.loginAccount,
+      yonghumingcheng: data.name,
+      mima: data.password,
+      bumenId: data.dept,
+      juseId: data.role,
+    }
+    return new Promise((resolve, reject)=>{
+      axios.post('/addUser', mapData)
+      .then(rs=>{
+        // 成功时调用
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  deleteUser(indexList){
+    return new Promise((resolve, reject)=>{
+      axios.post('/deleteUser', {ids: indexList})
+      .then(rs=>{
+        // 成功时调用
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  changeUser(data){
+    let mapData = {
+      dengluzhanghao: data.loginAccount,
+      yonghumingcheng: data.name,
+      bumenId: data.dept,
+      juseId: data.role,
+    }
+    return new Promise((resolve, reject)=>{
+      axios.post('/changeUser', mapData)
+      .then(rs=>{
+        // 成功时调用
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  searchUser(name){
+    return new Promise((resolve, reject)=>{
+      axios.get('/searchUser',{
+        params:{
+          yonghumingcheng: name
+        }
+      })
+      .then(rs=>{
+        // 处理rs为包括如下对象的列表
+        // [{
+        //    id: xx,
+        //    name: xx,
+        //    loginAccount: xx, 登录账号
+        //    dept: xx,  所属部门
+        //    role: xx, 角色
+        // }]
+        let data = rs.data.map(item=>({
+          id: item.id,
+          name: item.yonghumingcheng,
+          loginAccount: item.dengluzhanghao,
+          dept: item.bumenId,
+          role: item.juseId,
+        }))
+        resolve(data)
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+}
+
+const systemManagementAPI = {
+  ...userManagementAPI,
+  ...theUserManagementAPI,
 }
 
 const API = {
   ...FileUploadAPI,
+  ...systemManagementAPI,
   // 公用房处理
   // 新增公用房
   addPH(values){
@@ -569,144 +806,6 @@ const API = {
   updateBuilding(data){
     return new Promise((resolve, reject)=>{
       axios.post('/updateBuilding', data)
-      .then(rs=>{
-        // 成功时调用
-        resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
-  searchPersonnel(name){
-    return new Promise((resolve, reject)=>{
-      axios.post('/searchPersonnel', {name})
-      .then(rs=>{
-        // {
-        //    id: xx,
-        //    name: xx,
-        //    duty: xx,  职务
-        //    monad: xx,  单位
-        //    guideNum: xx,  指导研究生数量
-        // }
-        resolve(rs.data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
-  addPersonnel(data){
-    return new Promise((resolve, reject)=>{
-      axios.post('/addPersonnel', data)
-      .then(rs=>{
-        // 成功时调用
-        resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
-  deletePersonnel(indexList){
-    return new Promise((resolve, reject)=>{
-      axios.post('/deletePersonnel', {indexList})
-      .then(rs=>{
-        // 成功时调用
-        resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
-  changePersonnel(data){
-    return new Promise((resolve, reject)=>{
-      axios.post('/changePersonnel', data)
-      .then(rs=>{
-        // 成功时调用
-        resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
-  detailPersonnel(index){
-    return new Promise((resolve, reject)=>{
-      axios.post('/detailPersonnel', index)
-      .then(rs=>{
-        // 处理成需要的部门信息
-        // {
-        //    工号: workNum
-        //    姓名: name
-        //    职务等级: dutyGrade
-        //    所属部门: dept
-        //    科研单位: scientificResearchUnits
-        //    类别: category
-        // }
-        resolve(rs.data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
-  searchUser(name){
-    return new Promise((resolve, reject)=>{
-      axios.post('/searchUser', {name})
-      .then(rs=>{
-        // 处理rs为包括如下对象的列表
-        // [{
-        //    id: xx,
-        //    name: xx,
-        //    loginAccount: xx, 登录账号
-        //    dept: xx,  所属部门
-        //    role: xx, 角色
-        // }]
-        resolve(rs.data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
-  addUser(data){
-    return new Promise((resolve, reject)=>{
-      axios.post('/addUser', data)
-      .then(rs=>{
-        // 成功时调用
-        resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
-  deleteUser(indexList){
-    return new Promise((resolve, reject)=>{
-      axios.post('/deleteUser', {indexList})
-      .then(rs=>{
-        // 成功时调用
-        resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
-  changeUser(data){
-    return new Promise((resolve, reject)=>{
-      axios.post('/changeUser', data)
       .then(rs=>{
         // 成功时调用
         resolve()

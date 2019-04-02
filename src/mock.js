@@ -139,3 +139,5 @@ Mock.mock('/briefChangeFilterPH', 'post', {
     url: 'http://www.baidu.com/xxx.png',
   }],
 })
+Mock.mock('/searchUser', 'get', [{id: 1}])
+Mock.mock('/searchPersonnel', 'get', [{id:1}])

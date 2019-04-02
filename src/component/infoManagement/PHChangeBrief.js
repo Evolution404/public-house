@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Empty, message, Row, Col, Form, Select, Input, Button, Cascader, Checkbox, Upload, Icon} from 'antd'
+import {message, Row, Col, Form, Select, Input, Button, Checkbox, Upload, Icon} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import API from '../../api'
@@ -36,24 +36,6 @@ class MainForm extends Component{
       { label: '是否地下室', value: 0},
       { label: '是否简易房', value: 1},
     ]
-    const uploadProps = {
-      onRemove: (file) => {
-        this.setState((state) => {
-          const index = state.fileList.indexOf(file)
-          const newFileList = state.fileList.slice()
-          newFileList.splice(index, 1)
-          return {
-            fileList: newFileList,
-          }
-        })
-      },
-      beforeUpload: (file) => {
-        this.setState(state => ({
-          fileList: [...state.fileList, file],
-        }))
-        return false
-      },
-    }
     return (
       <Form onSubmit={this.handleSubmit}>
         <Row>

@@ -1,13 +1,12 @@
 import React, {Component} from 'react'
 import MainContainer from '../common/mainContainer'
-import {Input, Button,Form, Row, Col, message, Modal, Select} from 'antd'
+import {Input, Button,Form, Row, Col, message, Modal, Select, Upload, Icon} from 'antd'
 import {SButton} from '../common/button'
 import Split from '../common/split'
 import Table, {TableUtil}from '../common/table'
 import API from '../../api'
 const Item = Form.Item
 const confirm = Modal.confirm;
-const Option = Select.Option
 
 class Search extends Component{
   handleSubmit = (e) => {
@@ -51,7 +50,7 @@ class ButtonGroup extends Component{
         <Col span={13}>
           <Col offset={1} span={4}><Button block onClick={this.props.onAdd} type="primary">+新增</Button></Col>
           <Col offset={1} span={4}><Button block onClick={this.props.onDelete.bind(this, -1)} type="primary">X删除</Button></Col>
-          <Col offset={1} span={4}><Button block type="primary">从文件导入</Button></Col>
+          <Col offset={1} span={4}><Button block onClick={this.props.onImport} type="primary">从文件导入</Button></Col>
         </Col>
       </Row>
     )
@@ -92,6 +91,13 @@ class AddModal extends Component {
         return
       }
       console.log('Received values of form: ', values)
+      API.addUser(values)
+      .then(()=>{
+        message.success('添加成功')
+      })
+      .catch(err=>{
+        message.error('添加失败')
+      })
     })
   }
   render() {
@@ -188,8 +194,8 @@ class ChangeModal extends Component {
         cancelText="取消"
       >
         <Form labelCol={{span:8}} wrapperCol={{span:16}} labelAlign='left'>
-          <Item style={{marginBottom: '0px'}} label='工号'>
-            {getFieldDecorator('workNum', )(
+          <Item style={{marginBottom: '0px'}} label='登录账号'>
+            {getFieldDecorator('loginAccount', )(
               <Input/>
             )}
           </Item>
@@ -198,38 +204,14 @@ class ChangeModal extends Component {
               <Input/>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='职务等级'>
-            {getFieldDecorator('dutyGrade', )(
-              <Select>
-                <Option value='校级'>校级</Option>
-                <Option value='院士'>院士</Option>
-                <Option value='高端人才'>高端人才</Option>
-                <Option value='优秀人才'>优秀人才</Option>
-                <Option value='外聘高端'>外聘高端</Option>
-                <Option value='正高级职称'>正高级职称</Option>
-                <Option value='正处级'>正处级</Option>
-                <Option value='副处级职称'>副处级职称</Option>
-                <Option value='副处级'>副处级</Option>
-                <Option value='其他'>其他</Option>
-              </Select>
-            )}
-          </Item>
           <Item style={{marginBottom: '0px'}}  label='所属部门'>
             {getFieldDecorator('dept', )(
               <Select></Select>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='科研单位'>
-            {getFieldDecorator('scientificResearchUnits', )(
+          <Item style={{marginBottom: '0px'}}  label='角色'>
+            {getFieldDecorator('role', )(
               <Select></Select>
-            )}
-          </Item>
-          <Item style={{marginBottom: '0px'}}  label='类别'>
-            {getFieldDecorator('category', )(
-              <Select>
-                <Option value='教师'>教师</Option>
-                <Option value='其他'>其他</Option>
-              </Select>
             )}
           </Item>
         </Form>
@@ -238,6 +220,116 @@ class ChangeModal extends Component {
   }
 }
 const WrappedChangeModal = Form.create({ name: 'changemodal' })(ChangeModal)
+
+class Import extends Component{
+  state = {
+    fileList: [],
+    uploading: false,
+  }
+
+  handleUpload = () => {
+    const { fileList } = this.state;
+    const formData = new FormData();
+    fileList.forEach((file) => {
+      formData.append('files[]', file);
+    });
+
+    this.setState({
+      uploading: true,
+    });
+    this.props.uploadHelper(formData)
+    .then(()=>{
+      this.setState({
+        fileList: [],
+        uploading: false,
+      });
+      message.success('上传成功');
+    })
+    .catch(err=>{
+      this.setState({
+        uploading: false,
+      });
+      message.error('上传失败');
+    })
+  }
+
+  render() {
+    const { uploading, fileList } = this.state;
+    const props = {
+      onRemove: (file) => {
+        this.setState((state) => {
+          const index = state.fileList.indexOf(file);
+          const newFileList = state.fileList.slice();
+          newFileList.splice(index, 1);
+          return {
+            fileList: newFileList,
+          };
+        });
+      },
+      beforeUpload: (file) => {
+        this.setState(state => ({
+          fileList: [...state.fileList, file],
+        }));
+        return false;
+      },
+      fileList,
+    };
+
+    return (
+      <div style={{margin: '20px 0'}}>
+        <h3>{this.props.text}</h3>
+        <Row style={{marginTop: 15}}>
+          <Col offset={1} span={8}>
+            <Upload {...props}>
+              <Button>
+                <Icon type="upload" />选择文件
+              </Button>
+            </Upload>
+          </Col>
+          <Col span={8}>
+            <Button
+              type="primary"
+              onClick={this.handleUpload}
+              disabled={fileList.length === 0}
+              loading={uploading}
+            >
+              {uploading ? '导入中' : '开始导入' }
+            </Button>
+          </Col>
+          <Col style={{marginTop: 8}}>
+            <a download href={this.props.templateLink}>导入模板下载</a>
+          </Col>
+        </Row>
+      </div>
+    );
+  }
+}
+
+class ImportModal extends Component {
+  hideModal = () => {
+    this.props.close()
+  }
+  render() {
+    let uploadInfo = {
+      uploadHelper: API.ULBuildings,
+      templateLink: '',
+    }
+    return (
+      <Modal
+        title="导入用户信息"
+        width="600px"
+        visible={this.props.visible}
+        closable={false}
+        onOk={this.hideModal}
+        onCancel={this.hideModal}
+        okText="确定"
+        cancelText="取消"
+      >
+        <Import {...uploadInfo}></Import>
+      </Modal>
+    )
+  }
+}
 
 class UserManagement extends Component{
   state = {
@@ -250,6 +342,9 @@ class UserManagement extends Component{
     changemodal: {
       visible: false,
       index: 0,
+    },
+    importmodal: {
+      visible: false,
     },
   }
   add = ()=>{
@@ -312,6 +407,12 @@ class UserManagement extends Component{
   closeChangeModal = ()=>{
     this.setState({changemodal: {visible: false, index:0}})
   }
+  closeImportModal = ()=>{
+    this.setState({importmodal: {visible: false}})
+  }
+  openImport = ()=>{
+    this.setState({importmodal: {visible: true}})
+  }
   render(){
     let tableHelper = {
       delete: this.delete,
@@ -320,7 +421,7 @@ class UserManagement extends Component{
     return <MainContainer name="人员管理">
       <WrappedSearch onSearch={this.search}/>
       <Split/>
-      <ButtonGroup onAdd={this.add} onDelete={this.delete}/>
+      <ButtonGroup onAdd={this.add} onDelete={this.delete} onImport={this.openImport}/>
       <Row>
         <Col span={20}>
           <DisplayTable data={this.state.tableList} onSelectedChange={this.selectedChange} {...tableHelper}/>
@@ -328,6 +429,7 @@ class UserManagement extends Component{
       </Row>
       <WrappedAddModal {...this.state.addmodal} close={this.closeAddModal}/>
       <WrappedChangeModal {...this.state.changemodal} close={this.closeChangeModal}/>
+      <ImportModal {...this.state.importmodal} close={this.closeImportModal}/>
     </MainContainer>
   }
 }
