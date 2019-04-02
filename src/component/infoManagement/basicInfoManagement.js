@@ -4,7 +4,7 @@ import {
   Link
 } from "react-router-dom";
 import Map from '../../routerMap'
-import {Modal, message} from 'antd';
+import {Button,Form, Row, Col, message, Modal, Upload, Icon} from 'antd'
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import {LButton, SButton} from '../common/button'
@@ -12,8 +12,10 @@ import Input from '../common/input'
 import Split from '../common/split'
 import Select from '../common/select'
 import Table, {TableUtil}from '../common/table'
-
+const Item = Form.Item
 const confirm = Modal.confirm;
+const Option = Select.Option
+
 
 class Search extends Component{
   render(){
@@ -81,6 +83,129 @@ class DisplayTable extends Component{
   }
 }
 
+class Import extends Component{
+  state = {
+    fileList: [],
+    uploading: false,
+  }
+
+  handleUpload = () => {
+    const { fileList } = this.state;
+    const formData = new FormData();
+    fileList.forEach((file) => {
+      formData.append('files[]', file);
+    });
+    formData.append('index', this.props.index)
+
+    this.setState({
+      uploading: true,
+    });
+    this.props.uploadHelper(formData)
+    .then(()=>{
+      this.setState({
+        fileList: [],
+        uploading: false,
+      });
+      message.success('上传成功');
+    })
+    .catch(err=>{
+      this.setState({
+        uploading: false,
+      });
+      message.error('上传失败');
+    })
+  }
+
+  render() {
+    const { uploading, fileList } = this.state;
+    const props = {
+      onRemove: (file) => {
+        this.setState((state) => {
+          const index = state.fileList.indexOf(file);
+          const newFileList = state.fileList.slice();
+          newFileList.splice(index, 1);
+          return {
+            fileList: newFileList,
+          };
+        });
+      },
+      beforeUpload: (file) => {
+        this.setState(state => ({
+          fileList: [...state.fileList, file],
+        }));
+        return false;
+      },
+      fileList,
+    };
+
+    return (
+      <div style={{margin: '20px 0'}}>
+        <h3>{this.props.text}</h3>
+        <Row style={{marginTop: 15}}>
+          <Col offset={1} span={8}>
+            <Upload {...props}>
+              <Button>
+                <Icon type="upload" />选择文件
+              </Button>
+            </Upload>
+          </Col>
+          <Col span={8}>
+            <Button
+              type="primary"
+              onClick={this.handleUpload}
+              disabled={fileList.length === 0}
+              loading={uploading}
+            >
+              {uploading ? '导入中' : '开始导入' }
+            </Button>
+          </Col>
+          <Col style={{marginTop: 8}}>
+            <a download href={this.props.templateLink}>导入模板下载</a>
+          </Col>
+        </Row>
+      </div>
+    );
+  }
+}
+
+class UploadModal extends Component {
+  hideModal = () => {
+    this.props.close()
+  }
+  upload = ()=>{
+    const form = this.props.form
+    form.validateFields((err, values) => {
+      if (err) {
+        return
+      }
+      console.log('Received values of form: ', values)
+    })
+  }
+  render() {
+    const { getFieldDecorator } = this.props.form
+    return (
+      <Modal
+        title="上传平面图"
+        width="500px"
+        visible={this.props.visible}
+        closable={false}
+        onOk={this.hideModal}
+        onCancel={this.hideModal}
+        okText="确定"
+        cancelText="取消"
+      >
+        <Import index={this.props.index}
+          templateLink=''
+          uploadHelper={API.ULDrawings}
+        ></Import>
+      </Modal>
+    )
+  }
+}
+const WrappedUploadModal = Form.create({ name: 'upload_modal' })(UploadModal)
+
+
+
 class PHManagement extends Component{
   constructor(props){
     super(props)
@@ -91,6 +216,10 @@ class PHManagement extends Component{
       floor: '',
       tableList: [], // 表格处的数据
       selected: [], // 被选中的数据, 数值代表的是在tableList中的位置
+      uploadModal: {
+        visible: false,
+        index: 0,
+      }
     }
   }
   buildingNameChange = (e)=>{
@@ -142,7 +271,11 @@ class PHManagement extends Component{
   }
   // 上传条目处理函数
   upload = (index)=>{
-
+    index = this.state.tableList[index].id
+    this.setState({uploadModal: {visible: true, index}})
+  }
+  closeUploadModal = ()=>{
+    this.setState({uploadModal: {visible: false, index:0}})
   }
   // 修改条目处理函数
   change = (index)=>{
@@ -187,6 +320,7 @@ class PHManagement extends Component{
       <Split/>
       <ButtonGroup {...groupHelper}/>
       <DisplayTable data={this.state.tableList} onSelectedChange={this.selectedChange} {...tableHelper}/>
+      <WrappedUploadModal {...this.state.uploadModal} close={this.closeUploadModal} />
     </MainContainer>
   }
 }

@@ -3,6 +3,7 @@ import {
   HashRouter as Router,
   Link
 } from "react-router-dom";
+import { browserHistory } from 'react-router'
 import Map from '../../routerMap'
 import {Modal, message} from 'antd';
 import API from '../../api'
@@ -55,20 +56,24 @@ class DisplayTable extends Component{
     columns.push({
       title: '操作',
       render: (text, record, index)=>(
-        <div>
-          <div style={{display: 'inline-block', padding: '0 5px'}}>
-            <SButton disable={record.status===1} onClick={this.props.delete.bind(this,index)} text='X删除'/>
+        <Router>
+          <div>
+            <div style={{display: 'inline-block', padding: '0 5px'}}>
+              <SButton disable={record.status===1} onClick={this.props.delete.bind(this,index)} text='X删除'/>
+            </div>
+            <div style={{display: 'inline-block', padding: '0 5px'}}>
+               <SButton text='详细'/> 
+            </div>
+            <div style={{display: 'inline-block', padding: '0 5px'}}>
+                <SButton onClick={this.props.report.bind(this, index)} disable={record.status!==0} text='上报'/>
+            </div>
+            <div style={{display: 'inline-block', padding: '0 5px'}}>
+              <Link to={Map.PHChange.path.replace(':id', record.id)}>
+                <SButton disable={record.status!==1} text='变更'/>
+              </Link>
+            </div>
           </div>
-          <div style={{display: 'inline-block', padding: '0 5px'}}>
-             <SButton onClick={this.props.change.bind(this,index)} text='详细'/> 
-          </div>
-          <div style={{display: 'inline-block', padding: '0 5px'}}>
-            <SButton disable={record.status!==0} onClick={this.props.upload.bind(this,index)} text='上报'/>
-          </div>
-          <div style={{display: 'inline-block', padding: '0 5px'}}>
-            <SButton disable={record.status!==1} onClick={this.props.upload.bind(this,index)} text='变更'/>
-          </div>
-        </div>
+        </Router>
       )
     })
     return <Table columns={columns} {...this.props}/>
@@ -187,6 +192,17 @@ class PHList extends Component{
       message.error('获取失败, 请重试')
     })
   }
+  report = (index)=>{
+    let id = this.state.tableList[index].id
+    API.reportPH(id)
+    .then(()=>{
+      message.success('上报成功')
+      // this.props.history.push(Map.PHAudit.path)
+    })
+    .catch(err=>{
+      message.error('上报失败')
+    })
+  }
   render(){
     let changeListener = {
       deptNameChange: this.deptNameChange,
@@ -200,8 +216,7 @@ class PHList extends Component{
     }
     let tableHelper = {
       delete: this.delete,
-      upload: this.upload,
-      change: this.change,
+      report: this.report,
     }
     let groupHelper = {
       delete: this.delete,

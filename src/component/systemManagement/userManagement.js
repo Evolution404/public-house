@@ -178,7 +178,7 @@ class ChangeModal extends Component {
     const { getFieldDecorator } = this.props.form
     return (
       <Modal
-        title="新增人员"
+        title="修改人员"
         width="500px"
         visible={this.props.visible}
         closable={false}

@@ -70,7 +70,7 @@ const routerMap = {
     component: PHAdd
   },
   PHChange: {
-    path:'/PHChange',
+    path:'/PHChange/:id',
     name:'公用房变更',
     component: PHChange
   },

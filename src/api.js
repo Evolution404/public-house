@@ -3,6 +3,49 @@ import axios from 'axios'
 import './mock'
 
 const FileUploadAPI = {
+  // 上传图纸
+  // formData中包括index代表公用房的序号
+  ULDrawings(formData){
+    return new Promise((resolve, reject)=>{
+      axios({
+        url:'/upload',
+          method: 'post',
+          data: formData,
+          processData: false,  // 告诉axios不要去处理发送的数据(重要参数)
+          contentType: false,  // 告诉axios不要去设置Content-Type请求头
+      })
+      .then(rs=>{
+          console.log(rs)
+          // 上传成功执行
+          resolve()
+      })
+      .catch(err=>{
+        console.log(err)
+        reject(err)
+      })
+    })
+  },
+  // 导入公用房信息
+  ULPH(formData){
+    return new Promise((resolve, reject)=>{
+      axios({
+        url:'/upload',
+          method: 'post',
+          data: formData,
+          processData: false,  // 告诉axios不要去处理发送的数据(重要参数)
+          contentType: false,  // 告诉axios不要去设置Content-Type请求头
+      })
+      .then(rs=>{
+          console.log(rs)
+          // 上传成功执行
+          resolve()
+      })
+      .catch(err=>{
+        console.log(err)
+        reject(err)
+      })
+    })
+  },
   // 上传教学单位工作量
   ULTeachingUnitWorkLoad(formData){
     return new Promise((resolve, reject)=>{
@@ -159,6 +202,25 @@ const API = {
       })
     })
   },
+  // 公用房变更的搜索接口
+  changeFilterPH(filter){
+    // filter = {
+    //    id: 1, id参数是跳转过来的时候传递
+    //    buildingName: xxx,
+    //    roomNum: xxx,
+    // }
+    return new Promise((resolve, reject)=>{
+      axios.post('/changeFilterPH', filter)
+      .then(rs=>{
+        // 将后台传来数据转换成如下格式
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
   // 公用房审核的搜索接口
   auditFilterPH(filter){
     return new Promise((resolve, reject)=>{
@@ -189,6 +251,20 @@ const API = {
       axios.post('/deletePH', {indexList})
       .then(rs=>{
         // 不需要传参数, 这里要确保是删除成功
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  //上报公用房记录
+  reportPH(index){
+    return new Promise((resolve, reject)=>{
+      axios.post('/reportPH', {index})
+      .then(rs=>{
+        // 不需要传参数, 这里要确保是上报成功
         resolve()
       })
       .catch(err=>{
