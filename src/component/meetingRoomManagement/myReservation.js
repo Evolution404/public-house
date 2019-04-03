@@ -41,7 +41,7 @@ class MyReservation extends Component{
     })
   }
   cancleReservation = id=>{
-    API.retryReservation(id)
+    API.cancleReservation(id)
     .then(()=>{
       message.success('取消预约成功')
     })

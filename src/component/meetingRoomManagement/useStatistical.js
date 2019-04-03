@@ -26,24 +26,6 @@ class UseStatistical extends Component{
       }
     })
   }
-  retryReservation = id=>{
-    API.retryReservation(id)
-    .then(()=>{
-      message.success('再次预约成功, 请等待审核')
-    })
-    .catch(err=>{
-      message.error('再次预约失败, 请重试')
-    })
-  }
-  cancleReservation = id=>{
-    API.retryReservation(id)
-    .then(()=>{
-      message.success('取消预约成功')
-    })
-    .catch(err=>{
-      message.error('取消预约失败, 请重试')
-    })
-  }
   render(){
     let columns = [
       {

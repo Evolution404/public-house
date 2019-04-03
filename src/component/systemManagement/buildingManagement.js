@@ -60,7 +60,7 @@ class ButtonGroup extends Component{
 class DisplayTable extends Component{
   render(){
     const columns = TableUtil.mapColumns([
-      '序号', '名称', '建筑面积', '建筑年代', '使用面积'
+      '序号', '楼宇名称', '建筑面积', '建筑年代', '使用面积', '备注'
     ])
     columns.push({
       title: '操作',
@@ -96,6 +96,17 @@ class AddModal extends Component {
       if (err) {
         return
       }
+      API.addBuilding(values)
+      .then(()=>{
+        message.success('添加成功')
+        this.hideModal()
+        this.props.refresh()
+      })
+      .catch(err=>{
+        message.error('添加失败')
+        if(err.response)
+          message.error(err.response.data.title)
+      })
       console.log('Received values of form: ', values)
     })
   }
@@ -145,6 +156,11 @@ class AddModal extends Component {
               <Input/>
             )}
           </Item>
+          <Item style={{marginBottom: '0px'}}  label='备注'>
+            {getFieldDecorator('note', )(
+              <Input/>
+            )}
+          </Item>
           <Item style={{marginBottom: '0px'}}  label='楼宇层数'>
             {getFieldDecorator('buildingFloors', {initialValue: 0})(
               <InputNumber max={100} onChange={this.onFloorsChange} min={0}/>
@@ -157,6 +173,81 @@ class AddModal extends Component {
   }
 }
 const WrappedAddModal = Form.create({ name: 'addmodal' })(AddModal)
+
+class UpdateModal extends Component {
+  hideModal = () => {
+    this.props.close()
+  }
+  update = ()=>{
+    const form = this.props.form
+    form.validateFields((err, values) => {
+      if (err) {
+        return
+      }
+      values = {
+        id: this.props.data.id,
+        ...values,
+      }
+      API.updateBuilding(values)
+      .then(()=>{
+        message.success('更新成功')
+        this.hideModal()
+        this.props.refresh()
+      })
+      .catch(err=>{
+        message.error('更新失败')
+        if(err.response)
+          message.error(err.response.data.title)
+      })
+      console.log('Received values of form: ', values)
+    })
+  }
+  render() {
+    const { getFieldDecorator } = this.props.form
+    let data = this.props.data
+    return (
+      <Modal
+        title="修改楼宇信息"
+        width="500px"
+        visible={this.props.visible}
+        closable={false}
+        onOk={this.update}
+        onCancel={this.hideModal}
+        okText="确定"
+        cancelText="取消"
+      >
+        <Form labelCol={{span:8}} wrapperCol={{span:16}} labelAlign='left'>
+          <Item style={{marginBottom: '0px'}} label='楼宇名称'>
+            {getFieldDecorator('buildingName', {initialValue: data.buildingName})(
+              <Input/>
+            )}
+          </Item>
+          <Item style={{marginBottom: '0px'}}  label='建筑面积'>
+            {getFieldDecorator('buildingArea', {initialValue: data.buildingArea})(
+              <Input/>
+            )}
+          </Item>
+          <Item style={{marginBottom: '0px'}}  label='建筑年代'>
+            {getFieldDecorator('buildingTime', {initialValue: data.buildingTime})(
+              <Input/>
+            )}
+          </Item>
+          <Item style={{marginBottom: '0px'}}  label='备注'>
+            {getFieldDecorator('note', {initialValue: data.note})(
+              <Input/>
+            )}
+          </Item>
+          <Item style={{marginBottom: '0px'}}  label='楼宇层数'>
+            {getFieldDecorator('buildingFloors', {initialValue: data.buildingFloors})(
+              <InputNumber max={100} onChange={this.onFloorsChange} min={0}/>
+            )}
+          </Item>
+        </Form>
+      </Modal>
+    )
+  }
+}
+const WrappedUpdateModal = Form.create({ name: 'updatemodal' })(UpdateModal)
 
 class Import extends Component{
   state = {
@@ -187,6 +278,8 @@ class Import extends Component{
         uploading: false,
       });
       message.error('上传失败');
+      if(err.response)
+        message.error(err.response.data.title)
     })
   }
 
@@ -276,6 +369,10 @@ class BuildingManagement extends Component{
     addmodal: {
       visible: false,
     },
+    updatemodal: {
+      visible: false,
+      data: {},
+    },
     importmodal: {
       visible: false,
     },
@@ -296,6 +393,22 @@ class BuildingManagement extends Component{
     .catch(err=>{
       console.log(err)
       message.error('搜索失败')
+      if(err.response)
+        message.error(err.response.data.title)
+    })
+  }
+  refresh = ()=>{
+    API.searchBuilding(this.state.name)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('搜索失败')
+      if(err.response)
+        message.error(err.response.data.title)
     })
   }
   selectedChange = (newSelected)=>{
@@ -325,17 +438,23 @@ class BuildingManagement extends Component{
         .catch(err=>{
           console.log(err)
           message.error('删除失败')
+          if(err.response)
+            message.error(err.response.data.title)
         })
       },
       onCancel() {},
     });
   }
   update = index=>{
+    this.setState({updatemodal: {visible: true, data: this.state.tableList[index]}})
   }
   uploadPic = index=>{
   }
   closeAddModal = ()=>{
     this.setState({addmodal: {visible: false}})
+  }
+  closeUpdateModal = ()=>{
+    this.setState({updatemodal: {visible: false, data:{}}})
   }
   closeImportModal = ()=>{
     this.setState({importmodal: {visible: false}})
@@ -359,7 +478,8 @@ class BuildingManagement extends Component{
           <DisplayTable data={this.state.tableList} onSelectedChange={this.selectedChange} {...tableHelper}/>
         </Col>
       </Row>
-      <WrappedAddModal {...this.state.addmodal} close={this.closeAddModal}/>
+      <WrappedAddModal refresh={this.refresh} {...this.state.addmodal} close={this.closeAddModal}/>
+      <WrappedUpdateModal refresh={this.refresh} {...this.state.updatemodal} close={this.closeUpdateModal}/>
       <ImportModal {...this.state.importmodal} close={this.closeImportModal}/>
     </MainContainer>
   }

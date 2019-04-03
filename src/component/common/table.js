@@ -47,6 +47,8 @@ const TableUtil = {
     switch(c){
       case '序号':
         return 'id'
+      case '年份':
+        return 'year'
       case '部门':
         return 'dept'
       case '位置':
@@ -68,7 +70,7 @@ const TableUtil = {
       case '维护人':
         return 'maintenancePeople'
       case '备注':
-        return 'remark'
+        return 'note'
       case '可容纳人数':
         return 'peopleNum'
       case '实际人数':
@@ -90,15 +92,15 @@ const TableUtil = {
       case '单位名称':
         return 'companyName'
       case '本科生':
-        return 'undergraduates'
+        return 'undergraduate'
       case '硕士':
         return 'masterDegree'
       case '博士':
         return 'doctor'
       case '博士后':
         return 'postdoctoral'
-      case '名称':
-        return 'name'
+      case '楼宇名称':
+        return 'buildingName'
       case '建筑面积':
         return 'buildingArea'
       case '建筑年代':

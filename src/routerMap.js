@@ -40,8 +40,8 @@ import MyReservation from './component/meetingRoomManagement/myReservation'
 import UseStatistical from './component/meetingRoomManagement/useStatistical'
 
 // 公寓管理
-import ARealtimeMonitor from './component/apamentManagement/aRealtimeMonitor'
-import AMonitorStatistics from './component/apamentManagement/aMonitorStatistics'
+import ARealtimeMonitor from './component/apartmentManagement/aRealtimeMonitor'
+import AMonitorStatistics from './component/apartmentManagement/aMonitorStatistics'
 
 // 系统管理
 import DeptManagement from './component/systemManagement/deptManagement'
