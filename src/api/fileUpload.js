@@ -1,5 +1,4 @@
-import axios from 'axios'
-import {domainName} from './urlConfig'
+import axios from './apiConfig'
 
 const FileUploadAPI = {
   // 上传图纸

@@ -1,12 +1,13 @@
 import React, {Component} from 'react'
 import MainContainer from '../common/mainContainer'
-import {Input, Button,Form, Row, Col, message, Modal, Select, Upload, Icon} from 'antd'
+import {Input, Empty, Button,Form, Row, Col, message, Modal, Select, Upload, Icon} from 'antd'
 import {SButton} from '../common/button'
 import Split from '../common/split'
 import Table, {TableUtil}from '../common/table'
 import API from '../../api'
 const Item = Form.Item
 const confirm = Modal.confirm;
+const Option = Select.Option
 
 class Search extends Component{
   handleSubmit = (e) => {
@@ -25,8 +26,8 @@ class Search extends Component{
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
           <Col span={7}>
-            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="姓名">
-              {getFieldDecorator('name',)(
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="用户名称">
+              {getFieldDecorator('userName',)(
                 <Input/>
               )}
             </Item>
@@ -60,7 +61,7 @@ class ButtonGroup extends Component{
 class DisplayTable extends Component{
   render(){
     const columns = TableUtil.mapColumns([
-      '序号', '姓名', '登录账号', '所属部门', '角色'
+      '序号', '用户名称', '登录账号', '所属部门', '角色'
     ])
     columns.push({
       title: '操作',
@@ -81,6 +82,9 @@ class DisplayTable extends Component{
 }
 
 class AddModal extends Component {
+  state = {
+    confirmDirty: false,
+  }
   hideModal = () => {
     this.props.close()
   }
@@ -93,12 +97,34 @@ class AddModal extends Component {
       console.log('Received values of form: ', values)
       API.addUser(values)
       .then(()=>{
+        this.hideModal()
+        this.props.refresh()
         message.success('添加成功')
       })
       .catch(err=>{
         message.error('添加失败')
       })
     })
+  }
+  handleConfirmBlur = (e) => {
+    const value = e.target.value;
+    this.setState({ confirmDirty: this.state.confirmDirty || !!value });
+  }
+  compareToFirstPassword = (rule, value, callback) => {
+    const form = this.props.form;
+    if (value && value !== form.getFieldValue('password')) {
+      callback('两次密码输入不一致!');
+    } else {
+      callback();
+    }
+  }
+
+  validateToNextPassword = (rule, value, callback) => {
+    const form = this.props.form;
+    if (value && this.state.confirmDirty) {
+      form.validateFields(['confirm'], { force: true });
+    }
+    callback();
   }
   render() {
     const { getFieldDecorator } = this.props.form
@@ -115,33 +141,58 @@ class AddModal extends Component {
       >
         <Form labelCol={{span:8}} wrapperCol={{span:16}} labelAlign='left'>
           <Item style={{marginBottom: '0px'}} label='登录账号'>
-            {getFieldDecorator('loginAccount', )(
+            {getFieldDecorator('loginAccount',{
+              rules:[
+                {required: true, message: '请输入你的登录账号'}
+              ]
+            })(
               <Input/>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='姓名'>
-            {getFieldDecorator('name', )(
+          <Item style={{marginBottom: '0px'}}  label='用户名称'>
+            {getFieldDecorator('userName',{
+              rules:[
+                {required: true, message: '请输入用户名称'}
+              ]
+            })(
               <Input/>
             )}
           </Item>
           <Item style={{marginBottom: '0px'}}  label='密码'>
-            {getFieldDecorator('password', )(
-              <Input/>
+            {getFieldDecorator('password',{
+              rules: [{
+                required: true, message: '请输入你的密码',
+              }, {
+                validator: this.validateToNextPassword,
+              }],
+            })(
+              <Input type='password'/>
             )}
           </Item>
           <Item style={{marginBottom: '0px'}}  label='确认密码'>
-            {getFieldDecorator('confirmPassword', )(
-              <Input/>
+            {getFieldDecorator('confirm',{
+              rules: [{
+                required: true, message: '请确认你的密码',
+              }, {
+                validator: this.compareToFirstPassword,
+              }],
+
+            })(
+              <Input type='password'  onBlur={this.handleConfirmBlur}/>
             )}
           </Item>
           <Item style={{marginBottom: '0px'}}  label='所属部门'>
             {getFieldDecorator('dept', )(
-              <Select></Select>
+              <Select>
+                <Option value="1">部门1</Option>
+              </Select>
             )}
           </Item>
           <Item style={{marginBottom: '0px'}}  label='角色'>
             {getFieldDecorator('role', )(
-              <Select></Select>
+              <Select>
+                <Option value={1}>角色1</Option>
+              </Select>
             )}
           </Item>
         </Form>
@@ -164,15 +215,17 @@ class ChangeModal extends Component {
       }
       console.log('Received values of form: ', values)
       let newData = {
-        index: this.props.index,
+        id: this.props.id,
         // other data
+        ...this.props.data,
         ...values,
       }
       API.changeUser(newData)
       .then(()=>{
+        this.props.refresh()
+        this.hideModal()
         message.success('更新成功')
         form.resetFields()
-        this.hideModal()
       })
       .catch(err=>{
         console.log(err)
@@ -182,6 +235,7 @@ class ChangeModal extends Component {
   }
   render() {
     const { getFieldDecorator } = this.props.form
+    let data = this.props.data
     return (
       <Modal
         title="修改人员"
@@ -195,22 +249,22 @@ class ChangeModal extends Component {
       >
         <Form labelCol={{span:8}} wrapperCol={{span:16}} labelAlign='left'>
           <Item style={{marginBottom: '0px'}} label='登录账号'>
-            {getFieldDecorator('loginAccount', )(
+            {getFieldDecorator('loginAccount',{initialValue: data.loginAccount})(
               <Input/>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='姓名'>
-            {getFieldDecorator('name', )(
+          <Item style={{marginBottom: '0px'}}  label='用户名称'>
+            {getFieldDecorator('userName', {initialValue: data.userName})(
               <Input/>
             )}
           </Item>
           <Item style={{marginBottom: '0px'}}  label='所属部门'>
-            {getFieldDecorator('dept', )(
+            {getFieldDecorator('dept', {initialValue: data.dept})(
               <Select></Select>
             )}
           </Item>
           <Item style={{marginBottom: '0px'}}  label='角色'>
-            {getFieldDecorator('role', )(
+            {getFieldDecorator('role', {initialValue: data.role})(
               <Select></Select>
             )}
           </Item>
@@ -333,7 +387,8 @@ class ImportModal extends Component {
 
 class UserManagement extends Component{
   state = {
-    name: '',
+    isSearched: false,
+    userName: '',
     tableList: [],
     selected: [],
     addmodal: {
@@ -341,7 +396,8 @@ class UserManagement extends Component{
     },
     changemodal: {
       visible: false,
-      index: 0,
+      id: 0,
+      data: {},
     },
     importmodal: {
       visible: false,
@@ -350,11 +406,12 @@ class UserManagement extends Component{
   add = ()=>{
     this.setState({addmodal: {visible: true}})
   }
-  search = ({name})=>{
+  search = ({userName})=>{
     this.setState({
-      name,
+      userName,
+      isSearched: true,
     })
-    API.searchUser(name)
+    API.searchUser(userName)
     .then(rs=>{
       this.setState({
         tableList: rs,
@@ -363,6 +420,18 @@ class UserManagement extends Component{
     .catch(err=>{
       console.log(err)
       message.error('搜索失败')
+    })
+  }
+  refresh = ()=>{
+    API.searchUser(this.state.userName)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('刷新失败')
     })
   }
   selectedChange = (newSelected)=>{
@@ -398,14 +467,15 @@ class UserManagement extends Component{
     });
   }
   change = index=>{
-    index = this.state.tableList[index].id
-    this.setState({changemodal: {visible: true, index}})
+    let id = this.state.tableList[index].id
+    this.setState({changemodal: {visible: true, id,
+                  data:this.state.tableList[index]}})
   }
   closeAddModal = ()=>{
     this.setState({addmodal: {visible: false}})
   }
   closeChangeModal = ()=>{
-    this.setState({changemodal: {visible: false, index:0}})
+    this.setState({changemodal: {visible: false, id:0, data:{}}})
   }
   closeImportModal = ()=>{
     this.setState({importmodal: {visible: false}})
@@ -424,11 +494,17 @@ class UserManagement extends Component{
       <ButtonGroup onAdd={this.add} onDelete={this.delete} onImport={this.openImport}/>
       <Row>
         <Col span={20}>
-          <DisplayTable data={this.state.tableList} onSelectedChange={this.selectedChange} {...tableHelper}/>
+          {this.state.isSearched?(
+            <DisplayTable
+              data={this.state.tableList}
+              onSelectedChange={this.selectedChange} {...tableHelper}/>
+          ):(
+            <Empty description="请先搜索"></Empty>
+          )}
         </Col>
       </Row>
-      <WrappedAddModal {...this.state.addmodal} close={this.closeAddModal}/>
-      <WrappedChangeModal {...this.state.changemodal} close={this.closeChangeModal}/>
+      <WrappedAddModal refresh={this.refresh} {...this.state.addmodal} close={this.closeAddModal}/>
+      <WrappedChangeModal refresh={this.refresh} {...this.state.changemodal} close={this.closeChangeModal}/>
       <ImportModal {...this.state.importmodal} close={this.closeImportModal}/>
     </MainContainer>
   }

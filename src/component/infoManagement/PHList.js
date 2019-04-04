@@ -84,10 +84,10 @@ class PHList extends Component{
     super(props)
     this.state = {
       // 以下数据是搜索组件需要的数据, 使用双向数据绑定
-      deptName: '',
-      uesingNatur: '',
+      dept: '',
+      uesingNature: '',
       auditStatus: '',
-      user: '',
+      personnel: '',
       buildingName: '',
       roomNum: '',
       houseStatus: '',
@@ -95,44 +95,14 @@ class PHList extends Component{
       selected: [], // 被选中的数据, 数值代表的是在tableList中的位置
     }
   }
-  deptNameChange = (e)=>{
-    this.setState({
-      buildingName: e.target.value
+  search = (values)=>{
+    this.setState(values)
+    API.listFilterPH(values)
+    .then(rs=>{
+      this.setState({tableList: rs})
     })
-  }
-  usingNatureChange = (e)=>{
-    this.setState({
-      buildingName: e.target.value
-    })
-  }
-  auditStatusChange = (e)=>{
-    this.setState({
-      buildingName: e.target.value
-    })
-  }
-  userChange = (e)=>{
-    this.setState({
-      buildingName: e.target.value
-    })
-  }
-  buildingNameChange = (e)=>{
-    this.setState({
-      buildingName: e.target.value
-    })
-  }
-  roomNumChange = (e)=>{
-    this.setState({
-      roomNum: e.target.value
-    })
-  }
-  houseStatusChange = (e)=>{
-    this.setState({
-      roomNum: e.target.value
-    })
-  }
-  selectedChange = (newSelected)=>{
-    this.setState({
-      selected: newSelected
+    .catch(err=>{
+      message.error('搜索失败')
     })
   }
   // 删除条目处理函数
@@ -173,10 +143,10 @@ class PHList extends Component{
   // 根据当前填写的搜索信息获取后台数据
   refresh = ()=>{
     let filter = {
-      deptName: this.state.deptName,
-      usingNature: this.state.usingNatur,
+      dept: this.state.dept,
+      usingNature: this.state.usingNature,
       auditStatus: this.state.auditStatus,
-      user: this.state.user,
+      personnel: this.state.personnel,
       buildingName: this.state.buildingName,
       roomNum: this.state.roomNum,
       houseStatus: this.state.houseStatus,
@@ -203,16 +173,6 @@ class PHList extends Component{
     })
   }
   render(){
-    let changeListener = {
-      deptNameChange: this.deptNameChange,
-      usingNatureChange: this.usingNatureChange,
-      auditStatusChange: this.auditStatusChange,
-      userChange: this.userChange,
-      buildingNameChange: this.buildingNameChange,
-      roomNumChange: this.roomNumChange,
-      houseStatus: this.houseStatusChange,
-      search: this.refresh,
-    }
     let tableHelper = {
       delete: this.delete,
       report: this.report,
@@ -223,7 +183,7 @@ class PHList extends Component{
     }
     return <MainContainer name="信息管理">
       基本信息
-      <Search {...changeListener}/>
+      <Search onSearch={this.search}/>
       <Split/>
       <ButtonGroup {...groupHelper}/>
       <DisplayTable data={this.state.tableList} onSelectedChange={this.selectedChange} {...tableHelper}/>

@@ -9,7 +9,7 @@ const mapNameF2B = {
   fc: 'fuchuji',
   uc: 'chujiyixia',
   note: 'beizhu',
-  companyName: 'bumen',
+  dept: 'bumen',
   undergraduate: 'benkeshengshu',
   masterDegree: 'shuoshishengshu',
   doctor: 'boshishengshu',
@@ -25,6 +25,16 @@ const mapNameF2B = {
   buildingArea: 'jianzhumianji',
   buildingTime: 'jianzhuniandai',
   buildingFloors: 'loucengshu',
+  workNum: 'gonghao',
+  name: 'xingming',
+  dutyGrade: 'zhiwujibie',
+  proTitleLevel: 'zhichengjibie',
+  loginAccount: 'dengluzhanghao',
+  userName: 'yonghumingcheng',
+  password: 'mima',
+  oldPassword: 'jiumima',
+  newPassword: 'xinmima',
+  role: 'juseId',
 }
 let mapNameB2F = {}
 for (let i in mapNameF2B){

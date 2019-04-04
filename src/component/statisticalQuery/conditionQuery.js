@@ -48,10 +48,10 @@ class ConditionQuery extends Component{
     super(props)
     this.state = {
       // 以下数据是搜索组件需要的数据, 使用双向数据绑定
-      deptName: '',
-      uesingNatur: '',
+      dept: '',
+      uesingNature: '',
       auditStatus: '',
-      user: '',
+      personnel: '',
       buildingName: '',
       roomNum: '',
       houseStatus: '',
@@ -59,50 +59,21 @@ class ConditionQuery extends Component{
       selected: [], // 被选中的数据, 数值代表的是在tableList中的位置
     }
   }
-  deptNameChange = (e)=>{
-    this.setState({
-      buildingName: e.target.value
+  search = (values)=>{
+    this.setState(values)
+    API.conditionSearch(values)
+    .then(rs=>{
+      this.setState({tableList: rs})
     })
-  }
-  usingNatureChange = (e)=>{
-    this.setState({
-      buildingName: e.target.value
+    .catch(err=>{
+      message.error('查询失败')
     })
-  }
-  auditStatusChange = (e)=>{
-    this.setState({
-      buildingName: e.target.value
-    })
-  }
-  userChange = (e)=>{
-    this.setState({
-      buildingName: e.target.value
-    })
-  }
-  buildingNameChange = (e)=>{
-    this.setState({
-      buildingName: e.target.value
-    })
-  }
-  roomNumChange = (e)=>{
-    this.setState({
-      roomNum: e.target.value
-    })
-  }
-  houseStatusChange = (e)=>{
-    this.setState({
-      roomNum: e.target.value
-    })
-  }
-  selectedChange = (newSelected)=>{
-    this.setState({
-      selected: newSelected
-    })
+    
   }
   // 根据当前填写的搜索信息获取后台数据
   refresh = ()=>{
     let filter = {
-      deptName: this.state.deptName,
+      dept: this.state.dept,
       usingNature: this.state.usingNatur,
       auditStatus: this.state.auditStatus,
       user: this.state.user,
@@ -121,14 +92,8 @@ class ConditionQuery extends Component{
     })
   }
   render(){
-    let changeListener = {
-      buildingNameChange: this.buildingNameChange,
-      roomNumChange: this.roomNumChange,
-      floorChange: this.floorChange,
-      search: this.refresh,
-    }
     return <MainContainer name="统计查询">
-      <Search {...changeListener}/>
+      <Search onSearch={this.search}/>
       <Split/>
       <DisplayTable data={this.state.tableList}/>
       <DisplayTable type="apartment" data={this.state.tableList}/>

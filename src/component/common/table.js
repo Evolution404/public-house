@@ -82,15 +82,13 @@ const TableUtil = {
       case '房间':
         return 'room'
       case '部门名称':
-        return 'deptName'
+        return 'dept'
       case '定额面积':
         return 'fixedArea'
       case '实际面积':
         return 'realArea'
       case '超额面积':
         return 'excessArea'
-      case '单位名称':
-        return 'companyName'
       case '本科生':
         return 'undergraduate'
       case '硕士':
@@ -107,14 +105,10 @@ const TableUtil = {
         return 'buildingTime'
       case '使用面积':
         return 'useArea'
-      case '姓名':
-        return 'name'
+      case '用户名称':
+        return 'userName'
       case '职务':
         return 'duty'
-      case '单位':
-        return 'monad'
-      case '指导研究生数量':
-        return 'guideNum'
       case '登录账号':
         return 'loginAccount'
       case '所属部门':

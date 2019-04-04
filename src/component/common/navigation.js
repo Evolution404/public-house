@@ -3,7 +3,6 @@ import {
   HashRouter as Router,
   Link
 } from "react-router-dom";
-import Map from '../../routerMap'
 
 import css from '../../cssConfig.js'
 
@@ -78,50 +77,10 @@ class NavCeil extends Component{
 }
 
 
+
 class Navigation extends Component{
   render(){
-    let NavData = [
-      {
-        img: "/images/1.png",
-        text: "信息管理",
-        list:[Map.BasicInfoManagement, Map.PHList, Map.PHAdd, Map.PHChange, Map.PHAudit, Map.MyPH]
-      },
-      {
-        img: "/images/2.png",
-        text: "统计查询",
-        list:[Map.ConditionQuery, Map.BuildingQuery]
-      },
-      {
-        img: "/images/3.png",
-        text: "核算管理",
-        list:[Map.OverallAccount, Map.DepartmentAccount]
-      },
-      {
-        img: "/images/4.png",
-        text: "绩效管理",
-        list:[Map.DataImport, Map.CheckWorkload, Map.TeachingUnitPerformance, Map.ScientificPerformance, Map.BusinessPerformance, Map.LabPerformance, Map.ClassroomPerformance]
-      },
-      {
-        img: "/images/5.png",
-        text: "动态监测",
-        list:[Map.RealtimeMonitor, Map.MonitorStatistics]
-      },
-      {
-        img: "/images/6.png",
-        text: "会议室管理",
-        list:[Map.MeetingRoomReservation, Map.ReservationAudit, Map.MyReservation, Map.UseStatistical]
-      },
-      {
-        img: "/images/7.png",
-        text: "公寓管理",
-        list:[Map.ARealtimeMonitor, Map.AMonitorStatistics]
-      },
-      {
-        img: "/images/8.png",
-        text: "系统管理",
-        list: [Map.DeptManagement, Map.SystemParm, Map.BuildingManagement, Map.TheUserManagement, Map.UserManagement]
-      },
-    ]
+    let NavData = this.props.data
     let ceilList = NavData.map((ceil, index) => {
       return <NavCeil key={index} data={ceil}/>
     })

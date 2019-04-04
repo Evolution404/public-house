@@ -1,4 +1,5 @@
 import Home from './component/home'
+import Login from './component/common/login'
 
 // 信息管理
 import BasicInfoManagement from './component/infoManagement/basicInfoManagement'
@@ -57,6 +58,11 @@ const routerMap = {
     name:'主页',
     component: Home
   },
+  Login: {
+    path:'/login',
+    name:'登录页面',
+    component: Login
+  },
   BasicInfoManagement: {
     path:'/basicInfoManagement',
     name:'基础信息管理',
@@ -89,7 +95,7 @@ const routerMap = {
   },
   PHImport: {
     path:'/PHImport',
-    name:'公用房变更',
+    name:'公用房导入',
     component: PHImport
   },
   PHAuditDetail: {
@@ -207,7 +213,7 @@ const routerMap = {
     name:'部门管理',
     component: DeptManagement
   },
-  SystemParm: {
+  ParmManagement: {
     path:'/ParmManagement',
     name:'参数管理',
     component: ParmManagement

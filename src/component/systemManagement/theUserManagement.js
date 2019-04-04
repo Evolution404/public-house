@@ -1,9 +1,9 @@
 import React, {Component} from 'react'
 import MainContainer from '../common/mainContainer'
-import {Input, Button,Form, Row, Col, message, Modal, Select, Upload, Icon} from 'antd'
+import {Input, Empty,Button,Form, Row, Col, message, Modal, Select, Upload, Icon} from 'antd'
 import {SButton} from '../common/button'
 import Split from '../common/split'
-import Table, {TableUtil}from '../common/table'
+import Table from '../common/table'
 import API from '../../api'
 const Item = Form.Item
 const confirm = Modal.confirm;
@@ -60,9 +60,32 @@ class ButtonGroup extends Component{
 
 class DisplayTable extends Component{
   render(){
-    const columns = TableUtil.mapColumns([
-      '序号', '姓名', '职务', '单位', '指导研究生数量'
-    ])
+    let columns = [
+      {
+        title: '序号',
+        dataIndex: 'id',
+      },
+      {
+        title: '工号',
+        dataIndex: 'workNum',
+      },
+      {
+        title: '姓名',
+        dataIndex: 'name',
+      },
+      {
+        title: '职称级别',
+        dataIndex: 'proTitleLevel',
+      },
+      {
+        title: '职务级别',
+        dataIndex: 'dutyGrade',
+      },
+      {
+        title: '部门',
+        dataIndex: 'dept',
+      },
+    ]
     columns.push({
       title: '操作',
       render: (text, record, index)=>(
@@ -95,6 +118,18 @@ class AddModal extends Component {
         return
       }
       console.log('Received values of form: ', values)
+      API.addPersonnel(values)
+      .then(()=>{
+        message.success('添加成功')
+        this.props.refresh()
+        this.hideModal()
+      })
+      .catch(err=>{
+        message.error('添加失败')
+        if(err.response)
+          message.error(err.response.data.title)
+      })
+
     })
   }
   render() {
@@ -121,7 +156,7 @@ class AddModal extends Component {
               <Input/>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='职务等级'>
+          <Item style={{marginBottom: '0px'}}  label='职务级别'>
             {getFieldDecorator('dutyGrade', )(
               <Select>
                 <Option value='校级'>校级</Option>
@@ -137,21 +172,19 @@ class AddModal extends Component {
               </Select>
             )}
           </Item>
+          <Item style={{marginBottom: '0px'}}  label='职称级别'>
+            {getFieldDecorator('proTitleLevel', )(
+              <Select>
+                <Option value='校级'>校级</Option>
+                <Option value='院士'>院士</Option>
+              </Select>
+            )}
+          </Item>
           <Item style={{marginBottom: '0px'}}  label='所属部门'>
             {getFieldDecorator('dept', )(
-              <Select></Select>
-            )}
-          </Item>
-          <Item style={{marginBottom: '0px'}}  label='科研单位'>
-            {getFieldDecorator('scientificResearchUnits', )(
-              <Select></Select>
-            )}
-          </Item>
-          <Item style={{marginBottom: '0px'}}  label='类别'>
-            {getFieldDecorator('category', )(
               <Select>
-                <Option value='教师'>教师</Option>
-                <Option value='其他'>其他</Option>
+                <Option value="学院">学院</Option>
+                <Option value="部处">部处</Option>
               </Select>
             )}
           </Item>
@@ -189,15 +222,13 @@ class DetailModal extends Component {
         visible={this.props.visible}
         closable={false}
         footer={[
-            <Button type="primary" onClick={this.hideModal}>确定</Button>
+            <Button key='1' type="primary" onClick={this.hideModal}>确定</Button>
           ]}
       >
           <DisplayLabel label="工号" value={data.workNum}/>
           <DisplayLabel label="姓名" value={data.name}/>
-          <DisplayLabel label="职务等级" value={data.dutyGrade}/>
-          <DisplayLabel label="所属部门" value={data.dept}/>
-          <DisplayLabel label="科研单位" value={data.scientificResearchUnits}/>
-          <DisplayLabel label="类别" value={data.category}/>
+          <DisplayLabel label="职称级别" value={data.proTitleLevel}/>
+          <DisplayLabel label="职务级别" value={data.dutyGrade}/>
       </Modal>
     )
   }
@@ -215,27 +246,32 @@ class ChangeModal extends Component {
       }
       console.log('Received values of form: ', values)
       let newData = {
-        index: this.props.index,
+        id: this.props.id,
         // other data
+        ...this.props.data,
         ...values,
       }
       API.changePersonnel(newData)
       .then(()=>{
         message.success('更新成功')
         form.resetFields()
+        this.props.refresh()
         this.hideModal()
       })
       .catch(err=>{
         console.log(err)
         message.error('更新失败')
+        if(err.response)
+          message.error(err.response.data.title)
       })
     })
   }
   render() {
     const { getFieldDecorator } = this.props.form
+    let data = this.props.data
     return (
       <Modal
-        title="新增人员"
+        title="修改人员信息"
         width="500px"
         visible={this.props.visible}
         closable={false}
@@ -246,17 +282,17 @@ class ChangeModal extends Component {
       >
         <Form labelCol={{span:8}} wrapperCol={{span:16}} labelAlign='left'>
           <Item style={{marginBottom: '0px'}} label='工号'>
-            {getFieldDecorator('workNum', )(
+            {getFieldDecorator('workNum', {initialValue: data.workNum})(
               <Input/>
             )}
           </Item>
           <Item style={{marginBottom: '0px'}}  label='姓名'>
-            {getFieldDecorator('name', )(
+            {getFieldDecorator('name', {initialValue: data.name})(
               <Input/>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='职务等级'>
-            {getFieldDecorator('dutyGrade', )(
+          <Item style={{marginBottom: '0px'}}  label='职务级别'>
+            {getFieldDecorator('dutyGrade', {initialValue:data.dutyGrade})(
               <Select>
                 <Option value='校级'>校级</Option>
                 <Option value='院士'>院士</Option>
@@ -271,21 +307,19 @@ class ChangeModal extends Component {
               </Select>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='所属部门'>
-            {getFieldDecorator('dept', )(
-              <Select></Select>
-            )}
-          </Item>
-          <Item style={{marginBottom: '0px'}}  label='科研单位'>
-            {getFieldDecorator('scientificResearchUnits', )(
-              <Select></Select>
-            )}
-          </Item>
-          <Item style={{marginBottom: '0px'}}  label='类别'>
-            {getFieldDecorator('category', )(
+          <Item style={{marginBottom: '0px'}}  label='职称级别'>
+            {getFieldDecorator('proTitleLevel', {initialValue: data.proTitleLevel})(
               <Select>
-                <Option value='教师'>教师</Option>
-                <Option value='其他'>其他</Option>
+                <Option value='校级'>校级</Option>
+                <Option value='院士'>院士</Option>
+              </Select>
+            )}
+          </Item>
+          <Item style={{marginBottom: '0px'}}  label='所属部门'>
+            {getFieldDecorator('dept', {initialValue: data.dept})(
+              <Select>
+                <Option value="学院">学院</Option>
+                <Option value="部处">部处</Option>
               </Select>
             )}
           </Item>
@@ -408,6 +442,7 @@ class ImportModal extends Component {
 
 class TheUserManagement extends Component{
   state = {
+    isSearched: false,
     name: '',
     tableList: [],
     selected: [],
@@ -420,7 +455,8 @@ class TheUserManagement extends Component{
     },
     changemodal: {
       visible: false,
-      index: 0,
+      id: 0,
+      data: {},
     },
     importmodal: {
       visible: false,
@@ -438,6 +474,7 @@ class TheUserManagement extends Component{
   search = ({name})=>{
     this.setState({
       name,
+      isSearched: true,
     })
     API.searchPersonnel(name)
     .then(rs=>{
@@ -448,6 +485,18 @@ class TheUserManagement extends Component{
     .catch(err=>{
       console.log(err)
       message.error('搜索失败')
+    })
+  }
+  refresh = ()=>{
+    API.searchPersonnel(this.state.name)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('刷新失败')
     })
   }
   selectedChange = (newSelected)=>{
@@ -494,8 +543,9 @@ class TheUserManagement extends Component{
     })
   }
   change = index=>{
-    index = this.state.tableList[index].id
-    this.setState({changemodal: {visible: true, index}})
+    let id = this.state.tableList[index].id
+    this.setState({changemodal: {visible: true, id,
+                  data:this.state.tableList[index]}})
   }
   closeAddModal = ()=>{
     this.setState({addmodal: {visible: false}})
@@ -504,7 +554,7 @@ class TheUserManagement extends Component{
     this.setState({detailmodal: {visible: false, data: []}})
   }
   closeChangeModal = ()=>{
-    this.setState({changemodal: {visible: false, index:0}})
+    this.setState({changemodal: {visible: false, id:0, data: {}}})
   }
   render(){
     let tableHelper = {
@@ -518,13 +568,20 @@ class TheUserManagement extends Component{
       <ButtonGroup onAdd={this.add} onDelete={this.delete} onImport={this.openImport}/>
       <Row>
         <Col span={20}>
-          <DisplayTable data={this.state.tableList} onSelectedChange={this.selectedChange} {...tableHelper}/>
+          {this.state.isSearched?(
+            <DisplayTable
+              data={this.state.tableList}
+              onSelectedChange={this.selectedChange} {...tableHelper}/>
+          ):(
+            <Empty description="请先搜索"></Empty>
+          )}
         </Col>
       </Row>
-      <WrappedAddModal {...this.state.addmodal} close={this.closeAddModal}/>
+      <WrappedAddModal refresh={this.refresh}
+        {...this.state.addmodal} close={this.closeAddModal}/>
       <DetailModal {...this.state.detailmodal} close={this.closeDetailModal}/>
-      <WrappedChangeModal {...this.state.changemodal} close={this.closeChangeModal}/>
-      <ImportModal {...this.state.importmodal} close={this.closeImportModal}/>
+      <WrappedChangeModal refresh={this.refresh}{...this.state.changemodal} close={this.closeChangeModal}/>
+      <ImportModal refresh={this.refresh} {...this.state.importmodal} close={this.closeImportModal}/>
     </MainContainer>
   }
 }

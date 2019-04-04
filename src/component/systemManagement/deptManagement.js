@@ -51,7 +51,7 @@ class Search extends Component{
           </Col>
           <Col span={7}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
-              {getFieldDecorator('deptName',)(
+              {getFieldDecorator('dept',)(
                 <Input/>
               )}
             </Item>
@@ -97,8 +97,8 @@ class DisplayTable extends Component{
           dataIndex: 'year',
         },
         {
-          title: '单位名称',
-          dataIndex: 'companyName',
+          title: '部门',
+          dataIndex: 'dept',
         },
         {
           title: '副校级(正局级)',
@@ -127,7 +127,7 @@ class DisplayTable extends Component{
       ]
     }else if(type==='xy'){
       columns = TableUtil.mapColumns([
-        '序号', '年份', '单位名称', '本科生', '博士', '硕士', '博士后'
+        '序号', '年份', '部门', '本科生', '硕士', '博士', '博士后'
       ])
     }
     columns.push({
@@ -159,7 +159,7 @@ class DetailModal extends Component {
   render() {
     let data = this.props.data
     // {
-    //    deptName(部门名称), zj(正局级), fj(副局级)
+    //    dept(部门名称), zj(正局级), fj(副局级)
     //    zc(正处级), fc(副处级), uc(处级以下u-under)
     //    academician(院士), tT(高端人才, t-top T-talent)
     //    eT(优秀人才 e-excellent), zg(正高级), fg(副高级)
@@ -168,7 +168,7 @@ class DetailModal extends Component {
     //    masterDegree(硕士生数), postdoctoral(博士后数)
     // }
     let type = this.props.type
-    let content
+    let content=''
     if(type==='bc'){
       content = (<div>
         <Row><Col span={20} style={{textAlign: 'center'}}><h4>部处部门</h4></Col></Row>
@@ -257,7 +257,7 @@ class DetailModal extends Component {
         visible={this.props.visible}
         closable={false}
         footer={[
-            <Button type="primary" onClick={this.hideModal}>确定</Button>
+            <Button key='1' type="primary" onClick={this.hideModal}>确定</Button>
           ]}
       >
         {content}
@@ -266,7 +266,7 @@ class DetailModal extends Component {
   }
 }
 // {
-//    deptName(部门名称), zj(正局级), fj(副局级)
+//    dept(部门名称), zj(正局级), fj(副局级)
 //    zc(正处级), fc(副处级), uc(处级以下u-under)
 //    academician(院士), tT(高端人才, t-top T-talent)
 //    eT(优秀人才 e-excellent), zg(正高级), fg(副高级)
@@ -521,7 +521,7 @@ class AddForm extends Component{
         <Row>
           <Col offset={2} span={10}>
             <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="部门名称">
-              {getFieldDecorator('deptName',)(
+              {getFieldDecorator('dept',)(
                 <Input size="small" />
               )}
             </Item>
@@ -554,7 +554,7 @@ class AddForm extends Component{
           <Row>
             <Col offset={2} span={10}>
               <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="部门名称">
-                {getFieldDecorator('deptName',)(
+                {getFieldDecorator('dept',)(
                   <Input size="small" />
                 )}
               </Item>
@@ -638,7 +638,7 @@ class AddForm extends Component{
           <Row>
             <Col offset={2} span={10}>
               <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="部门名称">
-                {getFieldDecorator('deptName',)(
+                {getFieldDecorator('dept',)(
                   <Input size="small" />
                 )}
               </Item>
@@ -931,7 +931,7 @@ class DeptManagement extends Component{
   constructor(props){
     super(props)
     this.state = {
-      deptName: '',
+      dept: '',
       // xy学院,bc部处
       type: '',
       selected: [],
@@ -953,14 +953,14 @@ class DeptManagement extends Component{
       },
     }
   }
-  search = ({deptName, type})=>{
+  search = ({dept, type})=>{
     if(!type) // 保证type有值
       return
     this.setState({
-      deptName,
+      dept,
       type,
     })
-    API.searchDept({deptName, type})
+    API.searchDept({dept, type})
     .then(rs=>{
       this.setState({
         tableList: rs,
@@ -1032,7 +1032,7 @@ class DeptManagement extends Component{
     this.setState({importmodal: {visible: true}})
   }
   refresh = ()=>{
-    API.searchDept({deptName:this.state.deptName, type: this.state.type})
+    API.searchDept({dept:this.state.dept, type: this.state.type})
     .then(rs=>{
       this.setState({tableList: rs})
     })

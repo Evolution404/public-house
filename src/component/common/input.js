@@ -1,10 +1,11 @@
+import {Input} from 'antd'
 // 输入组件
 // 包括一个label和一个输入框
 // 传入name指定label的值
 
 import React, {Component} from 'react'
 
-class Input extends Component{
+class MyInput extends Component{
   render(){
     return (
       <div style={{display: 'inline',
@@ -14,7 +15,7 @@ class Input extends Component{
           display: 'inline-block',
           width: '71px',
         }}>{this.props.name}</div>
-        <input style={{width: '95px',
+        <Input style={{width: '95px',
           height: '21px',
           fontSize: '13px',
           color: '#999',
@@ -24,4 +25,4 @@ class Input extends Component{
   }
 }
 
-export default Input
+export default MyInput

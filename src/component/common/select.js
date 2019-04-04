@@ -1,8 +1,10 @@
 import React, {Component} from 'react'
+import {Select} from 'antd'
+const Option = Select.Option
 
 // 传入options,列表类型
 
-class Select extends Component{
+class MySelect extends Component{
   render(){
     let options = this.props.options
     if(!options) options = []
@@ -14,17 +16,19 @@ class Select extends Component{
           display: 'inline-block',
           width: '71px',
         }}>{this.props.name}</div>
-        <select style={{width: '95px',
+        <Select style={{width: '95px',
           height: '21px',
           fontSize: '13px',
-        }} type="text" onChange={this.props.onChange}>
+        }} type="text"
+          size='small'
+          onChange={this.props.onChange}>
         {options.map((option, index)=>(
-          <option key={index} value={index}>{option}</option>
+          <Option key={index} value={index}>{option}</Option>
         ))}
-        </select>
+        </Select>
       </div>
     )
   }
 }
 
-export default Select
+export default MySelect

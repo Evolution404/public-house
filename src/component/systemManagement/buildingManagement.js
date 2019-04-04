@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import MainContainer from '../common/mainContainer'
-import {Input, Button,Form, Row, Col, message, Modal, InputNumber, Upload, Icon} from 'antd'
+import {Input, Empty, Button,Form, Row, Col, message, Modal, InputNumber, Upload, Icon} from 'antd'
 import {SButton} from '../common/button'
 import Split from '../common/split'
 import Table, {TableUtil}from '../common/table'
@@ -363,6 +363,7 @@ class ImportModal extends Component {
 
 class BuildingManagement extends Component{
   state = {
+    isSearched: false,
     name: '',
     tableList: [],
     selected: [],
@@ -383,6 +384,7 @@ class BuildingManagement extends Component{
   search = ({name})=>{
     this.setState({
       name,
+      isSearched: true,
     })
     API.searchBuilding(name)
     .then(rs=>{
@@ -475,7 +477,13 @@ class BuildingManagement extends Component{
       <ButtonGroup onAdd={this.add} onDelete={this.delete} onImport={this.openImport}/>
       <Row>
         <Col span={20}>
-          <DisplayTable data={this.state.tableList} onSelectedChange={this.selectedChange} {...tableHelper}/>
+          {this.state.isSearched?(
+            <DisplayTable
+              data={this.state.tableList}
+              onSelectedChange={this.selectedChange} {...tableHelper}/>
+          ):(
+            <Empty description="请先搜索"></Empty>
+          )}
         </Col>
       </Row>
       <WrappedAddModal refresh={this.refresh} {...this.state.addmodal} close={this.closeAddModal}/>
