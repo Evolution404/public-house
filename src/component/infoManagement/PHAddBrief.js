@@ -60,14 +60,14 @@ class MainForm extends Component{
           )}
         </Item>
         <Row>
-          <Col span={8}>
-            <Item labelCol={{span:9}} wrapperCol={{span:13, offset:1}} label="房间号">
+          <Col span={6}>
+            <Item labelCol={{span:12}} wrapperCol={{span:12}} label="房间号">
               {getFieldDecorator('roomNum', )(
                 <Input />
               )}
             </Item>
           </Col>
-          <Col span={8}>
+          <Col offset={1} span={8}>
             <Item labelCol={{span:9}} wrapperCol={{span:13, offset:1}} label="房屋状态">
               {getFieldDecorator('houseStatus', )(
                 <Select >

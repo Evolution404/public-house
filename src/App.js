@@ -7,8 +7,13 @@ import {
 import Header from './component/common/header'
 import Navigation from './component/common/navigation'
 import RouterMap from './routerMap'
+import { LocaleProvider } from 'antd'
+import zh_CN from 'antd/lib/locale-provider/zh_CN'
+import moment from 'moment'
+import 'moment/locale/zh-cn'
 import 'antd/dist/antd.css'
 import './index.css'
+moment.locale('zh-cn')
 
 class App extends Component{
   state = {
@@ -92,4 +97,7 @@ class App extends Component{
     }
   }
 }
-export default hot(module)(App)
+function LocalApp(){
+  return <LocaleProvider locale={zh_CN}><App /></LocaleProvider>
+}
+export default hot(module)(LocalApp)

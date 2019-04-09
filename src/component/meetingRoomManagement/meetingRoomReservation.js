@@ -105,6 +105,9 @@ class MeetingRoomReservation extends Component{
   search = ()=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        if(values.startStopTime)
+          values.startStopTime[0] = Math.round(values.startStopTime[0].valueOf()/1000)
+          values.startStopTime[1] = Math.round(values.startStopTime[1].valueOf()/1000)
         API.searchMeetingRoomReservation(values)
         .then(rs=>{
           this.setState({tableList: rs})
@@ -113,6 +116,7 @@ class MeetingRoomReservation extends Component{
           message.error('搜索失败')
         })
         console.log('Received values of form: ', values);
+        // 转成时间字符串
       }
     })
   }
@@ -178,7 +182,11 @@ class MeetingRoomReservation extends Component{
           <Col span={12}>
             <Item labelCol={{span:6}} wrapperCol={{span:12}} label="使用起止时间">
               {getFieldDecorator('startStopTime',)(
-                <RangePicker />
+                <RangePicker
+                  showTime={{ format: 'HH:mm' }}
+                  format="YYYY-MM-DD HH:mm"
+                  placeholder={['开始时间', '结束时间']}
+                />
               )}
             </Item>
           </Col>
