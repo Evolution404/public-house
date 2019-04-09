@@ -248,27 +248,6 @@ const buildingManagement = {
       })
     })
   },
-  // 导入楼宇信息
-  ULBuildings(formData){
-    return new Promise((resolve, reject)=>{
-      axios({
-        url:'/tb-louyu/import-excel',
-          method: 'post',
-          data: formData,
-          processData: false,  // 告诉axios不要去处理发送的数据(重要参数)
-          contentType: false,  // 告诉axios不要去设置Content-Type请求头
-      })
-      .then(rs=>{
-          console.log(rs)
-          // 上传成功执行
-          resolve()
-      })
-      .catch(err=>{
-        console.log(err)
-        reject(err)
-      })
-    })
-  },
 }
 
 const theUserManagement = {

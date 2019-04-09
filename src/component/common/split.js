@@ -1,8 +1,10 @@
 import React, {Component} from 'react'
+import { Divider } from 'antd'
+
 class Split extends Component{
   render(){
     return (
-      <img src="/images/split.png" alt="加载失败"/>
+      <Divider>{this.props.text}</Divider>
     )
   }
 }

@@ -340,7 +340,7 @@ class Import extends Component{
     const { fileList } = this.state;
     const formData = new FormData();
     fileList.forEach((file) => {
-      formData.append('files[]', file);
+      formData.append('file', file);
     });
 
     this.setState({
@@ -420,7 +420,7 @@ class ImportModal extends Component {
   }
   render() {
     let uploadInfo = {
-      uploadHelper: API.ULBuildings,
+      uploadHelper: API.ULPersonnel,
       templateLink: '',
     }
     return (
@@ -562,7 +562,7 @@ class TheUserManagement extends Component{
       detail: this.detail,
       change: this.change,
     }
-    return <MainContainer name="人员管理">
+    return <MainContainer name="使用者管理">
       <WrappedSearch onSearch={this.search}/>
       <Split/>
       <ButtonGroup onAdd={this.add} onDelete={this.delete} onImport={this.openImport}/>

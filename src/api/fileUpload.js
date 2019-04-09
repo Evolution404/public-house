@@ -151,9 +151,53 @@ const FileUploadAPI = {
   },
   // 导入部门信息
   ULDept(formData){
+    formData.append('module', 'buchubumen')
     return new Promise((resolve, reject)=>{
       axios({
-        url:'/upload',
+        processData: false,  // 告诉axios不要去处理发送的数据(重要参数)
+        contentType: false,  // 告诉axios不要去设置Content-Type请求头
+        url:'/tb-buchu-bumen/import-excel',
+        method: 'post',
+        data: formData,
+      })
+      .then(rs=>{
+          console.log(rs)
+          // 上传成功执行
+          resolve()
+      })
+      .catch(err=>{
+        console.log(err)
+        reject(err)
+      })
+    })
+  },
+  // 导入楼宇信息
+  ULBuildings(formData){
+    formData.append('module', 'louyu')
+    return new Promise((resolve, reject)=>{
+      axios({
+        url:'/tb-louyu/import-excel',
+          method: 'post',
+          data: formData,
+          processData: false,  // 告诉axios不要去处理发送的数据(重要参数)
+          contentType: false,  // 告诉axios不要去设置Content-Type请求头
+      })
+      .then(rs=>{
+          console.log(rs)
+          // 上传成功执行
+          resolve()
+      })
+      .catch(err=>{
+        console.log(err)
+        reject(err)
+      })
+    })
+  },
+  ULPersonnel(formData){
+    formData.append('module', 'shiyongzhe')
+    return new Promise((resolve, reject)=>{
+      axios({
+        url:'/tb-shiyongzhe/import-excel',
           method: 'post',
           data: formData,
           processData: false,  // 告诉axios不要去处理发送的数据(重要参数)

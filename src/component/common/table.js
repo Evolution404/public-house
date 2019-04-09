@@ -36,6 +36,7 @@ class MyTable extends Component{
         columns={columns}
         pagination={pagination}
         locale={locale}
+        bordered={true}
         rowSelection={rowSelection}/>
     )
   }

@@ -827,7 +827,7 @@ class Import extends Component{
     const { fileList } = this.state;
     const formData = new FormData();
     fileList.forEach((file) => {
-      formData.append('files[]', file);
+      formData.append('file', file);
     });
 
     this.setState({
@@ -846,6 +846,9 @@ class Import extends Component{
         uploading: false,
       });
       message.error('上传失败');
+      if(err.response){
+        message.error(err.response.data.title)
+      }
     })
   }
 

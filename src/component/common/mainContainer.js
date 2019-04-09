@@ -6,8 +6,7 @@ class MainContainer extends Component{
     return <div>
       <div style={{width: "114px",
         height: "37px",
-        backgroundColor: "rgba(0, 153, 0, 1)",
-        ...css.borderDeep,
+        backgroundColor: "#4091f7",
         ...css.commonFontStyle,
         fontSize: "13px",
         lineHeight: "37px",
@@ -15,7 +14,7 @@ class MainContainer extends Component{
         marginLeft: "20px",
         boxSizing: "border-box",
       }}>{this.props.name}</div>
-      <div style={{backgroundColor: "#f8fdfd",
+      <div style={{
         ...css.borderLight,
       }}>
         <div style={{paddingLeft: "20px",

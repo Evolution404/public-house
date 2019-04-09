@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import { Modal, message ,Form, Input} from 'antd'
 import css from '../../cssConfig.js'
 import API from '../../api'
+import headerPic from './images/header.png'
 
 const confirm = Modal.confirm
 const Item = Form.Item
@@ -182,7 +183,7 @@ class Header extends Component{
   }
   render(){
     let styleDiv = {
-      backgroundColor: css.green,
+      backgroundColor: '#4091f7',
       height: "76px"
     }
     let fontStyle = {
@@ -204,7 +205,7 @@ class Header extends Component{
       }}>
         <img style={{height: "62px", 
           marginTop: "7px"
-        }} src="/images/header.png" alt="" />
+        }} src={headerPic} alt="" />
         <span style={fontStyle}>公用房管理系统</span>
         <div style={rightStyle}>
           <RightInfo {...this.props} name={this.state.name}/>
