@@ -4,8 +4,129 @@ import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Table from '../common/table'
 import {SButton} from '../common/button'
+import ECharts from '../common/echarts'
+
 const Item = Form.Item
 const Option = Select.Option
+// data = [
+//  {
+//    name: xx,
+//    value: xx,
+//  },
+// ]
+class DeptContrast1 extends Component {
+  render(){
+    let option = {
+      title: {
+        text: '部门情况对比1（各部门实际公用房使用面积对比图表）',
+        textStyle: {
+          fontSize: 15,
+        },
+      },
+      tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+      },
+      legend: {
+          type: 'scroll',
+          orient: 'vertical',
+          right: 10,
+          top: 20,
+          bottom: 20,
+      },
+      series : [
+          {
+              name: '部门',
+              type: 'pie',
+              radius : '55%',
+              center: ['40%', '50%'],
+              data: this.props.data,
+              itemStyle: {
+                  emphasis: {
+                      shadowBlur: 10,
+                      shadowOffsetX: 0,
+                      shadowColor: 'rgba(0, 0, 0, 0.5)'
+                  }
+              }
+          }
+      ]
+    }
+    return <ECharts id="DeptContrast1" option={option}></ECharts>
+  }
+}
+
+class Histogram extends Component{
+  render(){
+    let xAxisData = []
+    let legendData = []
+    for(let k in this.props.data){
+      xAxisData.push(k)
+      for(let v in this.props.data[k]){
+        if(legendData.indexOf(v) < 0)
+          legendData.push(v)
+      }
+    }
+    let data = legendData.map(legend=>{
+      let tempData = []
+      for(let k in this.props.data){
+        tempData.push(this.props.data[k][legend])
+      }
+      return{
+            name: legend,
+            type: 'bar',
+            barGap: 0,
+            data: tempData,
+      }
+    })
+    let option = {
+      title: {
+        text: this.props.title,
+        textStyle: {
+          fontSize: 15,
+        },
+      },
+      color: ['#003366', '#006699', '#4cabce', '#e5323e'],
+      tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+              type: 'shadow'
+          }
+      },
+      legend: {
+          data: legendData,
+          top: 20
+      },
+      toolbox: {
+          show: true,
+          orient: 'vertical',
+          left: 'right',
+          top: 'center',
+          feature: {
+              mark: {show: true},
+              dataView: {show: true, readOnly: false},
+              magicType: {show: true, type: ['line', 'bar', 'stack', 'tiled']},
+              restore: {show: true},
+              saveAsImage: {show: true}
+          }
+      },
+      calculable: true,
+      xAxis: [
+          {
+              type: 'category',
+              axisTick: {show: false},
+              data: xAxisData,
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value'
+          }
+      ],
+      series: data,
+    }
+    return <ECharts id={this.props.id} option={option}></ECharts>
+  }
+}
 
 class AcademyHouseTable extends Component{
   render(){
@@ -117,11 +238,88 @@ class PartyHouseTable extends Component{
 }
 
 class OverallAccount extends Component{
-  constructor(props){
-    super(props)
-    this.state = {
-      year: '',
-    }
+  state = {
+    year: '',
+    DeptContrast1: [
+      {
+        name: '1',
+        value: 0.1,
+      },
+      {
+        name: '2',
+        value: 0.2,
+      },
+      {
+        name: '3',
+        value: 0.3,
+      },
+    ],
+    DeptContrast2: {
+      '类别1': {
+          '项目1':100,
+          '项目2':200,
+      },
+      '类别2': {
+          '项目1':100,
+          '项目2':200,
+      },
+      '类别3': {
+          '项目1':100,
+          '项目2':200,
+      },
+      '类别4': {
+          '项目1':100,
+          '项目2':200,
+      },
+      '类别5': {
+          '项目1':100,
+          '项目2':200,
+      },
+    },
+    DeptContrast3: {
+      '类别1': {
+          '项目1':100,
+          '项目2':200,
+      },
+      '类别2': {
+          '项目1':100,
+          '项目2':200,
+      },
+      '类别3': {
+          '项目1':100,
+          '项目2':200,
+      },
+      '类别4': {
+          '项目1':100,
+          '项目2':200,
+      },
+      '类别5': {
+          '项目1':100,
+          '项目2':200,
+      },
+    },
+    CollegeContrast4: {
+      '类别1': {
+          '项目1':100,
+          '项目2':200,
+      },
+      '类别2': {
+          '项目1':100,
+          '项目2':200,
+      },
+      '类别3': {
+          '项目1':100,
+          '项目2':200,
+      },
+      '类别4': {
+          '项目1':100,
+          '项目2':200,
+      },
+      '类别5': {
+          '项目1':100,
+          '项目2':200,
+      },
+    },
   }
   handleYearChange = (e)=>{
     this.setState({
@@ -160,6 +358,28 @@ class OverallAccount extends Component{
       <Row>
         <Col span={20} offset={1}>
           <AcademyHouseTable data={[{id:1}]}/>
+        </Col>
+      </Row>
+      <Row>
+        <Col span={12}>
+          <DeptContrast1 data={this.state.DeptContrast1}></DeptContrast1>
+        </Col>
+        <Col span={12}>
+          <Histogram id="DeptContrast2"
+            title="部门情况对比2（各学院实际总面积、人均使用面积对比图表）"
+            data={this.state.DeptContrast2}></Histogram>
+        </Col>
+      </Row>
+      <Row>
+        <Col span={12}>
+          <Histogram id="DeptContrast3"
+            title="部门情况对比3（各部门公用房额定面积、实际使用面积对比图表）"
+            data={this.state.DeptContrast3}></Histogram>
+        </Col>
+        <Col span={12}>
+          <Histogram id="CollegeContrast4"
+            title="学院情况对比4（各学院分项实际使用面积对比图表）"
+            data={this.state.CollegeContrast4}></Histogram>
         </Col>
       </Row>
     </MainContainer>

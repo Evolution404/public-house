@@ -359,6 +359,8 @@ class Import extends Component{
         uploading: false,
       });
       message.error('上传失败');
+      if(err.response)
+        message.error(err.response.data.title)
     })
   }
 
