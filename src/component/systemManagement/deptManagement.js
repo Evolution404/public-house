@@ -939,6 +939,7 @@ class DeptManagement extends Component{
       type: '',
       selected: [],
       tableList: [],
+      tableLoading: false,
       detailmodal: {
         visible: false,
         data: {},
@@ -963,6 +964,7 @@ class DeptManagement extends Component{
       dept,
       type,
     })
+    this.setState({tableLoading: true})
     API.searchDept({dept, type})
     .then(rs=>{
       this.setState({
@@ -973,6 +975,7 @@ class DeptManagement extends Component{
       console.log(err)
       message.error('搜索失败')
     })
+    .finally(()=>this.setState({tableLoading: false}))
   }
   selectedChange = (newSelected)=>{
     this.setState({
@@ -1035,6 +1038,7 @@ class DeptManagement extends Component{
     this.setState({importmodal: {visible: true}})
   }
   refresh = ()=>{
+    this.setState({tableLoading: true})
     API.searchDept({dept:this.state.dept, type: this.state.type})
     .then(rs=>{
       this.setState({tableList: rs})
@@ -1042,6 +1046,7 @@ class DeptManagement extends Component{
     .catch(err=>{
       console.log(err)
     })
+    .finally(()=>this.setState({tableLoading: false}))
   }
   render(){
     let tableHelper = {
@@ -1059,6 +1064,7 @@ class DeptManagement extends Component{
           {
             this.state.type.length>0?(
               <DisplayTable
+                loading={this.state.tableLoading}
                 type={this.state.type}
                 data={this.state.tableList}
                 onSelectedChange={this.selectedChange} {...tableHelper}/>

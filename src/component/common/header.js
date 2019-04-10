@@ -67,7 +67,7 @@ class ChangePwModal extends Component {
     const { getFieldDecorator } = this.props.form
     return (
       <Modal
-        title="新增用户"
+        title="修改密码"
         width="500px"
         visible={this.props.visible}
         closable={false}
@@ -184,14 +184,15 @@ class Header extends Component{
   render(){
     let styleDiv = {
       backgroundColor: '#4091f7',
-      height: "76px"
+      height: "76px",
+      border: '1px solid #40bdf7',
     }
     let fontStyle = {
-      fontSize: "28px",
+      fontSize: "20px",
       fontWeight: 700,
       color: "white",
       position: "absolute",
-      left: "383px",
+      left: "280px",
       top: "31px",
     }
     let rightStyle = {
@@ -201,7 +202,6 @@ class Header extends Component{
     }
     return (
       <div style={{...styleDiv,
-        ...css.borderDeep
       }}>
         <img style={{height: "62px", 
           marginTop: "7px"

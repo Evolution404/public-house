@@ -445,6 +445,7 @@ class ImportModal extends Component {
 class TheUserManagement extends Component{
   state = {
     isSearched: false,
+    tableLoading: false,
     name: '',
     tableList: [],
     selected: [],
@@ -478,6 +479,7 @@ class TheUserManagement extends Component{
       name,
       isSearched: true,
     })
+    this.setState({tableLoading: true})
     API.searchPersonnel(name)
     .then(rs=>{
       this.setState({
@@ -488,8 +490,10 @@ class TheUserManagement extends Component{
       console.log(err)
       message.error('搜索失败')
     })
+    .finally(()=>this.setState({tableLoading: false}))
   }
   refresh = ()=>{
+    this.setState({tableLoading: true})
     API.searchPersonnel(this.state.name)
     .then(rs=>{
       this.setState({
@@ -500,6 +504,7 @@ class TheUserManagement extends Component{
       console.log(err)
       message.error('刷新失败')
     })
+    .finally(()=>this.setState({tableLoading: false}))
   }
   selectedChange = (newSelected)=>{
     this.setState({
@@ -572,6 +577,7 @@ class TheUserManagement extends Component{
         <Col span={20}>
           {this.state.isSearched?(
             <DisplayTable
+              loading={this.state.tableLoading}
               data={this.state.tableList}
               onSelectedChange={this.selectedChange} {...tableHelper}/>
           ):(

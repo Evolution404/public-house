@@ -1,5 +1,6 @@
 import axios from "axios";
-const domainName = 'http://140.249.19.181:8910/api/gongyongfang'
+let host = 'http://140.249.19.181:8910'
+const domainName = host+'/api/gongyongfang'
 
 const http = axios.create({
     baseURL: domainName,
@@ -24,3 +25,4 @@ http.interceptors.request.use(config=>{
 })
 
 export default http
+export {host}

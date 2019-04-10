@@ -1,8 +1,10 @@
 import React, {Component} from 'react'
-import {Select, Button, Form, Row, Col} from 'antd'
+import {Select, Button, Form, Row, Col, Input, message, Empty, Spin} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Zmage from 'react-zmage'
+import API from '../../api'
+import {host} from '../../api/apiConfig'
 const Item = Form.Item
 const Option = Select.Option
 
@@ -11,10 +13,9 @@ class Search extends Component{
     let self = this
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        self.props.onSearch(values)
-      }
+      if(err)return
+      console.log('Received values of form: ', values);
+      self.props.onSearch(values)
     })
   }
   render(){
@@ -24,9 +25,15 @@ class Search extends Component{
         <Row>
           <Col span={7}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="楼宇名称">
-              {getFieldDecorator('buildingName',)(
+              {getFieldDecorator('buildingName',{
+                rules: [{required: true, message: '请选择楼宇名称'}]
+              })(
                 <Select>
-                  <Option value="研究院">研究院</Option>
+                  {
+                    this.props.optionList.map(name=>(
+                      <Option key={name} value={name}>{name}</Option>
+                    ))
+                  }
                 </Select>
               )}
             </Item>
@@ -62,7 +69,7 @@ class ImgDisplay extends Component{
         {
           this.props.data.map((item, index)=>(
             <div key={index} style={childStyle}>
-              <Zmage style={imgStyle} src={item.src} alt="加载失败"></Zmage>
+              <Zmage style={imgStyle} src={item.src} alt=""></Zmage>
               <p style={{textAlign: 'center'}}>{item.text}</p>
             </div>
           ))
@@ -77,35 +84,51 @@ const WrappedSearch = Form.create({ name: 'search' })(Search)
 class BuildingQuery extends Component{
   state = {
     buildingName: '',
-    imgData: [
-      {
-        text: '楼层1',
-        src: 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg',
-      },
-      {
-        text: '楼层1',
-        src: 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg',
-      },
-      {
-        text: '楼层1',
-        src: 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg',
-      },
-      {
-        text: '楼层1',
-        src: 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg',
-      },
-    ],
+    imgData: [],
+    loading: true,
+    buildingNameList: [],
+  }
+  componentDidMount(){
+    // TODO 请求楼宇名称选项列表
+    this.setState({buildingNameList:['xxxx楼'], loading: false})
   }
   search = ({buildingName})=>{
-    this.setState({
-      buildingName,
+    this.setState({loading: true})
+    API.buildingSearch(buildingName)
+    .then(data=>{
+      if(data.buildingName){
+        this.setState({buildingName: data.buildingName})
+      }
+      if(data.buildingImgs){
+        let imgData = []
+        data.buildingImgs.forEach(floor=>{
+          let text = '楼层'+floor.louceng
+          floor.tupianlujing.forEach(imgPath=>{
+            imgData.push({text,src:host+imgPath})
+          })
+        })
+        this.setState({imgData})
+      }
     })
+    .catch(err=>{
+      message.error('查询失败')
+    })
+    .finally(()=>this.setState({loading: false}))
   }
   render(){
     return <MainContainer name="统计查询">
-      <WrappedSearch onSearch={this.search}/>
-      <Split/>
-      <ImgDisplay data={this.state.imgData}></ImgDisplay>
+      <Spin spinning={this.state.loading}>
+        <WrappedSearch optionList={this.state.buildingNameList} onSearch={this.search}/>
+        <Split/>
+        {this.state.imgData.length>0?(
+          <div>
+              <h2>{this.state.buildingName}</h2>
+              <ImgDisplay data={this.state.imgData}></ImgDisplay>
+          </div>
+        ):(
+          <Empty description="请先搜索"></Empty>
+        )}
+      </Spin>
     </MainContainer>
   }
 }

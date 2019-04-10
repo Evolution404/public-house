@@ -278,6 +278,7 @@ const WrappedChangeModal = Form.create({ name: 'changemodal' })(ChangeModal)
 class UserManagement extends Component{
   state = {
     isSearched: false,
+    tableLoading: false,
     userName: '',
     tableList: [],
     selected: [],
@@ -298,6 +299,7 @@ class UserManagement extends Component{
       userName,
       isSearched: true,
     })
+    this.setState({tableLoading: true})
     API.searchUser(userName)
     .then(rs=>{
       this.setState({
@@ -308,8 +310,12 @@ class UserManagement extends Component{
       console.log(err)
       message.error('搜索失败')
     })
+    .finally(()=>{
+      this.setState({tableLoading: false})
+    })
   }
   refresh = ()=>{
+    this.setState({tableLoading: true})
     API.searchUser(this.state.userName)
     .then(rs=>{
       this.setState({
@@ -319,6 +325,9 @@ class UserManagement extends Component{
     .catch(err=>{
       console.log(err)
       message.error('刷新失败')
+    })
+    .finally(()=>{
+      this.setState({tableLoading: false})
     })
   }
   selectedChange = (newSelected)=>{
@@ -378,6 +387,7 @@ class UserManagement extends Component{
           {this.state.isSearched?(
             <DisplayTable
               data={this.state.tableList}
+              loading={this.state.tableLoading}
               onSelectedChange={this.selectedChange} {...tableHelper}/>
           ):(
             <Empty description="请先搜索"></Empty>

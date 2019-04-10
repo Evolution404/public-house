@@ -63,7 +63,16 @@ checkBrowsers(paths.appPath, isInteractive)
   .then(previousFileSizes => {
     // Remove all content but keep the directory so that
     // if you're in it, you don't end up in Trash
-    fs.emptyDirSync(paths.appBuild);
+    if(fs.pathExistsSync(paths.appBuild+'/.git')){
+      fs.ensureDirSync(paths.appPath+'/tmp/.git')
+      fs.moveSync(paths.appBuild+'/.git', paths.appPath+'/tmp/.git')
+      fs.emptyDirSync(paths.appBuild);
+      fs.ensureDirSync(paths.appBuild+'/.git')
+      fs.moveSync(paths.appPath+'/tmp/.git', paths.appBuild+'/.git')
+      fs.removeSync(paths.appPath+'/tmp')
+    }else{
+      fs.emptyDirSync(paths.appBuild);
+    }
     // Merge with the public folder
     copyPublicFolder();
     // Start the webpack build

@@ -1,10 +1,11 @@
 import React, {Component} from 'react'
 import MainContainer from '../common/mainContainer'
-import {Input, Empty, Button,Form, Row, Col, message, Modal, InputNumber, Upload, Icon} from 'antd'
+import {Input, Empty, Button,Form, Row, Col, message, Modal, InputNumber, Upload, Icon, Select} from 'antd'
 import {SButton} from '../common/button'
 import Split from '../common/split'
 import Table, {TableUtil}from '../common/table'
 import API from '../../api'
+const Option = Select.Option
 const Item = Form.Item
 const confirm = Modal.confirm;
 
@@ -260,11 +261,10 @@ class Import extends Component{
     const formData = new FormData();
     fileList.forEach((file) => {
       formData.append('file', file);
-    });
-
+    })
     this.setState({
       uploading: true,
-    });
+    })
     this.props.uploadHelper(formData)
     .then(()=>{
       this.setState({
@@ -276,7 +276,7 @@ class Import extends Component{
     .catch(err=>{
       this.setState({
         uploading: false,
-      });
+      })
       message.error('上传失败');
       if(err.response)
         message.error(err.response.data.title)
@@ -303,7 +303,7 @@ class Import extends Component{
         return false;
       },
       fileList,
-    };
+    }
 
     return (
       <div style={{margin: '20px 0'}}>
@@ -360,11 +360,128 @@ class ImportModal extends Component {
     )
   }
 }
+class UploadModal extends Component {
+  state = {
+    fileList: [],
+    uploading: false,
+  }
+  hideModal = () => {
+    this.props.close()
+  }
+  handleUpload = () => {
+    let form = this.props.form
+    form.validateFields((err, values)=>{
+      if(err) return
+      const { fileList } = this.state;
+      const formData = new FormData();
+      fileList.forEach((file) => {
+        formData.append('file', file);
+      })
+      this.setState({
+        uploading: true,
+      })
+      formData.append('loucneg', values.floor)
+      formData.append('louyumingcheng', this.props.data.buildingName)
+      API.ULFloorPlan(formData)
+      .then(()=>{
+        this.setState({
+          fileList: [],
+          uploading: false,
+        });
+        message.success('上传成功');
+      })
+      .catch(err=>{
+        this.setState({
+          uploading: false,
+        })
+        message.error('上传失败');
+        if(err.response)
+          message.error(err.response.data.title)
+      })
+    })
+  }
+  render() {
+    const { uploading, fileList } = this.state;
+    const props = {
+      onRemove: (file) => {
+        this.setState((state) => {
+          const index = state.fileList.indexOf(file);
+          const newFileList = state.fileList.slice();
+          newFileList.splice(index, 1);
+          return {
+            fileList: newFileList,
+          };
+        });
+      },
+      beforeUpload: (file) => {
+        this.setState(state => ({
+          fileList: [...state.fileList, file],
+        }));
+        return false;
+      },
+      fileList,
+    }
+    const { getFieldDecorator } = this.props.form
+    let floorOptions = []
+    for(let i =0;i < this.props.data.buildingFloors;i++){
+      floorOptions.push(<Option key={i+1} value={i+1}>{i+1}</Option>)
+    }
+    return (
+      <Modal
+        title="上传平面图"
+        width="600px"
+        visible={this.props.visible}
+        closable={false}
+        onOk={this.hideModal}
+        onCancel={this.hideModal}
+        okText="确定"
+        cancelText="取消"
+      >
+        <Form>
+          <Item labelCol={{span:4}} wrapperCol={{span:6}} style={{marginBottom: '0px'}} label='楼层'>
+            {getFieldDecorator('floor', {
+              rules: [{ required: true, message: '请选择楼层' }],
+            })(
+              <Select placeholder="请选择楼层">
+                {floorOptions}
+              </Select>
+            )}
+          </Item>
+          <Row>
+            <Col span={12}>
+              <Item labelCol={{span:8}} wrapperCol={{span:12}} style={{marginBottom: '0px'}} label='请选择图片'>
+                {getFieldDecorator('buildingFloorPic', )(
+                <Upload {...props}>
+                  <Button>
+                    <Icon type="upload" />选择图片
+                  </Button>
+                </Upload>
+                )}
+              </Item>
+            </Col>
+            <Col span={12}>
+              <Button
+                type="primary"
+                onClick={this.handleUpload}
+                disabled={fileList.length === 0}
+                loading={uploading}
+              >
+                {uploading ? '导入中' : '开始导入' }
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </Modal>
+    )
+  }
+}
+UploadModal = Form.create({ name: 'upload_modal' })(UploadModal)
 
 class BuildingManagement extends Component{
   state = {
     isSearched: false,
     name: '',
+    tableLoading: false,
     tableList: [],
     selected: [],
     addmodal: {
@@ -377,6 +494,10 @@ class BuildingManagement extends Component{
     importmodal: {
       visible: false,
     },
+    uploadmodal: {
+      visible: false,
+      data: {},
+    },
   }
   add = ()=>{
     this.setState({addmodal: {visible: true}})
@@ -386,6 +507,7 @@ class BuildingManagement extends Component{
       name,
       isSearched: true,
     })
+    this.setState({tableLoading: true})
     API.searchBuilding(name)
     .then(rs=>{
       this.setState({
@@ -397,6 +519,9 @@ class BuildingManagement extends Component{
       message.error('搜索失败')
       if(err.response)
         message.error(err.response.data.title)
+    })
+    .finally(()=>{
+      this.setState({tableLoading: false})
     })
   }
   refresh = ()=>{
@@ -451,6 +576,10 @@ class BuildingManagement extends Component{
     this.setState({updatemodal: {visible: true, data: this.state.tableList[index]}})
   }
   uploadPic = index=>{
+    this.setState({uploadmodal: {visible: true, data: this.state.tableList[index]}})
+  }
+  closeUploadModal = ()=>{
+    this.setState({uploadmodal: {visible: false, data:{}}})
   }
   closeAddModal = ()=>{
     this.setState({addmodal: {visible: false}})
@@ -480,6 +609,7 @@ class BuildingManagement extends Component{
           {this.state.isSearched?(
             <DisplayTable
               data={this.state.tableList}
+              loading={this.state.tableLoading}
               onSelectedChange={this.selectedChange} {...tableHelper}/>
           ):(
             <Empty description="请先搜索"></Empty>
@@ -489,6 +619,7 @@ class BuildingManagement extends Component{
       <WrappedAddModal refresh={this.refresh} {...this.state.addmodal} close={this.closeAddModal}/>
       <WrappedUpdateModal refresh={this.refresh} {...this.state.updatemodal} close={this.closeUpdateModal}/>
       <ImportModal {...this.state.importmodal} close={this.closeImportModal}/>
+      <UploadModal {...this.state.uploadmodal} close={this.closeUploadModal}/>
     </MainContainer>
   }
 }

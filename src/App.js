@@ -73,6 +73,7 @@ class App extends Component{
       }
       return (
         <div>
+            <Router>
           <Header getPersistentData={this.getPersistentData} clear={this.clearPersistenData}
             name={this.state.userData.userName}/>
           <div style={{float: "left"}}>
@@ -82,12 +83,11 @@ class App extends Component{
             margin: "25px",
             width: '78%',
           }}>
-            <Router>
               <div>
                 {routerList}
               </div>
-            </Router>
           </div>
+            </Router>
         </div>
       )
 

@@ -13,9 +13,11 @@ class MainContainer extends Component{
         textAlign: "center",
         marginLeft: "20px",
         boxSizing: "border-box",
+        borderRadius: "5px 5px 0 0",
       }}>{this.props.name}</div>
       <div style={{
         ...css.borderLight,
+        borderRadius: 5,
       }}>
         <div style={{paddingLeft: "20px",
           paddingTop: "10px",

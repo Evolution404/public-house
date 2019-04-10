@@ -35,6 +35,7 @@ const mapNameF2B = {
   oldPassword: 'jiumima',
   newPassword: 'xinmima',
   role: 'juseId',
+  buildingImgs: 'louyuTupians',
 }
 let mapNameB2F = {}
 for (let i in mapNameF2B){

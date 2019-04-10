@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import {withRouter} from 'react-router-dom'
 import {Menu, Icon} from 'antd'
 import {
   HashRouter as Router,
@@ -13,17 +14,23 @@ class Sider extends Component {
 
   state = {
     openKeys: [],
+    selectedKeys: [],
   }
-
-  onOpenChange = (openKeys) => {
-    const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1)
-    if (this.rootSubmenuKeys.indexOf(latestOpenKey) === -1) {
-      this.setState({ openKeys })
-    } else {
-      this.setState({
-        openKeys: latestOpenKey ? [latestOpenKey] : [],
+  componentDidMount(){
+    let pathname = this.props.location.pathname
+    this.props.data.forEach(item=>{
+      item.list.forEach(newItem=>{
+        if(newItem.path.split('/')[1]===pathname.split('/')[1])
+          this.setState({openKeys:[item.text],
+            selectedKeys: [`${item.text}-${newItem.name}`]})
       })
-    }
+    })
+  }
+  onOpenChange = (openKeys) => {
+    this.setState({ openKeys })
+  }
+  onSelect = ({ item, key, selectedKeys })=>{
+    this.setState({selectedKeys})
   }
   mapTitle = (text)=>{
     // 传入菜单标题返回对应的title
@@ -46,15 +53,17 @@ class Sider extends Component {
       <Menu
         mode="inline"
         openKeys={this.state.openKeys}
+        selectedKeys={this.state.selectedKeys}
         onOpenChange={this.onOpenChange}
+        onSelect={this.onSelect}
         style={{ width: 256}}
       >
         {
           this.props.data.map((item, index)=>(
-            <SubMenu key={index} title={<span>{this.mapTitle(item.text)}<span>{item.text}</span></span>}>
+            <SubMenu key={item.text} title={<span>{this.mapTitle(item.text)}<span>{item.text}</span></span>}>
               {
                 item.list.map((newItem, newIndex)=>(
-                  <Menu.Item key={`${index}-${newIndex}`}>
+                  <Menu.Item key={`${item.text}-${newItem.name}`}>
                     <Link to={newItem.path}>{newItem.name}</Link>
                   </Menu.Item>
                 ))
@@ -67,4 +76,4 @@ class Sider extends Component {
     )
   }
 }
-export default Sider
+export default withRouter(Sider)
