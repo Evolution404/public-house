@@ -57,7 +57,7 @@ const TableUtil = {
       case '使用性质':
         return 'usingNature'
       case '使用者':
-        return 'user'
+        return 'personnel'
       case '填报时间':
         return 'fillInTime'
       case '状态':

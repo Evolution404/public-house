@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {message} from 'antd';
+import {message, Row, Col, Button} from 'antd';
 import MainContainer from '../common/mainContainer'
 import Search from '../common/search'
 import {SButton} from '../common/button'
@@ -91,12 +91,28 @@ class ConditionQuery extends Component{
       message.error('获取失败, 请重试')
     })
   }
+  print = ()=>{
+    window.document.body.innerHTML =
+      window.document.getElementById('printArea').innerHTML
+    window.print()
+    window.location.reload()
+  }
   render(){
     return <MainContainer name="统计查询">
       <Search onSearch={this.search}/>
       <Split/>
-      <DisplayTable data={this.state.tableList}/>
-      <DisplayTable type="apartment" data={this.state.tableList}/>
+      <Row style={{marginBottom: 20}}>
+        <Col offset={14} span={3}>
+          <Button type="primary">导出到文件</Button>
+        </Col>
+        <Col span={2}>
+          <Button onClick={this.print} type="primary">打印</Button>
+        </Col>
+      </Row>
+      <div id="printArea">
+        <DisplayTable data={this.state.tableList}/>
+        <DisplayTable type="apartment" data={this.state.tableList}/>
+      </div>
     </MainContainer>
   }
 }

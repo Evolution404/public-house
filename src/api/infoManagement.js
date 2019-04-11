@@ -1,4 +1,5 @@
 import axios from './apiConfig'
+import {MapB2F, MapF2B} from './nameMapConfig'
 
 const PHAdd = {
   // 公用房新增
@@ -291,7 +292,47 @@ const basicInfoManagement = {
 
 const myPH = {
   // 我的公用房
+  myPHSearch(values){
+    return new Promise((resolve, reject)=>{
+      axios.post('/search', MapF2B(values))
+      .then(rs=>{
+        let data = MapB2F(rs.data)
+        resolve(data)
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  // 传入用户的id
+  getPersonnelInfo(id){
+    return new Promise((resolve, reject)=>{
+      axios.post('/info', {id})
+      .then(rs=>{
+        resolve(MapB2F(rs.data))
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+}
 
+const PHDetailInfo = {
+  getPHDetailInfo(id){
+    return new Promise((resolve, reject)=>{
+      axios.post('/info', {id})
+      .then(rs=>{
+        resolve(MapB2F(rs.data))
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
 }
 
 export default {
@@ -305,4 +346,5 @@ export default {
   ...PHList,
   ...basicInfoManagement,
   ...myPH,
+  ...PHDetailInfo,
 }

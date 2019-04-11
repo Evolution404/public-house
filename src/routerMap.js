@@ -11,6 +11,7 @@ import PHChangeBrief from './component/infoManagement/PHChangeBrief'
 import PHImport from './component/infoManagement/PHImport'
 import PHAuditDetail from './component/infoManagement/PHAuditDetail'
 import PHAudit from './component/infoManagement/PHAudit'
+import PHDetailInfo from './component/infoManagement/PHDetailInfo'
 import MyPH from './component/infoManagement/myPH'
 
 // 统计查询
@@ -108,8 +109,13 @@ const routerMap = {
     name:'公用房审核',
     component: PHAudit
   },
+  PHDetailInfo: {
+    path:'/PHDetailInfo/:id',
+    name:'公用房详细信息',
+    component: PHDetailInfo
+  },
   MyPH: {
-    path:'/MyPH',
+    path:'/MyPH/:id',
     name:'我的公用房',
     component: MyPH
   },

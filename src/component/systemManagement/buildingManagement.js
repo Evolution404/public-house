@@ -380,7 +380,7 @@ class UploadModal extends Component {
       this.setState({
         uploading: true,
       })
-      formData.append('loucneg', values.floor)
+      formData.append('louceng', values.floor)
       formData.append('louyumingcheng', this.props.data.buildingName)
       API.ULFloorPlan(formData)
       .then(()=>{

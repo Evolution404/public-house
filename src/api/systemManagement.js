@@ -413,6 +413,7 @@ const userManagement = {
         returnData.userData.role = rs.data['jueseid']
         returnData.userData.userName = rs.data['yonghumingcheng']
         returnData.userData.token = rs.data['token']
+        returnData.userData.id= rs.data['id']
         resolve(returnData)
       })
       .catch(err=>{

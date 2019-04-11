@@ -36,6 +36,12 @@ const mapNameF2B = {
   newPassword: 'xinmima',
   role: 'juseId',
   buildingImgs: 'louyuTupians',
+  'location': '', //位置
+  usingNature: '', // 使用性质
+  secondaryNature: '', // 二级性质
+  personnel: '', // 使用者
+  house: '', // 房屋
+  time: '', // 时间
 }
 let mapNameB2F = {}
 for (let i in mapNameF2B){

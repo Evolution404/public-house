@@ -51,8 +51,13 @@ const FileUploadAPI = {
   ULClassroom(formData){
     return uploadHelper(formData, '')
   },
-  // 导入部门信息
-  ULDept(formData){
+  // 导入学院部门信息
+  ULXYDept(formData){
+    formData.append('module', 'xueyuanbumen')
+    return uploadHelper(formData, '/tb-xueyuan-bumen/import-excel')
+  },
+  // 导入部处部门信息
+  ULBCDept(formData){
     formData.append('module', 'buchubumen')
     return uploadHelper(formData, '/tb-buchu-bumen/import-excel')
   },

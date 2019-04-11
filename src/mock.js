@@ -112,7 +112,7 @@ let defaultFileList = [{
 }]
 Mock.mock('/changeFilterPH', 'post', {usingArea:24, peopleNum: "1", housePic:defaultFileList})
 Mock.mock('/auditFilterPH', 'post', [{id:1}])
-Mock.mock('/auditDetailPH', 'post', {
+Mock.mock('http://140.249.19.181:8910/api/gongyongfang/auditDetailPH', 'post', {
   dept: '计算机科学与技术学院',
   usingNature: '学院用房',
   secondaryNature: '专业实验室',
@@ -120,9 +120,9 @@ Mock.mock('/auditDetailPH', 'post', {
   floor: '6楼',
   roomNum: '604室',
   usingArea: '100.4平方米',
-  user: ['张三', '李四'],
-  head: '张三',
-  fireHead: '张三',
+  personnel: [{name:'张三', id:1},{name: '李四', id: 2}],
+  head: [{name: '张三', id:1}],
+  fireHead: [{name: '张三', id:1}],
   drawings: ['https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg'],
   housePic: ['https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg'],
   houseDesc: 'this is houseDesc',

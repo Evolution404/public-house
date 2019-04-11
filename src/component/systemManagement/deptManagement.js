@@ -905,12 +905,18 @@ class Import extends Component{
 }
 
 class ImportModal extends Component {
+  state = {
+    type: 'xy'
+  }
   hideModal = () => {
     this.props.close()
   }
+  typeChange = (type)=>{
+    this.setState({type})
+  }
   render() {
     let uploadInfo = {
-      uploadHelper: API.ULDept,
+      uploadHelper: this.state.type==='xy'?API.ULXYDept:API.ULBCDept,
       templateLink: '',
     }
     return (
@@ -924,6 +930,15 @@ class ImportModal extends Component {
         okText="确定"
         cancelText="取消"
       >
+        <Row>
+          <Col style={{marginTop: 5}} span={4}>部门性质:</Col>
+          <Col span={12}>
+            <Select onChange={this.typeChange} defaultValue='xy'>
+              <Option value='xy'>学院</Option>
+              <Option value='bc'>部处</Option>
+            </Select>
+          </Col>
+        </Row>
         <Import {...uploadInfo}></Import>
       </Modal>
     )
