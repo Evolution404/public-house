@@ -36,6 +36,11 @@ const mapNameF2B = {
   newPassword: 'xinmima',
   role: 'juseId',
   buildingImgs: 'louyuTupians',
+  roomNum: 'fangjianhao',
+  useArea: 'shiyongmianji',
+  status: 'zhuangtai',
+  building: 'louyu',
+  floor: 'louceng',
   'location': '', //位置
   usingNature: '', // 使用性质
   secondaryNature: '', // 二级性质

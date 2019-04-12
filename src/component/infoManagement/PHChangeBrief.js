@@ -75,7 +75,8 @@ class MainForm extends Component{
           </Col>
           <Col span={10}>
             <Item labelCol={{span:3}} wrapperCol={{span:20}}>
-              {getFieldDecorator('areaConfig', )(
+              {getFieldDecorator('areaConfig',
+                 {initialValue: this.props.areaConfig})(
                 <CheckboxGroup options={checkboxOption}/>
               )}
             </Item>
@@ -125,6 +126,7 @@ class PHChangeBrief extends Component{
   search = ()=>{
     API.briefChangeFilterPH(this.state.id)
     .then(rs=>{
+      debugger
       this.setState(rs)
       this.setState({hasLoaded: true})
     })

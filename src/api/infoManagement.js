@@ -25,7 +25,19 @@ const PHAddBrief = {
 
   briefAddPH(values){
     return new Promise((resolve, reject)=>{
-      axios.post('/briefAddPH', values)
+      let areaConfig = values['areaConfig']
+      let shifoudixiashi = false
+      let shifoujianyifang = false
+      if(areaConfig){
+        shifoudixiashi = values['areaConfig'].indexOf(0)>-1
+        shifoujianyifang = values['areaConfig'].indexOf(1)>-1
+      }
+      let data = {
+        shifoudixiashi,
+        shifoujianyifang,
+        ...MapF2B(values)
+      }
+      axios.post('/tb-gongyongfang-jibenxinxi/create', data)
       .then(rs=>{
         // 成功调用
         resolve()
@@ -169,10 +181,19 @@ const PHChangeBrief = {
     //    roomNum: xxx,
     // }
     return new Promise((resolve, reject)=>{
-      axios.post('/briefChangeFilterPH', {index})
+      axios.get('/tb-gongyongfang-jibenxinxi/get/'+index)
       .then(rs=>{
         // 将后台传来数据转换成如下格式
-        resolve(rs.data)
+        let areaConfig = []
+        if(rs.data.shifoudixiashi)
+          areaConfig.push(0)
+        if(rs.data.shifoujianyifang)
+          areaConfig.push(1)
+        let data = {
+          areaConfig,
+          ...MapB2F(rs.data),
+        }
+        resolve(data)
       })
       .catch(err=>{
         reject(err)
@@ -250,7 +271,9 @@ const PHList = {
   // 删除公用房记录
   deletePH(indexList){
     return new Promise((resolve, reject)=>{
-      axios.post('/deletePH', {indexList})
+      axios.delete('/tb-gongyongfang-jibenxinxi/delete', {
+        params: {ids: `[${indexList.toString()}]`}
+      })
       .then(rs=>{
         // 不需要传参数, 这里要确保是删除成功
         resolve()
@@ -270,7 +293,9 @@ const basicInfoManagement = {
   // 楼宇名称: buildingName 楼层:floor 房间号: roomNum
   filterPH(filter){
     return new Promise((resolve, reject)=>{
-      axios.post('/filterPH', filter)
+      axios.get('/tb-gongyongfang-jibenxinxi/get/all', {
+        params: MapF2B(filter),
+      })
       .then(rs=>{
         // 将后台传来数据转换成如下格式
         /*[{
@@ -280,7 +305,8 @@ const basicInfoManagement = {
           setUpTime: i,
           maintenancePeople: i,
         }]*/
-        resolve(rs.data)
+        let data = rs.data.map(item=>MapB2F(item))
+        resolve(data)
       })
       .catch(err=>{
         reject(err)

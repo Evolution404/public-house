@@ -1,8 +1,11 @@
 import React, {Component} from 'react'
-import {Upload, Button, Icon, message, Row, Col} from 'antd';
+import {Upload, Button, Icon, message, Row, Col, Form} from 'antd';
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
+import UsingNature from '../common/usingNature'
+
+const Item = Form.Item
 
 class Import extends Component{
   state = {
@@ -11,28 +14,33 @@ class Import extends Component{
   }
 
   handleUpload = () => {
-    const { fileList } = this.state;
-    const formData = new FormData();
-    fileList.forEach((file) => {
-      formData.append('files[]', file);
-    });
+    this.props.form.validateFields((err, values)=>{
+      if(err)return
+      const { fileList } = this.state;
+      const formData = new FormData();
+      fileList.forEach((file) => {
+        formData.append('file', file);
+      });
 
-    this.setState({
-      uploading: true,
-    });
-    this.props.uploadHelper(formData)
-    .then(()=>{
       this.setState({
-        fileList: [],
-        uploading: false,
+        uploading: true,
       });
-      message.success('上传成功');
-    })
-    .catch(err=>{
-      this.setState({
-        uploading: false,
-      });
-      message.error('上传失败');
+      this.props.uploadHelper(formData)
+      .then(()=>{
+        this.setState({
+          fileList: [],
+          uploading: false,
+        });
+        message.success('上传成功');
+      })
+      .catch(err=>{
+        this.setState({
+          uploading: false,
+        })
+        message.error('上传失败');
+        if(err.response)
+          message.error(err.response.data.title)
+      })
     })
   }
 
@@ -57,36 +65,51 @@ class Import extends Component{
       },
       fileList,
     };
-
+    const {getFieldDecorator} = this.props.form
     return (
       <div style={{margin: '20px 0'}}>
         <h3>{this.props.text}</h3>
-        <Row style={{marginTop: 15}}>
-          <Col offset={1} span={4}>
-            <Upload {...props}>
-              <Button>
-                <Icon type="upload" />选择文件
+        <Form>
+          <Row style={{marginTop: 15}}>
+            <Col span={8}>
+              <Item labelCol={{span:10}} wrapperCol={{span:10}} label='使用性质'>
+                {
+                  getFieldDecorator('usingNature',{
+                    rules: [{required: true, message:'请选择使用性质'}]
+                  })(
+                    <UsingNature></UsingNature>
+                  )
+                }
+              </Item>
+            </Col>
+            <Col offset={1} span={4}>
+              <Upload {...props}>
+                <Button>
+                  <Icon type="upload" />选择文件
+                </Button>
+              </Upload>
+            </Col>
+            <Col span={4}>
+              <Button
+                type="primary"
+                onClick={this.handleUpload}
+                disabled={fileList.length === 0}
+                loading={uploading}
+              >
+                {uploading ? '导入中' : '开始导入' }
               </Button>
-            </Upload>
-          </Col>
-          <Col span={4}>
-            <Button
-              type="primary"
-              onClick={this.handleUpload}
-              disabled={fileList.length === 0}
-              loading={uploading}
-            >
-              {uploading ? '导入中' : '开始导入' }
-            </Button>
-          </Col>
-          <Col style={{marginTop: 5}}>
-            <a download href={this.props.templateLink}>导入模板下载</a>
-          </Col>
-        </Row>
+            </Col>
+            <Col style={{marginTop: 5}}>
+              <a download href={this.props.templateLink}>导入模板下载</a>
+            </Col>
+          </Row>
+        </Form>
       </div>
     );
   }
 }
+
+Import = Form.create({name: 'import'})(Import)
 
 class PHImport extends Component{
   render(){
@@ -99,7 +122,7 @@ class PHImport extends Component{
       <h2 style={{textAlign:'center'}}>导入公用房信息</h2>
       <Split></Split>
       <Row>
-        <Col offset={3}>
+        <Col>
           <Import {...uploadInfo}></Import>
         </Col>
       </Row>

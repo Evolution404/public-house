@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
-import {Row, Col, Form, Select, Input, Button, Checkbox, Upload, Icon, message} from 'antd'
+import {Row, Col, Form, Select, Input, Button,
+  Checkbox, Upload, Icon, message, Spin} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import API from '../../api'
@@ -26,13 +27,7 @@ class MainForm extends Component{
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
-        API.briefAddPH(values)
-        .then(()=>{
-          message.success('新增成功')
-        })
-        .catch(err=>{
-          message.error('新增失败')
-        })
+        this.props.add(values)
 
       }
     })
@@ -69,7 +64,7 @@ class MainForm extends Component{
           </Col>
           <Col offset={1} span={8}>
             <Item labelCol={{span:9}} wrapperCol={{span:13, offset:1}} label="房屋状态">
-              {getFieldDecorator('houseStatus', )(
+              {getFieldDecorator('status', )(
                 <Select >
                   <Option value="使用中">使用中</Option>
                   <Option value="待分配">待分配</Option>
@@ -82,7 +77,7 @@ class MainForm extends Component{
         <Row>
           <Col span={8}>
             <Item labelCol={{span:9}} wrapperCol={{span:12}} label="使用面积">
-              {getFieldDecorator('area',{initialValue:this.props.usingArea} )(
+              {getFieldDecorator('useArea', )(
                 <Input />
               )}
             </Item>
@@ -121,16 +116,36 @@ const WrappedMainForm = Form.create({ name: 'main_form' })(MainForm)
 
 
 class PHAddBrief extends Component{
+  state = {
+    loading: false,
+  }
+  add = (values)=>{
+    this.setState({loading: true})
+    API.briefAddPH(values)
+    .then(()=>{
+      message.success('新增成功')
+    })
+    .catch(err=>{
+      message.error('新增失败')
+      if(err.response)
+        message.error(err.response.data.title)
+    })
+    .finally(()=>{
+      this.setState({loading: false})
+    })
+  }
   render(){
     return <MainContainer name="基本信息管理">
       基本信息/新增公用房
+      <Spin spinning={this.state.loading}>
       <Title/>
       <Split/>
-      <Row>
-        <Col offset={2} span={15}>
-          <WrappedMainForm/>
-        </Col>
-      </Row>
+        <Row>
+          <Col offset={2} span={15}>
+            <WrappedMainForm add={this.add}/>
+          </Col>
+        </Row>
+      </Spin>
     </MainContainer>
   }
 }
