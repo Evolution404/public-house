@@ -1,6 +1,8 @@
 import React, {Component} from 'react'
+import { Route, Link } from "react-router-dom";
+import Map from '../../routerMap'
 import
-  {Form, Select, Row, Col, Button, message, DatePicker, Checkbox, Modal, Input, notification}
+  {Form, Select, Row, Col, Button, message, DatePicker, Checkbox, Modal, Input, notification, Empty}
 from 'antd'
 import API from '../../api'
 import {SButton} from '../common/button'
@@ -66,8 +68,12 @@ class ReservationModal extends Component {
       >
         <Form labelCol={{span: 5}} wrapperCol={{span:14}}>
           <Item label="预约时段">
-            {getFieldDecorator('time',)(
-              <Input/>
+            {getFieldDecorator('startStopTime',)(
+              <RangePicker
+                showTime={{ format: 'HH:mm' }}
+                format="YYYY-MM-DD HH:mm"
+                placeholder={['开始时间', '结束时间']}
+              />
             )}
           </Item>
           <Item label="预约用途">
@@ -90,11 +96,13 @@ const WrappedReservationModal = Form.create({ name: 'reservation_modal' })(Reser
 
 class MeetingRoomReservation extends Component{
   state = {
-    tableList: [{id:0}],
+    tableList: [],
+    tableLoading: false,
+    isSearched: false,
     reservationModal: {
       visible: false,
       id: 0,
-    }
+    },
   }
   openReservationModal = id=>{
     this.setState({reservationModal:{visible: true, id}})
@@ -105,9 +113,13 @@ class MeetingRoomReservation extends Component{
   search = ()=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        if(values.startStopTime)
-          values.startStopTime[0] = Math.round(values.startStopTime[0].valueOf()/1000)
-          values.startStopTime[1] = Math.round(values.startStopTime[1].valueOf()/1000)
+        console.log('Received values of form: ', values);
+        this.setState({tableLoading: true, isSearched: true})
+        if(values.startStopTime){
+          let startStopTime =
+            values.startStopTime.map(i=>Math.round((i.valueOf())/1000))
+          values.startStopTime = startStopTime
+        }
         API.searchMeetingRoomReservation(values)
         .then(rs=>{
           this.setState({tableList: rs})
@@ -115,8 +127,9 @@ class MeetingRoomReservation extends Component{
         .catch(err=>{
           message.error('搜索失败')
         })
-        console.log('Received values of form: ', values);
-        // 转成时间字符串
+        .finally(()=>{
+          this.setState({tableLoading: false})
+        })
       }
     })
   }
@@ -147,7 +160,9 @@ class MeetingRoomReservation extends Component{
         render: (text, record, index)=>(
           <div>
             <div style={{display: 'inline-block', padding: '0 10px'}}>
-              <SButton text='详细'/>
+              <Route><Link to={Map.PHDetailInfo.path.replace(':id', record.id)}>
+                  <SButton text='详细'/>
+              </Link></Route>
             </div>
             <div style={{display: 'inline-block', padding: '0 10px'}}>
               <SButton onClick={this.openReservationModal.bind(this, record.id)} text='开始预约'/>
@@ -199,22 +214,26 @@ class MeetingRoomReservation extends Component{
               )}
             </Item>
           </Col>
-            <Col span={4} style={{marginLeft: '-100px'}}>
+            <Col span={3} style={{marginLeft: '-100px'}}>
               <Button type="primary" onClick={this.search}>搜索房间</Button>
             </Col>
             <Col span={4}>
-              <Button type="primary">历史预约信息</Button>
+              <Route>
+                <Link to={Map.MyReservation.path}>
+                  <Button type="primary">历史预约信息</Button>
+                </Link>
+              </Route>
             </Col>
         </Row>
       </Form>
       <Split/>
-      <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>教室使用效益</div>
-      <Row>
-        <Col offset={1}>
-          <p style={{fontSize: '17px'}}>总学时数: {this.state.totalSchool}</p>
-        </Col>
-      </Row>
-      <Table columns={columns} data={this.state.tableList}></Table>
+      {
+        this.state.isSearched?(
+          <Table columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
+        ):(
+          <Empty description="请先搜索"></Empty>
+        )
+      }
       <WrappedReservationModal {...this.state.reservationModal} close={this.closeReservationModal} />
     </MainContainer>
   }

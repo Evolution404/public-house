@@ -12,10 +12,16 @@ import 'echarts/lib/component/legendScroll'
 
 class ECharts extends Component{
   componentDidMount() {
-      // 基于准备好的dom，初始化echarts实例
-      var myChart = echarts.init(document.getElementById(this.props.id));
-      // 绘制图表
-      myChart.setOption(this.props.option);
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById(this.props.id));
+    // 绘制图表
+    myChart.setOption(this.props.option);
+  }
+  componentDidUpdate(){
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById(this.props.id));
+    // 绘制图表
+    myChart.setOption(this.props.option);
   }
   render(){
     let style={

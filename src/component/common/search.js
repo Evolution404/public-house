@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
-import {Select, Input, Form, Row, Col, Button} from 'antd'
+import {Select, Input, Form, Row, Col, Button, Cascader} from 'antd'
+import UsingNature from '../common/usingNature'
 
 const Item = Form.Item
 const Option = Select.Option
@@ -29,7 +30,7 @@ class Search extends Component{
           <Col span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="使用性质">
               {getFieldDecorator('usingNature',)(
-                  <Select size="small"></Select>
+                <UsingNature size="small"/>
               )}
             </Item>
           </Col>

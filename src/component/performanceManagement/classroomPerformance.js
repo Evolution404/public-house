@@ -1,9 +1,10 @@
 import React, {Component} from 'react'
-import {Form, Select, Row, Col, Button, message} from 'antd'
+import {Form, Select, Row, Col, Button, message, Empty} from 'antd'
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Table from '../common/table'
+import Histogram from '../common/histogram'
 
 const Item = Form.Item
 const Option = Select.Option
@@ -12,12 +13,59 @@ class ClassroomPerformance extends Component{
   state = {
     year: 0,
     deptName: '',
+    isSearched: false,
     tableList: [],
     totalSchool: 0,
+    printData: {},
+    isPrinting: false,
+    graphData: {
+      '类别1': {
+          '项目1':100,
+          '项目2':200,
+      },
+      '类别2': {
+          '项目1':100,
+          '项目2':200,
+      },
+      '类别3': {
+          '项目1':100,
+          '项目2':200,
+      },
+      '类别4': {
+          '项目1':100,
+          '项目2':200,
+      },
+      '类别5': {
+          '项目1':100,
+          '项目2':200,
+      },
+    },
+  }
+  getCanvasURL = (id)=>{
+    return document.querySelector(`#${id} canvas`).toDataURL()
+  }
+  print = ()=>{
+    let printData = {
+      graph: this.getCanvasURL('graph'),
+    }
+    this.setState({isPrinting: true, printData}, ()=>{
+      // 直接执行有可能图片没有加载完成
+      // 使用一个interval直到找到图片才开始打印
+      let interval = setInterval(()=>{
+        if(document.querySelectorAll('#printArea img').length>0){
+          clearInterval(interval)
+          window.document.body.innerHTML =
+            window.document.getElementById('printArea').innerHTML
+          window.print()
+          window.location.reload()
+        }
+      }, 100)
+    })
   }
   search = ()=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        this.setState({isSearched: true})
         API.searchClassroomPerformance(values)
         .then(rs=>{
           this.setState({tableList: rs})
@@ -99,19 +147,43 @@ class ClassroomPerformance extends Component{
           </Col>
           <Col offset={1} span={2}>
             <div style={{marginTop:'5px'}}>
-              <Button block type='primary'>打印</Button>
+              <Button onClick={this.print} block type='primary'>打印</Button>
             </div>
           </Col>
         </Row>
       </Form>
       <Split/>
-      <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>教室使用效益</div>
-      <Row>
-        <Col offset={1}>
-          <p style={{fontSize: '17px'}}>总学时数: {this.state.totalSchool}</p>
-        </Col>
-      </Row>
-      <Table columns={columns} data={this.state.tableList}></Table>
+      <div id="printArea">
+        <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>教室使用效益</div>
+        {
+          this.state.isSearched?(
+            <div>
+              <Row>
+                <Col offset={1}>
+                  <p style={{fontSize: '17px'}}>总学时数: {this.state.totalSchool}</p>
+                </Col>
+              </Row>
+              <Table columns={columns} data={this.state.tableList}></Table>
+              <Row style={{marginTop: 30}}>
+                <Col offset={1} span={12}>
+                  {
+                    !this.state.isPrinting&&(
+                      <Histogram id="graph"
+                        title="图表对比（各教学单位使用效益、米均效益对比情况）"
+                        data={this.state.graphData}></Histogram>
+                    )
+                  }
+                  {this.state.isPrinting&&(
+                    <img style={{width:500}} src={this.state.printData.graph} alt=""/>
+                  )}
+                </Col>
+              </Row>
+            </div>
+          ):(
+            <Empty description="请先搜索"></Empty>
+          )
+        }
+      </div>
     </MainContainer>
   }
 }

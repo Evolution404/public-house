@@ -1,5 +1,6 @@
 import React, {Component} from 'react'
-import {Form, Row, Col, Select, Input, Button, message, DatePicker} from 'antd'
+import {Form, Row, Col, Select, Input, Button, message, DatePicker, Empty} from 'antd'
+import {SButton} from '../common/button'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Table from '../common/table'
@@ -10,18 +11,29 @@ const {RangePicker} = DatePicker;
 
 class UseStatistical extends Component{
   state = {
-    tableList: [{id:1}],
+    tableList: [],
+    tableLoading: false,
+    isSearched: false,
   }
-  search = type=>{
+  search = ()=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        this.setState({tableLoading: true, isSearched: true})
         console.log('Received values of form: ', values);
+        if(values.startStopTime){
+          let startStopTime =
+            values.startStopTime.map(i=>Math.round((i.valueOf())/1000))
+          values.startStopTime = startStopTime
+        }
         API.searchUseStatistical(values)
         .then((rs)=>{
           this.setState({tableList: rs})
         })
         .catch(err=>{
           message.error('查询失败')
+        })
+        .finally(()=>{
+          this.setState({tableLoading: false})
         })
       }
     })
@@ -52,7 +64,7 @@ class UseStatistical extends Component{
         title: '操作',
         render: (text, record, index)=>(
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <Button type="primary">详细</Button>
+            <SButton text='详细'></SButton>
           </div>
       )
       }
@@ -87,7 +99,11 @@ class UseStatistical extends Component{
           <Col span={12}>
             <Item labelCol={{span:6}} wrapperCol={{span:12}} label="起止时间">
               {getFieldDecorator('startStopTime',)(
-                <RangePicker />
+                <RangePicker
+                  showTime={{ format: 'HH:mm' }}
+                  format="YYYY-MM-DD HH:mm"
+                  placeholder={['开始时间', '结束时间']}
+                />
               )}
             </Item>
           </Col>
@@ -101,7 +117,13 @@ class UseStatistical extends Component{
         <Col span={2}><Button type="primary">导出到文件</Button></Col>
         <Col offset={1} span={2}><Button block type="primary">打印</Button></Col>
       </Row>
-      <Table data={this.state.tableList} columns={columns}></Table>
+      {
+        this.state.isSearched?(
+          <Table columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
+        ):(
+          <Empty description="请先搜索"></Empty>
+        )
+      }
     </MainContainer>
   }
 }

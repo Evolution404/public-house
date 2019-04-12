@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import { hot } from 'react-hot-loader'
 import {
+  Redirect,
   HashRouter as Router,
   Route,
 } from "react-router-dom";
@@ -84,6 +85,9 @@ class App extends Component{
             width: '78%',
           }}>
               <div>
+                <Route exact path='/'
+                  render={()=>(<Redirect  to={RouterMap.MyPH.path} />)}></Route>
+                
                 {routerList}
               </div>
           </div>

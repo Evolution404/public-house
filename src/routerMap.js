@@ -1,4 +1,4 @@
-import Home from './component/home'
+// import Home from './component/home'
 import Login from './component/common/login'
 
 // 信息管理
@@ -54,11 +54,6 @@ import UserManagement from './component/systemManagement/userManagement'
 
 
 const routerMap = {
-  Home: {
-    path:'/',
-    name:'主页',
-    component: Home
-  },
   Login: {
     path:'/login',
     name:'登录页面',

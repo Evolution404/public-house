@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
-import {Row, Col, Form, Select, Input, Button, Cascader, Checkbox, Upload, Icon} from 'antd'
+import {Row, Col, Form, Select, Input, Button, Checkbox, Upload, Icon} from 'antd'
 import MainContainer from '../common/mainContainer'
+import UsingNature from '../common/usingNature'
 import Split from '../common/split'
 const {Item} = Form
 const Option = Select.Option
@@ -38,48 +39,6 @@ class MainForm extends Component{
   }
   render(){
     const { getFieldDecorator } = this.props.form
-    const options = [
-      {
-        value: '0',
-        label: '产业商业用房',
-        children: [{
-          value: 'hangzhou',
-          label: 'Hangzhou',
-        }],
-      },
-      {
-        value: '1',
-        label: '后勤保障用房',
-        children: [{
-          value: 'hangzhou',
-          label: 'Hangzhou',
-        }],
-      },
-      {
-        value: '2',
-        label: '公共服务用房',
-        children: [{
-          value: 'hangzhou',
-          label: 'Hangzhou',
-        }],
-      },
-      {
-        value: '3',
-        label: '党政机关用房',
-        children: [{
-          value: 'hangzhou',
-          label: 'Hangzhou',
-        }],
-      },
-      {
-        value: '4',
-        label: '学院用房',
-        children: [{
-          value: 'hangzhou',
-          label: 'Hangzhou',
-        }],
-      },
-    ]
     const checkboxOption = [
       { label: '投影仪', value: 0},
       { label: '音响', value: 1},
@@ -125,12 +84,7 @@ class MainForm extends Component{
         </Row>
         <Item labelCol={{span:3}} wrapperCol={{span:8}} label="使用性质">
           {getFieldDecorator('usingNature', )(
-            <Cascader
-              
-              placeholder='请选择'
-              options={options}
-              expandTrigger="hover"
-            />
+            <UsingNature></UsingNature>
           )}
         </Item>
         <Item labelCol={{span:3}} wrapperCol={{span:4}} label="使用面积">

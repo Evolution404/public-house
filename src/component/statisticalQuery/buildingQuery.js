@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Select, Button, Form, Row, Col, Input, message, Empty, Spin} from 'antd'
+import {Select, Button, Form, Row, Col, message, Empty, Spin} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Zmage from 'react-zmage'

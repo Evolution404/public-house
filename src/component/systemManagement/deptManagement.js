@@ -4,6 +4,7 @@ import {SButton} from '../common/button'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Table, {TableUtil}from '../common/table'
+import YearSelect from '../common/yearSelect'
 import API from '../../api'
 const Item = Form.Item
 const confirm = Modal.confirm;
@@ -287,9 +288,7 @@ class UpdateForm extends Component{
           <Row style={{margin: '-20px 0'}}><Col>
             <Item labelCol={{span:4}} wrapperCol={{span:4}} label="年份">
               {getFieldDecorator('year',{initialValue: data.year})(
-                <Select size="small">
-                  <Option value="2019">2019</Option>
-                </Select>
+                <YearSelect></YearSelect>
               )}
             </Item>
           </Col></Row>
@@ -343,9 +342,7 @@ class UpdateForm extends Component{
           <Row style={{margin: '-20px 0'}}><Col>
             <Item labelCol={{span:4}} wrapperCol={{span:4}} label="年份">
               {getFieldDecorator('year',{initialValue: data.year})(
-                <Select size="small">
-                  <Option value="2019">2019</Option>
-                </Select>
+                <YearSelect></YearSelect>
               )}
             </Item>
           </Col></Row>
@@ -511,24 +508,28 @@ class AddForm extends Component{
       <Form labelAlign='left'>
         <Row style={{margin: '-20px 0'}}><Col>
           <Item labelCol={{span:4}} wrapperCol={{span:4}} label="年份">
-            {getFieldDecorator('year',)(
-              <Select size="small">
-                <Option value="2019">2019</Option>
-              </Select>
+            {getFieldDecorator('year',{
+              rules: [{required: true, message:'请选择年份'}]
+            })(
+              <YearSelect></YearSelect>
             )}
           </Item>
         </Col></Row>
         <Row>
           <Col offset={2} span={10}>
             <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="部门名称">
-              {getFieldDecorator('dept',)(
+              {getFieldDecorator('dept',{
+                rules: [{required: true, message:'请输入部门名称'}]
+              })(
                 <Input size="small" />
               )}
             </Item>
           </Col>
           <Col offset={2} span={10}>
             <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:10}} label="部门性质">
-              {getFieldDecorator('type',)(
+              {getFieldDecorator('type',{
+                rules: [{required: true, message:'请选择部门性质'}]
+              })(
                 <Select onChange={this.props.typeChange} size="small">
                   <Option value="xy">学院</Option>
                   <Option value="bc">部处</Option>
@@ -544,32 +545,36 @@ class AddForm extends Component{
         <Form labelAlign='left'>
         <Row style={{margin: '-20px 0'}}><Col>
           <Item labelCol={{span:4}} wrapperCol={{span:4}} label="年份">
-            {getFieldDecorator('year',)(
-              <Select size="small">
-                <Option value="2019">2019</Option>
-              </Select>
+            {getFieldDecorator('year',{
+              rules: [{required: true, message:'请选择年份'}]
+            })(
+              <YearSelect></YearSelect>
             )}
           </Item>
         </Col></Row>
-          <Row>
-            <Col offset={2} span={10}>
-              <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="部门名称">
-                {getFieldDecorator('dept',)(
-                  <Input size="small" />
-                )}
-              </Item>
-            </Col>
-            <Col offset={2} span={10}>
-              <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:10}} label="部门性质">
-                {getFieldDecorator('type',)(
-                  <Select onChange={this.props.typeChange} size="small">
-                    <Option value="xy">学院</Option>
-                    <Option value="bc">部处</Option>
-                  </Select>
-                )}
-              </Item>
-            </Col>
-          </Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="部门名称">
+              {getFieldDecorator('dept',{
+                rules: [{required: true, message:'请输入部门名称'}]
+              })(
+                <Input size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:10}} label="部门性质">
+              {getFieldDecorator('type',{
+                rules: [{required: true, message:'请选择部门性质'}]
+              })(
+                <Select onChange={this.props.typeChange} size="small">
+                  <Option value="xy">学院</Option>
+                  <Option value="bc">部处</Option>
+                </Select>
+              )}
+            </Item>
+          </Col>
+        </Row>
           <Row><Col style={{textAlign: 'center'}}>部处部门填写</Col></Row>
           <Row>
             <Col offset={2} span={10}>
@@ -628,32 +633,36 @@ class AddForm extends Component{
         <Form labelAlign='left'>
         <Row style={{margin: '-20px 0'}}><Col>
           <Item labelCol={{span:4}} wrapperCol={{span:4}} label="年份">
-            {getFieldDecorator('year',)(
-              <Select size="small">
-                <Option value="2019">2019</Option>
-              </Select>
+            {getFieldDecorator('year',{
+              rules: [{required: true, message:'请选择年份'}]
+            })(
+              <YearSelect></YearSelect>
             )}
           </Item>
         </Col></Row>
-          <Row>
-            <Col offset={2} span={10}>
-              <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="部门名称">
-                {getFieldDecorator('dept',)(
-                  <Input size="small" />
-                )}
-              </Item>
-            </Col>
-            <Col offset={2} span={10}>
-              <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:10}} label="部门性质">
-                {getFieldDecorator('type',)(
-                  <Select onChange={this.props.typeChange} size="small">
-                    <Option value="xy">学院</Option>
-                    <Option value="bc">部处</Option>
-                  </Select>
-                )}
-              </Item>
-            </Col>
-          </Row>
+        <Row>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="部门名称">
+              {getFieldDecorator('dept',{
+                rules: [{required: true, message:'请输入部门名称'}]
+              })(
+                <Input size="small" />
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={10}>
+            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:10}} label="部门性质">
+              {getFieldDecorator('type',{
+                rules: [{required: true, message:'请选择部门性质'}]
+              })(
+                <Select onChange={this.props.typeChange} size="small">
+                  <Option value="xy">学院</Option>
+                  <Option value="bc">部处</Option>
+                </Select>
+              )}
+            </Item>
+          </Col>
+        </Row>
           <Row><Col style={{textAlign: 'center'}}>学院部门填写</Col></Row>
           <Row>
             <Col offset={2} span={10}>

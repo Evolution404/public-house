@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Modal, message, notification, Form, Input} from 'antd';
+import {Modal, message, notification, Form, Input, Empty} from 'antd';
 import {SButton} from '../common/button'
 import MainContainer from '../common/mainContainer'
 import Search from '../common/search'
@@ -67,58 +67,17 @@ const WrappedRefuseModal = Form.create({ name: 'refuse_modal' })(RefuseModal)
 
 class ReservationAudit extends Component{
   state = {
-    tableList: [{id:1}],
+    tableList: [],
+    isSearched: false,
+    tableLoading: false,
     refuseModal: {
       visible: false,
       id: 0,
     }
   }
-  deptNameChange = (e)=>{
-    this.setState({
-      buildingName: e.target.value
-    })
-  }
-  usingNatureChange = (e)=>{
-    this.setState({
-      buildingName: e.target.value
-    })
-  }
-  auditStatusChange = (e)=>{
-    this.setState({
-      buildingName: e.target.value
-    })
-  }
-  userChange = (e)=>{
-    this.setState({
-      buildingName: e.target.value
-    })
-  }
-  buildingNameChange = (e)=>{
-    this.setState({
-      buildingName: e.target.value
-    })
-  }
-  roomNumChange = (e)=>{
-    this.setState({
-      roomNum: e.target.value
-    })
-  }
-  houseStatusChange = (e)=>{
-    this.setState({
-      roomNum: e.target.value
-    })
-  }
-  search = ()=>{
-    let filter = {
-      deptName: this.state.deptName,
-      usingNature: this.state.usingNatur,
-      auditStatus: this.state.auditStatus,
-      user: this.state.user,
-      buildingName: this.state.buildingName,
-      roomNum: this.state.roomNum,
-      houseStatus: this.state.houseStatus,
-    }
-    return API.searchReservationAudit(filter)
+  search = (values)=>{
+    this.setState({tableLoading: true, isSearched: true})
+    API.searchReservationAudit(values)
     .then(rs=>{
       this.setState({
         tableList: rs
@@ -126,6 +85,9 @@ class ReservationAudit extends Component{
     })
     .catch(err=>{
       message.error('获取失败, 请重试')
+    })
+    .finally(()=>{
+      this.setState({tableLoading: false})
     })
   }
   onAgree = id=>{
@@ -150,16 +112,6 @@ class ReservationAudit extends Component{
     this.setState({refuseModal:{visible: false, id: 0}})
   }
   render(){
-    let changeListener = {
-      deptNameChange: this.deptNameChange,
-      usingNatureChange: this.usingNatureChange,
-      auditStatusChange: this.auditStatusChange,
-      userChange: this.userChange,
-      buildingNameChange: this.buildingNameChange,
-      roomNumChange: this.roomNumChange,
-      houseStatus: this.houseStatusChange,
-      search: this.search,
-    }
     let columns = [
       {
         title: '序号',
@@ -204,9 +156,15 @@ class ReservationAudit extends Component{
       }
     ]
     return <MainContainer name="预约审批">
-      <Search {...changeListener}/>
+      <Search onSearch={this.search}/>
       <Split />
-      <Table columns={columns} data={this.state.tableList}></Table>
+      {
+        this.state.isSearched?(
+          <Table columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
+        ):(
+          <Empty description="请先搜索"></Empty>
+        )
+      }
       <WrappedRefuseModal close={this.closeRefuseModal} {...this.state.refuseModal} />
     </MainContainer>
   }

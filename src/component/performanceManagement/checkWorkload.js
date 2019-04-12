@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Button, Form, Row, Col, message, Select} from 'antd'
+import {Button, Form, Row, Col, message, Select, Empty} from 'antd'
 import API from '../../api'
 import Table, {TableUtil}from '../common/table'
 import MainContainer from '../common/mainContainer'
@@ -57,11 +57,14 @@ class CheckWorkload extends Component{
   state = {
     deptName: '',
     tableList: [],
+    isSearched: false,
+    tableLoading: false,
   }
   search = ({deptName})=>{
     this.setState({
       deptName,
     })
+    this.setState({tableLoading: true, isSearched: true})
     API.searchWorkLoad(deptName)
     .then(rs=>{
       this.setState({
@@ -72,13 +75,22 @@ class CheckWorkload extends Component{
       console.log(err)
       message.error('搜索失败')
     })
+    .finally(()=>{
+      this.setState({tableLoading: false})
+    })
   }
 
   render(){
     return <MainContainer name="效益管理">
       <WrappedSearch onSearch={this.search}/>
       <Split/>
-      <DisplayTable data={this.state.tableList}/>
+      {
+        this.state.isSearched?(
+          <DisplayTable loading={this.state.tableLoading} data={this.state.tableList}/>
+        ):(
+          <Empty description="请先搜索"></Empty>
+        )
+      }
     </MainContainer>
   }
 }

@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Form, Row, Col, Select, Input, Button, message} from 'antd'
+import {Form, Row, Col, Select, Input, Button, message, Empty} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Table from '../common/table'
@@ -11,11 +11,14 @@ const Option = Select.Option
 
 class MyReservation extends Component{
   state = {
-    tableList: [{id:1}],
+    tableList: [],
+    tableLoading: false,
+    isSearched: false,
   }
   search = type=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        this.setState({tableLoading: true, isSearched: true})
         console.log('Received values of form: ', values);
         values = {
           ...values,
@@ -27,6 +30,9 @@ class MyReservation extends Component{
         })
         .catch(err=>{
           message.error('查询失败')
+        })
+        .finally(()=>{
+          this.setState({tableLoading: false})
         })
       }
     })
@@ -150,7 +156,13 @@ class MyReservation extends Component{
         </Row>
       </Form>
       <Split/>
-      <Table data={this.state.tableList} columns={columns}></Table>
+      {
+        this.state.isSearched?(
+          <Table columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
+        ):(
+          <Empty description="请先搜索"></Empty>
+        )
+      }
     </MainContainer>
   }
 }

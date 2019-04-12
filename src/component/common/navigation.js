@@ -16,8 +16,8 @@ class Sider extends Component {
     openKeys: [],
     selectedKeys: [],
   }
-  componentDidMount(){
-    let pathname = this.props.location.pathname
+  // 根据路由信息设置打开和激活的导航信息
+  initState = (pathname)=>{
     this.props.data.forEach(item=>{
       item.list.forEach(newItem=>{
         if(newItem.path.split('/')[1]===pathname.split('/')[1])
@@ -25,6 +25,16 @@ class Sider extends Component {
             selectedKeys: [`${item.text}-${newItem.name}`]})
       })
     })
+  }
+  componentDidMount(){
+    let pathname = this.props.location.pathname
+    this.initState(pathname)
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.location.pathname !== this.props.location.pathname) {
+      let pathname = nextProps.location.pathname
+      this.initState(pathname)
+    } 
   }
   onOpenChange = (openKeys) => {
     this.setState({ openKeys })

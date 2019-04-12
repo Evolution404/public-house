@@ -11,7 +11,6 @@ import Table from '../common/table'
 import {SButton} from '../common/button'
 import MainContainer from '../common/mainContainer'
 
-const Option = Select.Option
 const Item = Form.Item
 
 class InfoTag extends Component{
@@ -172,8 +171,7 @@ class MyPH extends Component{
     personnelInfo: {},
     tableList: [],
     tableLoading: false,
-    // TODO infoLoading改成true
-    infoLoading: false,
+    infoLoading: true,
   }
   initPersonnelInfo = id=>{
     API.getPersonnelInfo(id)
@@ -247,6 +245,7 @@ class MyPH extends Component{
       <Search onSearch={this.search}></Search>
       <Split></Split>
       <DisplayTable
+        loading={this.state.tableLoading}
         data={this.state.tableList}/>
     </MainContainer>
   }
