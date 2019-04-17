@@ -9,6 +9,7 @@ import PHAddBrief from './component/infoManagement/PHAddBrief'
 import PHChange from './component/infoManagement/PHChange'
 import PHChangeBrief from './component/infoManagement/PHChangeBrief'
 import PHImport from './component/infoManagement/PHImport'
+import PHImportDetail from './component/infoManagement/PHImportDetail'
 import PHAuditDetail from './component/infoManagement/PHAuditDetail'
 import PHAudit from './component/infoManagement/PHAudit'
 import PHDetailInfo from './component/infoManagement/PHDetailInfo'
@@ -93,6 +94,11 @@ const routerMap = {
     path:'/PHImport',
     name:'公用房导入',
     component: PHImport
+  },
+  PHImportDetail: {
+    path:'/PHImportDetail',
+    name:'公用房导入',
+    component: PHImportDetail
   },
   PHAuditDetail: {
     path:'/PHAuditDetail/:id',

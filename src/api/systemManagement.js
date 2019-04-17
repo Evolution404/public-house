@@ -4,7 +4,17 @@ import Map from '../routerMap'
 
 const deptManagement = {
   // 部门管理
-
+  getDepts(){
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-bumen/get/all/bumengmingcheng')
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
   searchDept(values){
 
     // 搜索部门, type可能是bc(部处)也可能是xy(学院)
@@ -187,6 +197,30 @@ const parmManagement = {
 const buildingManagement = {
   // 楼宇管理
 
+  getBuildings(){
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-louyu/get/all/louyumingcheng')
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
+  getBuildingFloors(building){
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-louyu/get/louceng', {
+        params: {louyumingcheng: building},
+      })
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
   searchBuilding(name){
     return new Promise((resolve, reject)=>{
       axios.get('/tb-louyu/get/all',
@@ -414,6 +448,7 @@ const userManagement = {
         returnData.userData.userName = rs.data['yonghumingcheng']
         returnData.userData.token = rs.data['token']
         returnData.userData.id= rs.data['id']
+        returnData.userData.workNum= rs.data['gonghao']
         resolve(returnData)
       })
       .catch(err=>{

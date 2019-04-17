@@ -1,12 +1,15 @@
 import React, {Component} from 'react'
-import {Row, Col, Form, Select, Input, Button, Checkbox, Upload, Icon} from 'antd'
+import {Row, Col, Form, Button, message} from 'antd'
 import MainContainer from '../common/mainContainer'
 import UsingNature from '../common/usingNature'
 import Split from '../common/split'
+import API from '../../api'
+import {ScientificBuilding,
+  LogisticsBuilding,
+  BusinessBuilding,
+  CollegePartyBuilding} from './commonFormItem'
 const {Item} = Form
-const Option = Select.Option
-const { TextArea } = Input
-const CheckboxGroup = Checkbox.Group
+
 
 function Title(){
   return (
@@ -18,7 +21,15 @@ function Title(){
   )
 }
 
+
 class MainForm extends Component{
+  state = {
+    type: '',
+  }
+  setType = (props)=>{
+    this.setState({type: props[0]})
+    return props
+  }
   staging = ()=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
@@ -28,120 +39,47 @@ class MainForm extends Component{
   }
   reset = ()=>{
     this.props.form.resetFields()
+    this.setState({type: '1'})
   }
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
+        API.addPH(values)
+        .then(()=>{
+          message.success('添加成功')
+        })
+        .catch(err=>{
+          message.error('添加失败')
+          if(err.response){
+            message.error(err.response.data.title)
+          }
+        })
       }
     })
   }
   render(){
     const { getFieldDecorator } = this.props.form
-    const checkboxOption = [
-      { label: '投影仪', value: 0},
-      { label: '音响', value: 1},
-      { label: '麦克风', value: 2},
-      { label: '白板', value: 3},
-      { label: '电脑', value: 4},
-    ]
+    let changeForm = {
+      '1':<ScientificBuilding {...this.props}></ScientificBuilding>,
+      '2':<LogisticsBuilding {...this.props}></LogisticsBuilding>,
+      '3':<BusinessBuilding {...this.props}></BusinessBuilding>,
+      '4':<CollegePartyBuilding {...this.props}></CollegePartyBuilding>,
+    }
     return (
       <Form onSubmit={this.handleSubmit}>
-        <Item labelCol={{span:3}} wrapperCol={{span:4}} label="所属部门">
-          {getFieldDecorator('dept',{rules:[{required: true, message: '请选择所属部门'}]} )(
-            <Select >
-              <Option value="部门1">部门1</Option>
-            </Select>
-          )}
-        </Item>
-        <Row>
-          <Col span={8}>
-            <Item labelCol={{span:9}} wrapperCol={{span:13}} label="楼宇">
-              {getFieldDecorator('building', )(
-                <Select >
-                  <Option value="部门1">部门1</Option>
-                </Select>
-              )}
-            </Item>
-          </Col>
-          <Col span={8}>
-            <Item labelCol={{span:6}} wrapperCol={{span:13, offset:1}} label="楼层">
-              {getFieldDecorator('floor', )(
-                <Select >
-                  <Option value="部门1">部门1</Option>
-                </Select>
-              )}
-            </Item>
-          </Col>
-          <Col span={8}>
-            <Item labelCol={{span:6}} wrapperCol={{span:13, offset:1}} label="房间号">
-              {getFieldDecorator('roomNum', )(
-                <Input />
-              )}
-            </Item>
-          </Col>
-        </Row>
         <Item labelCol={{span:3}} wrapperCol={{span:8}} label="使用性质">
-          {getFieldDecorator('usingNature', )(
-            <UsingNature></UsingNature>
+          {getFieldDecorator('usingNature', {
+            getValueFromEvent: this.setType,
+            rules:[{required: true, message:'请选择使用性质'}]
+          })(
+            <UsingNature changeOnSelect={false}></UsingNature>
           )}
         </Item>
-        <Item labelCol={{span:3}} wrapperCol={{span:4}} label="使用面积">
-          {getFieldDecorator('area',{rules:[{type: 'number', message: '请输入数字',transform:(value)=> {return Number(value)}}]} )(
-            <Input />
-          )}
-        </Item>
-        <Item labelCol={{span:3}} wrapperCol={{span:12}} label="使用者">
-          {getFieldDecorator('user', )(
-            <Input />
-          )}
-        </Item>
-        <Item labelCol={{span:3}} wrapperCol={{span:12}} label="负责人">
-          {getFieldDecorator('head', )(
-            <Input />
-          )}
-        </Item>
-        <Item labelCol={{span:3}} wrapperCol={{span:12}} label="防火责任人">
-          {getFieldDecorator('fireHead', )(
-            <Input />
-          )}
-        </Item>
-        <Item labelCol={{span:3}} wrapperCol={{span:20}} label="房屋描述">
-          {getFieldDecorator('houseDesc', )(
-            <TextArea rows={4}></TextArea>
-          )}
-        </Item>
-        <Item labelCol={{span:3}} wrapperCol={{span:20}} label="设备配置">
-          {getFieldDecorator('deviceConfig', )(
-            <CheckboxGroup options={checkboxOption}/>
-          )}
-        </Item>
-        <Item labelCol={{span:3}} wrapperCol={{span:4}} label="容纳人数">
-          {getFieldDecorator('peopleNum', )(
-            <Select >
-              <Option value="0">不限</Option>
-              <Option value="1">5人以下</Option>
-              <Option value="2">5-10人</Option>
-              <Option value="3">10-20人</Option>
-              <Option value="4">20人以上</Option>
-            </Select>
-          )}
-        </Item>
-        <Item labelCol={{span:3}} wrapperCol={{span:12}} label="实际人数">
-          {getFieldDecorator('realPeopleNum', )(
-            <Input/>
-          )}
-        </Item>
-        <Item labelCol={{span:3}} wrapperCol={{span:12}} label="房屋照片">
-          {getFieldDecorator('housePic', )(
-            <Upload action='//jsonplaceholder.typicode.com/posts/' listType='picture'>
-              <Button>
-                <Icon type="upload" /> 上传
-              </Button>
-            </Upload>
-          )}
-        </Item>
+        {
+          changeForm[this.state.type]
+        }
         <Row>
           <Col span={4} offset={10}>
             <Button type='primary' onClick={this.staging}>暂时保存</Button>
@@ -169,7 +107,7 @@ class PHAdd extends Component{
       <Split/>
       <Row>
         <Col span={15}>
-          <WrappedMainForm/>
+          <WrappedMainForm />
         </Col>
       </Row>
     </MainContainer>

@@ -5,14 +5,14 @@ import {
 } from "react-router-dom";
 import Map from '../../routerMap'
 import {Button,Form, Row, Col, message, Modal, Upload,
-  Icon, Select, Input} from 'antd'
+  Icon, Input} from 'antd'
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import {LButton, SButton} from '../common/button'
 import Split from '../common/split'
-import Table, {TableUtil}from '../common/table'
+import Table from '../common/table'
+import {BuildingSelect} from '../common/select'
 const confirm = Modal.confirm
-const Option = Select.Option
 const Item = Form.Item
 
 
@@ -33,8 +33,7 @@ class Search extends Component{
           <Col span={6}>
             <Item label="楼宇名称">
               {getFieldDecorator('buildingName',)(
-                <Select placeholder="">
-                </Select>
+                <BuildingSelect></BuildingSelect>
               )}
             </Item>
           </Col>
@@ -256,7 +255,6 @@ const WrappedUploadModal = Form.create({ name: 'upload_modal' })(UploadModal)
 
 class PHManagement extends Component{
   state = {
-    // 以下数据是搜索组件需要的数据, 使用双向数据绑定
     tableList: [], // 表格处的数据
     tableLoading: false,
     selected: [], // 被选中的数据, 数值代表的是在tableList中的位置

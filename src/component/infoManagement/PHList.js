@@ -4,13 +4,14 @@ import {
   Link
 } from "react-router-dom";
 import Map from '../../routerMap'
-import {Modal, message} from 'antd';
+import {Modal, message, Empty} from 'antd';
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import {LButton, SButton} from '../common/button'
 import Split from '../common/split'
-import Table, {TableUtil} from '../common/table'
+import Table from '../common/table'
 import Search from '../common/search'
+import columns from './typeColumns'
 
 const confirm = Modal.confirm;
 
@@ -26,7 +27,7 @@ class ButtonGroup extends Component{
           <div style={{padding: '10px', display: 'inline-block'}}><LButton onClick={this.props.delete.bind(this, -1)} text='X删除'/></div>
           <div style={{padding: '10px', display: 'inline-block'}}><LButton onClick={this.props.refresh} text='刷新'/></div>
           <div style={{padding: '10px', display: 'inline-block'}}>
-            <Link to={Map.PHImport.path}>
+            <Link to={Map.PHImportDetail.path}>
               <LButton text='从文件夹导入'/>
             </Link>
           </div>
@@ -48,34 +49,80 @@ class DisplayTable extends Component{
     }
   }
   render(){
-    const columns = TableUtil.mapColumns([
-      '序号', '部门', '位置', '使用性质', 
-      '使用者', '填报时间', '状态', '审批时间'
-    ]) 
-    columns.push({
+    let tableColumns = JSON.parse(JSON.stringify(columns))
+    // 未上报
+    // 已上报
+    // 已驳回
+    // 已批准
+    let getChangeButton = (record)=>{
+      let path = Map.PHChange.path.replace(':id', `${this.props.type}-${record.id}`)
+      switch(record.auditStatus){
+        case '未上报':
+        return (
+          <Link to={path}>
+            <SButton text='修改'/>
+          </Link>
+        )
+        case '已上报':
+        return (
+          <Link to={path}>
+            <SButton text='变更'/>
+          </Link>
+        )
+        case '已驳回':
+        return (
+          <Link to={path}>
+            <SButton text='变更'/>
+          </Link>
+        )
+        case '已批准':
+        return (
+          <SButton disable={true} text='变更'/>
+        )
+        default:
+        return (
+          <Link to={path}>
+            <SButton text='修改'/>
+          </Link>
+        )
+      }
+    }
+    let operate = {
       title: '操作',
       render: (text, record, index)=>(
         <Router>
           <div>
             <div style={{display: 'inline-block', padding: '0 5px'}}>
-              <SButton disable={record.status===1} onClick={this.props.delete.bind(this,index)} text='X删除'/>
+              <SButton disable={record.auditStatus==='已审核'} onClick={this.props.delete.bind(this,index)} text='X删除'/>
             </div>
             <div style={{display: 'inline-block', padding: '0 5px'}}>
-               <SButton text='详细'/> 
-            </div>
-            <div style={{display: 'inline-block', padding: '0 5px'}}>
-                <SButton onClick={this.props.report.bind(this, index)} disable={record.status!==0} text='上报'/>
-            </div>
-            <div style={{display: 'inline-block', padding: '0 5px'}}>
-              <Link to={Map.PHChange.path.replace(':id', record.id)}>
-                <SButton disable={record.status!==1} text='变更'/>
+              <Link to={Map.PHDetailInfo.path.replace(':id', `${this.props.type}-${record.id}`)}>
+                <SButton text='详细'/> 
               </Link>
+            </div>
+            <div style={{display: 'inline-block', padding: '0 5px'}}>
+                <SButton onClick={this.props.report.bind(this, index)} disable={record.auditStatus!=='未上报'} text='上报'/>
+            </div>
+            <div style={{display: 'inline-block', padding: '0 5px'}}>
+              {
+                getChangeButton(record)
+              }
             </div>
           </div>
         </Router>
       )
-    })
-    return <Table columns={columns} {...this.props}/>
+    }
+    tableColumns[1].push(operate)
+    tableColumns[2].push(operate)
+    tableColumns[3].push(operate)
+    tableColumns[4].push(operate)
+    if(this.props.type){
+      tableColumns = tableColumns[this.props.type]
+    }else{
+      tableColumns = []
+    }
+
+    return <Table columns={tableColumns} {...this.props}/>
   }
 }
 
@@ -83,19 +130,23 @@ class PHList extends Component{
   constructor(props){
     super(props)
     this.state = {
-      // 以下数据是搜索组件需要的数据, 使用双向数据绑定
-      dept: '',
+      type: '',
+      deptName: '',
       uesingNature: '',
       auditStatus: '',
       personnel: '',
       buildingName: '',
       roomNum: '',
       houseStatus: '',
+      isSearched: false,
       tableList: [], // 表格处的数据
+      tableLoading: false,
       selected: [], // 被选中的数据, 数值代表的是在tableList中的位置
     }
   }
   search = (values)=>{
+    console.log(values)
+    this.setState({type: values.usingNature[0], isSearched: true, tableLoading: true})
     this.setState(values)
     API.listFilterPH(values)
     .then(rs=>{
@@ -103,6 +154,9 @@ class PHList extends Component{
     })
     .catch(err=>{
       message.error('搜索失败')
+    })
+    .finally(()=>{
+      this.setState({tableLoading: false})
     })
   }
   // 删除条目处理函数
@@ -119,7 +173,7 @@ class PHList extends Component{
       okText:"确认",
       cancelText:"取消",
       onOk() {
-        return API.deletePH(index)
+        return API.deletePH(index, self.state.type)
         .then(()=>{
           message.success('删除成功')
           self.refresh()
@@ -140,6 +194,11 @@ class PHList extends Component{
   change = (index)=>{
 
   }
+  selectedChange = (newSelected)=>{
+    this.setState({
+      selected: newSelected
+    })
+  }
   // 根据当前填写的搜索信息获取后台数据
   refresh = ()=>{
     let filter = {
@@ -151,6 +210,7 @@ class PHList extends Component{
       roomNum: this.state.roomNum,
       houseStatus: this.state.houseStatus,
     }
+    this.setState({tableLoading: true})
     return API.listFilterPH(filter)
     .then(rs=>{
       this.setState({
@@ -158,14 +218,24 @@ class PHList extends Component{
       })
     })
     .catch(err=>{
-      message.error('获取失败, 请重试')
+      if(this.state.isSearched)
+        message.error('获取失败, 请重试')
+    })
+    .finally(()=>{
+      this.setState({tableLoading: false})
     })
   }
   report = (index)=>{
     let id = this.state.tableList[index].id
-    API.reportPH(id)
+    let data = {
+      id,
+      type: this.state.type,
+      auditStatus: '已上报',
+    }
+    API.reportPH(data)
     .then(()=>{
       message.success('上报成功')
+      this.refresh()
       // this.props.history.push(Map.PHAudit.path)
     })
     .catch(err=>{
@@ -186,7 +256,16 @@ class PHList extends Component{
       <Search onSearch={this.search}/>
       <Split/>
       <ButtonGroup {...groupHelper}/>
-      <DisplayTable data={this.state.tableList} onSelectedChange={this.selectedChange} {...tableHelper}/>
+      {
+        this.state.isSearched?(
+          <DisplayTable loading={this.state.tableLoading}
+            type={this.state.type}
+            data={this.state.tableList}
+            onSelectedChange={this.selectedChange} {...tableHelper}/>
+        ):(
+          <Empty description="请先搜索"></Empty>
+        )
+      }
     </MainContainer>
   }
 }

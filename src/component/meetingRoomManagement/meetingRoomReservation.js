@@ -144,23 +144,31 @@ class MeetingRoomReservation extends Component{
         dataIndex: 'dept',
       },
       {
-        title: '位置',
-        dataIndex: 'location',
+        title: '楼宇',
+        dataIndex: 'building',
       },
       {
-        title: '使用性质',
-        dataIndex: 'usingNature',
+        title: '楼层',
+        dataIndex: 'floor',
       },
       {
-        title: '状态',
-        dataIndex: 'state',
+        title: '房间号',
+        dataIndex: 'roomNum',
+      },
+      {
+        title: '管理者',
+        dataIndex: 'manager',
+      },
+      {
+        title: '审批状态',
+        dataIndex: 'auditStatus',
       },
       {
         title: '操作',
         render: (text, record, index)=>(
           <div>
             <div style={{display: 'inline-block', padding: '0 10px'}}>
-              <Route><Link to={Map.PHDetailInfo.path.replace(':id', record.id)}>
+              <Route><Link to={Map.PHDetailInfo.path.replace(':id', '4-'+record.id)}>
                   <SButton text='详细'/>
               </Link></Route>
             </div>
@@ -173,6 +181,7 @@ class MeetingRoomReservation extends Component{
     ]
     const { getFieldDecorator } = this.props.form
     const options = [
+      { label: '白板', value: '白板' },
       { label: '投影仪', value: '投影仪' },
       { label: '音响', value: '音响' },
       { label: '麦克风', value: '麦克风' },
@@ -183,20 +192,24 @@ class MeetingRoomReservation extends Component{
         <Row>
           <Col span={6}>
             <Item labelCol={{span:8}} wrapperCol={{span:15}} label="人数要求">
-              {getFieldDecorator('peopleNum',)(
+              {getFieldDecorator('galleryful',{
+                rules: [{required: true, message: '请选择人数要求'}]
+              })(
                 <Select>
-                  <Option value="不限">不限</Option>
-                  <Option value="5人以下">5人以下</Option>
-                  <Option value="5-10人">5-10人</Option>
-                  <Option value="10-20人">10-20人</Option>
-                  <Option value="20人以上">20人以上</Option>
+                  <Option value="0">不限</Option>
+                  <Option value="1">5人以下</Option>
+                  <Option value="2">5-10人</Option>
+                  <Option value="3">10-20人</Option>
+                  <Option value="4">20人以上</Option>
                 </Select>
               )}
             </Item>
           </Col>
           <Col span={12}>
             <Item labelCol={{span:6}} wrapperCol={{span:12}} label="使用起止时间">
-              {getFieldDecorator('startStopTime',)(
+              {getFieldDecorator('startStopTime',{
+                rules: [{required: true, message: '请选择起止时间'}]
+              })(
                 <RangePicker
                   showTime={{ format: 'HH:mm' }}
                   format="YYYY-MM-DD HH:mm"
@@ -209,7 +222,7 @@ class MeetingRoomReservation extends Component{
         <Row>
           <Col span={12}>
             <Item labelCol={{span:4}} wrapperCol={{span:20}} label="设备要求">
-              {getFieldDecorator('equipment',)(
+              {getFieldDecorator('deviceConfig',)(
                 <CheckboxGroup options={options} />
               )}
             </Item>

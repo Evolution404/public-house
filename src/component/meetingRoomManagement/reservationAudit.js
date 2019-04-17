@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {Modal, message, notification, Form, Input, Empty} from 'antd';
 import {SButton} from '../common/button'
 import MainContainer from '../common/mainContainer'
-import Search from '../common/search'
+import {ReservationAuditSearch} from '../common/search'
 import Split from '../common/split'
 import API from '../../api'
 import Table from '../common/table'
@@ -156,7 +156,7 @@ class ReservationAudit extends Component{
       }
     ]
     return <MainContainer name="预约审批">
-      <Search onSearch={this.search}/>
+      <ReservationAuditSearch onSearch={this.search}/>
       <Split />
       {
         this.state.isSearched?(

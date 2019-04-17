@@ -68,7 +68,7 @@ class MainForm extends Component{
         <Row>
           <Col span={8}>
             <Item labelCol={{span:9}} wrapperCol={{span:12}} label="使用面积">
-              {getFieldDecorator('area',{initialValue:this.props.usingArea} )(
+              {getFieldDecorator('useArea',{initialValue:this.props.useArea} )(
                 <Input />
               )}
             </Item>
@@ -126,7 +126,6 @@ class PHChangeBrief extends Component{
   search = ()=>{
     API.briefChangeFilterPH(this.state.id)
     .then(rs=>{
-      debugger
       this.setState(rs)
       this.setState({hasLoaded: true})
     })

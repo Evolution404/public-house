@@ -1,5 +1,7 @@
-import axios from "axios";
+import axios from "axios"
 let host = 'http://140.249.19.181:8910'
+if(localStorage.getItem('host'))
+  host = localStorage.getItem('host')
 const domainName = host+'/api/gongyongfang'
 
 const http = axios.create({
@@ -14,7 +16,7 @@ http.interceptors.request.use(config=>{
   // 去除get请求中参数的空值
   if(config.method==='get'){
     for(let key in config.params){
-      if(!config.params[key])
+      if(!config.params[key]&&config.params[key]!==0)
         delete config.params[key]
     }
   }

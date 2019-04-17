@@ -1,4 +1,8 @@
-import axios from './apiConfig'
+import axios ,{host} from './apiConfig'
+import NOaxios from 'axios'
+import {MapB2F, MapF2B} from './nameMapConfig'
+
+const domainName = host+'/api/gongyongfang'
 
 const meetingRoomReservation = {
   // 会议室预约
@@ -9,8 +13,26 @@ const meetingRoomReservation = {
     //    startStopTime: xx, 使用起止时间
     //    equipment: xx, 设备要求
     // }
+    let newInfo = MapF2B(info)
+    let deviceConfig = info.deviceConfig
+    newInfo.touyingyi = ''
+    newInfo.yinxiang = ''
+    newInfo.maikefeng = ''
+    newInfo.diannao = ''
+    newInfo.baiban = ''
+    if(deviceConfig){
+      newInfo.touyingyi = deviceConfig.indexOf('投影仪')>-1?'是':''
+      newInfo.yinxiang = deviceConfig.indexOf('音响')>-1?'是':''
+      newInfo.maikefeng = deviceConfig.indexOf('麦克风')>-1?'是':''
+      newInfo.diannao = deviceConfig.indexOf('电脑')>-1?'是':''
+      newInfo.baiban = deviceConfig.indexOf('白板')>-1?'是':''
+    }
+    newInfo.kaishishijian = info.startStopTime[0]
+    newInfo.jieshushijian = info.startStopTime[1]
     return new Promise((resolve, reject)=>{
-      axios.post('/searchMeetingRoomReservation', info)
+      axios.get('/tb-xueyuan-dangzhengjiguan-yongfang/get/screen', {
+        params: newInfo,
+      })
       .then(rs=>{
         // 处理成tableList
         // {
@@ -20,7 +42,8 @@ const meetingRoomReservation = {
         //    usingNature: xx, 使用性质
         //    state: xx, 状态
         // }
-        resolve(rs.data)
+        let data = rs.data.map(item=>MapB2F(item))
+        resolve(data)
       })
       .catch(err=>{
         reject(err)
@@ -130,7 +153,10 @@ const reservationAudit = {
     //    houseStatus: xx, 房屋状态
     // }
     return new Promise((resolve, reject)=>{
-      axios.post('/searchReservationAudit', info)
+      let newInfo = MapF2B()
+      axios.get('/tb-huiyishi-yuyue/get/all', {
+        params: newInfo,
+      })
       .then(rs=>{
         // 处理成tableList
         // {
@@ -142,7 +168,8 @@ const reservationAudit = {
         //    phone: xx, 联系电话
         //    purpose: xx, 预约用途
         // }
-        resolve(rs.data)
+        let data = rs.data.map(item=>MapB2F(item))
+        resolve(data)
       })
       .catch(err=>{
         reject(err)
@@ -206,6 +233,24 @@ const useStatistical = {
         //    totalUseTime: xx, 总使用时间
         //    avgDailyUseTime: xx, 日均使用时间
         // }
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  // 使用统计导出
+  exportUseStatistical(info){
+    let formData = new FormData()
+    formData.append('tubiao', info.graph.split(',')[1])
+    formData.append('bumen', info.dept)
+    formData.append('kaishishijian', info.startStopTime[0])
+    formData.append('jieshushijian',info.startStopTime[1])
+    return new Promise((resolve, reject)=>{
+      axios.post('/tb-huiyishi-yuyue/export-excel-xls', formData)
+      .then(rs=>{
         resolve(rs.data)
       })
       .catch(err=>{

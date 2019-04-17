@@ -1,8 +1,9 @@
 import React, {Component} from 'react'
-import {Row, Col, Form, Select, Input, Button,
+import {Row, Col, Form, Select, Input, Button, InputNumber,
   Checkbox, Upload, Icon, message, Spin} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
+import {BuildingSelect, FloorSelect} from '../common/select'
 import API from '../../api'
 const {Item} = Form
 const Option = Select.Option
@@ -19,8 +20,15 @@ function Title(){
 }
 
 class MainForm extends Component{
+  state = {
+    building: '',
+  }
   reset = ()=>{
     this.props.form.resetFields()
+  }
+  buildingChange = building=>{
+    this.setState({building})
+    return building
   }
   handleSubmit = (e) => {
     e.preventDefault();
@@ -41,17 +49,15 @@ class MainForm extends Component{
     return (
       <Form onSubmit={this.handleSubmit}>
         <Item labelCol={{span:3}} wrapperCol={{span:6}} label="楼宇">
-          {getFieldDecorator('building', )(
-            <Select >
-              <Option value="部门1">部门1</Option>
-            </Select>
+          {getFieldDecorator('building', {
+            getValueFromEvent: this.buildingChange,
+          })(
+            <BuildingSelect></BuildingSelect>
           )}
         </Item>
         <Item labelCol={{span:3}} wrapperCol={{span:6}} label="楼层">
           {getFieldDecorator('floor', )(
-            <Select >
-              <Option value="部门1">部门1</Option>
-            </Select>
+            <FloorSelect building={this.state.building}></FloorSelect>
           )}
         </Item>
         <Row>

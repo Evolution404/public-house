@@ -10,15 +10,15 @@ const { TextArea } = Input
 class PHAuditDetail extends Component{
   state = {
     opinion: '',
-    id: this.props.match.params.id,
+    id: '',
     hasLoaded: false,
   }
   componentDidMount(){
     let id = this.props.match.params.id
+    this.setState({id})
     API.auditDetailPH(id)
     .then(rs=>{
-      this.setState(rs)
-      this.setState({hasLoaded: true})
+      this.setState({...rs,hasLoaded: true, id})
     })
     .catch(err=>{
       message.error('加载失败')
@@ -39,7 +39,7 @@ class PHAuditDetail extends Component{
   }
   // 驳回回调
   rejected = ()=>{
-    API.aprovalPH(this.state.id)
+    API.rejectedPH(this.state.id)
     .then(()=>{
       message.success('驳回成功')
     })
@@ -66,7 +66,9 @@ class PHAuditDetail extends Component{
       </div>
       {
       this.state.hasLoaded&&(
-        <DetailHelper {...this.state}></DetailHelper>
+        <DetailHelper
+          numType={this.state.id.split('-')[0]}
+          {...this.state}></DetailHelper>
       )
       }
     </MainContainer>

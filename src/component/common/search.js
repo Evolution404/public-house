@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
-import {Select, Input, Form, Row, Col, Button, Cascader} from 'antd'
+import {Select, Input, Form, Row, Col, Button} from 'antd'
 import UsingNature from '../common/usingNature'
+import {DeptSelect, BuildingSelect} from '../common/select'
 
 const Item = Form.Item
 const Option = Select.Option
@@ -22,14 +23,16 @@ class Search extends Component{
         <Row>
           <Col span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
-              {getFieldDecorator('dept',)(
-                  <Select size="small"></Select>
+              {getFieldDecorator('deptName',)(
+                  <DeptSelect size="small"></DeptSelect>
               )}
             </Item>
           </Col>
           <Col span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="使用性质">
-              {getFieldDecorator('usingNature',)(
+              {getFieldDecorator('usingNature',{
+                rules: [{required: true, message: '请选择使用性质'}]
+              })(
                 <UsingNature size="small"/>
               )}
             </Item>
@@ -38,10 +41,10 @@ class Search extends Component{
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="审批状态">
               {getFieldDecorator('auditStatus',)(
                 <Select size="small">
-                  <Option value="所有">所有</Option>
+                  <Option value="">所有</Option>
                   <Option value="已批准">已批准</Option>
                   <Option value="未上报">未上报</Option>
-                  <Option value="等待审核">等待审核</Option>
+                  <Option value="已上报">已上报</Option>
                   <Option value="已驳回">已驳回</Option>
                 </Select>
               )}
@@ -59,7 +62,7 @@ class Search extends Component{
           <Col span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="楼宇名称">
               {getFieldDecorator('buildingName',)(
-                  <Select size="small"></Select>
+                  <BuildingSelect size="small"></BuildingSelect>
               )}
             </Item>
           </Col>
@@ -72,12 +75,11 @@ class Search extends Component{
           </Col>
           <Col span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="房屋状态">
-              {getFieldDecorator('houseStatus',)(
+              {getFieldDecorator('status',)(
                 <Select size="small">
-                  <Option value="所有">所有</Option>
-                  <Option value="使用中">使用中</Option>
-                  <Option value="待分配">待分配</Option>
-                  <Option value="暂借中">暂借中</Option>
+                  <Option value="">所有</Option>
+                  <Option value="已租">已租</Option>
+                  <Option value="待租">待租</Option>
                 </Select>
               )}
             </Item>
@@ -93,4 +95,72 @@ class Search extends Component{
 
 const WrappedSearch = Form.create({ name: 'search' })(Search)
 
+class ReservationAuditSearch extends Component{
+  search = ()=>{
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        this.props.onSearch(values)
+      }
+    })
+  }
+  render(){
+    const { getFieldDecorator } = this.props.form
+    return (
+      <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
+        <Row>
+          <Col span={5}>
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
+              {getFieldDecorator('deptName',)(
+                  <DeptSelect size="small"></DeptSelect>
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={5}>
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="预约状态">
+              {getFieldDecorator('reservationStatus',)(
+                <Select size="small">
+                  <Option value="">所有</Option>
+                  <Option value="已审批">已审批</Option>
+                  <Option value="未审批">未审批</Option>
+                  <Option value="已驳回">已驳回</Option>
+                </Select>
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={5}>
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="预约人">
+              {getFieldDecorator('reservationPerson',)(
+                  <Input size="small"></Input>
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={5}>
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="楼宇名称">
+              {getFieldDecorator('buildingName',)(
+                  <BuildingSelect size="small"></BuildingSelect>
+              )}
+            </Item>
+          </Col>
+          <Col offset={2} span={5}>
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="房间号">
+              {getFieldDecorator('roomNum',)(
+                  <Input size="small"></Input>
+              )}
+            </Item>
+          </Col>
+          <Col style={{marginTop: 5}} offset={3} span={2}>
+            <Button block onClick={this.search} type="primary">搜索</Button>
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
+}
+
+ReservationAuditSearch =
+  Form.create({ name: 'ReservationAuditSearch' })(ReservationAuditSearch)
+
 export default WrappedSearch
+export {ReservationAuditSearch}

@@ -44,6 +44,23 @@ class MyTable extends Component{
 
 // 生成table的工具
 const TableUtil = {
+  mapColor(text){
+    switch(text){
+      case '未上报':
+        return <span style={{color:'#333'}}>未上报</span>
+      case '已审核':
+        return <span style={{color:'#008000'}}>已审核</span>
+      case '已驳回':
+        return <span style={{color:'#ff0000'}}>已驳回</span>
+      case '已上报':
+        return <span style={{color:'#008000'}}>已上报</span>
+      case '已批准':
+        return <span style={{color:'#ff0000'}}>已批准</span>
+      default:
+        return <span style={{color:'#333'}}>未上报</span>
+    }
+
+  },
   mapColumnC2E: c=>{
     switch(c){
       case '序号':

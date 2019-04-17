@@ -43,8 +43,10 @@ class App extends Component{
     this.setState({isLogined: false})
   }
   login = ({navData, userData})=>{
-    this.setState({isLogined: true, navData, userData})
-    this.setPersistentData()
+    this.setState({navData, userData},()=>{
+      this.setPersistentData()
+      this.setState({isLogined: true})
+    })
   }
   isLoginedCheck = ()=>{
     let {token, navData, userData} = this.getPersistentData()

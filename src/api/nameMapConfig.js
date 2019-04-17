@@ -41,10 +41,25 @@ const mapNameF2B = {
   status: 'zhuangtai',
   building: 'louyu',
   floor: 'louceng',
+  deptName: 'bumenmingcheng',
   'location': '', //位置
-  usingNature: '', // 使用性质
+  auditStatus: 'shenpizhuangtai',
+  houseStatus: 'fangwuzhuangtai',
+  spectificPurpose: 'jutiyongtu',
+  scientificTeam: 'keyantuandui',
+  annualIncome: 'nianshouru',
+  rentPrice: 'zujinjinedanjia',
+  rentType: 'zujinleixing',
+  manager: 'guanlizhe',
+  galleryful: 'rongnarenshu',
+  lessee: 'chengzuren',
+  head: 'fuzeren',
+  type: 'leixing',
   secondaryNature: '', // 二级性质
-  personnel: '', // 使用者
+  personnel: 'shiyongzhe', // 使用者
+  reservationStatus: 'yuyuezhuangtai',
+  reservationPerson: 'yuyueren',
+  dismissReason: 'yuanyin',
   house: '', // 房屋
   time: '', // 时间
 }

@@ -4,6 +4,7 @@ import Split from '../common/split'
 import API from '../../api'
 import {message, Button, Row, Col} from 'antd'
 import DetailHelper from './detailHelper'
+import {parseType} from '../common/usingNature'
 class PHDetailInfo extends Component{
   state = {
     id:'',
@@ -34,6 +35,7 @@ class PHDetailInfo extends Component{
     this.setState({id, infoLoading: true})
     API.getPHDetailInfo(id)
     .then(rs=>{
+      rs.type = parseType(this.state.id.split('-')[0])
       this.setState({detailInfo: rs})
     })
     .catch(err=>{
@@ -43,34 +45,6 @@ class PHDetailInfo extends Component{
     })
     .finally(()=>{
       this.setState({infoLoading: false})
-      // TODO 对接删除
-      let detailInfo = {
-        dept: '计算机科学与技术学院',
-        usingNature: '学院用房',
-        secondaryNature: '专业实验室',
-        building: '研学楼',
-        floor: '6楼',
-        roomNum: '604室',
-        usingArea: '100.4平方米',
-        personnel: [{name:'张三', id:1},{name: '李四', id: 2}],
-        head: [{name: '张三', id:1}],
-        fireHead: [{name: '张三', id:1}],
-        drawings: ['https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg'],
-        housePic: ['https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg', 'https://ws3.sinaimg.cn/large/006tKfTcly1g1kuay0luwj30ss0hugoa.jpg'],
-        houseDesc: 'this is houseDesc',
-        equipment: ['投影仪', '音响', '麦克风'],
-        peopleNum: '5-10人',
-        historyInfo: [
-          {
-            id: 'id',
-            house: '111house',
-            time: 'xxx-xxx',
-            personnel: 'personnel',
-            usingNature: '学院用房',
-          },
-        ],
-      }
-      this.setState({detailInfo})
     })
   }
   render(){
@@ -86,7 +60,8 @@ class PHDetailInfo extends Component{
         </Row>
         <Split></Split>
         <div id='printArea'>
-          <DetailHelper {...this.state.detailInfo}></DetailHelper>
+          <DetailHelper numType={this.state.id.split('-')[0]}
+            {...this.state.detailInfo}></DetailHelper>
         </div>
       </MainContainer>
     )

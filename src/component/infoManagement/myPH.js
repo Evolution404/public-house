@@ -4,12 +4,14 @@ import {
   Link
 } from "react-router-dom";
 import Map from '../../routerMap'
-import {Input, Select, Form, Row, Col, Button, message, Spin, Card, Tag} from 'antd'
+import {Input, Select, Form, Row, Col, Button, message, Spin, Card, Tag, Empty} from 'antd'
 import API from '../../api'
 import Split from '../common/split'
 import Table from '../common/table'
 import {SButton} from '../common/button'
+import Search from '../common/search'
 import MainContainer from '../common/mainContainer'
+import columns from './typeColumns'
 
 const Item = Form.Item
 
@@ -41,135 +43,46 @@ class PersonalInfo extends Component{
           <InfoTag data={data.dept}/></Card.Grid>
         <Card.Grid style={gridStyle}><Label>职务级别:</Label>
           <InfoTag data={data.dutyGrade}/></Card.Grid>
-        <Card.Grid style={gridStyle}><Label>本科生:</Label>
-          <InfoTag data={data.undergraduate}/></Card.Grid>
-        <Card.Grid style={gridStyle}><Label>研究生:</Label>
-          <InfoTag data={data.masterDegree}/></Card.Grid>
-        <Card.Grid style={gridStyle}><Label>博士生</Label>
-          <InfoTag data={data.doctor}/></Card.Grid>
       </Card>
     )
   }
 }
 
-class Search extends Component{
-  onSearch = ()=>{
-    let self = this
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        self.props.onSearch(values)
-      }
-    })
-  }
-  render(){
-    const {getFieldDecorator} = this.props.form
-    return (
-      <Form labelCol={{span: 8}} wrapperCol={{span:16}}>
-        <Row>
-          <Col span={6}>
-            <Item label="部门名称">
-              {getFieldDecorator('dept',)(
-                <Select></Select>
-              )}
-            </Item>
-          </Col>
-          <Col span={6}>
-            <Item label="使用性质">
-              {getFieldDecorator('usingNature',)(
-                <Select></Select>
-              )}
-            </Item>
-          </Col>
-          <Col span={6}>
-            <Item label="二级性质">
-              {getFieldDecorator('secondaryNature',)(
-                <Select></Select>
-              )}
-            </Item>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={6}>
-            <Item label="楼宇名称">
-              {getFieldDecorator('buildingName',)(
-                <Select></Select>
-              )}
-            </Item>
-          </Col>
-          <Col span={6}>
-            <Item label="房间号">
-              {getFieldDecorator('roomNum',)(
-                <Input></Input>
-              )}
-            </Item>
-          </Col>
-          <Col span={6}>
-            <Item label="使用者">
-              {getFieldDecorator('personnel',)(
-                <Input></Input>
-              )}
-            </Item>
-          </Col>
-          <Col offset={1} span={5}>
-            <Button onClick={this.onSearch} style={{marginTop: 5}} type="primary">搜索</Button>
-          </Col>
-        </Row>
-      </Form>
-    )
-  }
-}
-Search = Form.create({ name: 'search' })(Search)
 class DisplayTable extends Component{
   render(){
-    let columns = [
-      {
-        title: '序号',
-        dataIndex: 'id',
-      },
-      {
-        title: '部门',
-        dataIndex: 'dept',
-      },
-      {
-        title: '位置',
-        dataIndex: 'location',
-      },
-      {
-        title: '使用性质',
-        dataIndex: 'usingNature',
-      },
-      {
-        title: '二级性质',
-        dataIndex: 'secondaryNature',
-      },
-      {
-        title: '使用者',
-        dataIndex: 'personnel',
-      },
-      {
+    let tableColumns = JSON.parse(JSON.stringify(columns))
+    let operate = {
         title: '操作',
         render: (text, record, index)=>(
         <Router>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <Link to={Map.PHDetailInfo.path.replace(':id', record.id)}>
+            <Link to={Map.PHDetailInfo.path.replace(':id', this.props.type+'-'+record.id)}>
               <SButton text='详细'/>
             </Link>
           </div>
         </Router>
         )
-      },
-    ]
-    return (
-      <Table columns={columns} {...this.props}></Table>      
-    )
+    }
+    tableColumns[1].push(operate)
+    tableColumns[2].push(operate)
+    tableColumns[3].push(operate)
+    tableColumns[4].push(operate)
+    if(this.props.type){
+      tableColumns = tableColumns[this.props.type]
+    }else{
+      tableColumns = []
+    }
+
+    return <Table columns={tableColumns} {...this.props}/>
   }
 }
 
 class MyPH extends Component{
   state = {
+    type: '',
     personnelInfo: {},
     tableList: [],
+    isSearched: false,
     tableLoading: false,
     infoLoading: true,
   }
@@ -184,36 +97,24 @@ class MyPH extends Component{
         message.error(err.response.data.title)
     })
     .finally(()=>{
-      // TODO 接口对接删除
-      let rs = {
-        workNum: '1100018',
-        name: '张三',
-        dept: '计算机与软件学院',
-        dutyGrade: '院士',
-        undergraduate: '10',
-        masterDegree: '10',
-        doctor: '10',
-      }
-      this.setState({personnelInfo: rs})
-      // }
       this.setState({infoLoading: false})
     })
   }
   componentDidMount(){
     let id = this.props.match.params.id
     if(id===':id')
-      id = JSON.parse(localStorage.getItem('id'))
+      id = JSON.parse(localStorage.getItem('userData'))['workNum']
     this.initPersonnelInfo(id)
   }
   componentWillReceiveProps(nextProps) {
     this.setState({infoLoading: true})
     let id = nextProps.match.params.id
     if(id===':id')
-      id = JSON.parse(localStorage.getItem('id'))
+      id = JSON.parse(localStorage.getItem('userData'))['workNum']
     this.initPersonnelInfo(id)
   }
   search = (values)=>{
-    this.setState({tableLoading: true})
+    this.setState({type: values.usingNature[0], isSearched: true, tableLoading: true})
     API.myPHSearch(values)
     .then(rs=>{
       this.setState({tableList:rs})
@@ -225,16 +126,6 @@ class MyPH extends Component{
     })
     .finally(()=>{
       this.setState({tableLoading: false})
-      // TODO 对接后删除
-      let data = [{
-        id: 1,
-        dept: 'x部门',
-        location: 'xxx',
-        usingNature: 'xxxnature',
-        secondaryNature: 'xxxnature',
-        personnel: 'xxxper',
-      }]
-      this.setState({tableList: data})
     })
   }
   render(){
@@ -244,9 +135,16 @@ class MyPH extends Component{
       </Spin>
       <Search onSearch={this.search}></Search>
       <Split></Split>
-      <DisplayTable
-        loading={this.state.tableLoading}
-        data={this.state.tableList}/>
+      {
+        this.state.isSearched?(
+          <DisplayTable loading={this.state.tableLoading}
+            type={this.state.type}
+            data={this.state.tableList}
+            onSelectedChange={this.selectedChange}/>
+        ):(
+          <Empty description="请先搜索"></Empty>
+        )
+      }
     </MainContainer>
   }
 }

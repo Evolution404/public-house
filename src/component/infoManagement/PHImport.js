@@ -3,9 +3,6 @@ import {Upload, Button, Icon, message, Row, Col, Form} from 'antd';
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
-import UsingNature from '../common/usingNature'
-
-const Item = Form.Item
 
 class Import extends Component{
   state = {
@@ -65,23 +62,11 @@ class Import extends Component{
       },
       fileList,
     };
-    const {getFieldDecorator} = this.props.form
     return (
       <div style={{margin: '20px 0'}}>
         <h3>{this.props.text}</h3>
         <Form>
           <Row style={{marginTop: 15}}>
-            <Col span={8}>
-              <Item labelCol={{span:10}} wrapperCol={{span:10}} label='使用性质'>
-                {
-                  getFieldDecorator('usingNature',{
-                    rules: [{required: true, message:'请选择使用性质'}]
-                  })(
-                    <UsingNature></UsingNature>
-                  )
-                }
-              </Item>
-            </Col>
             <Col offset={1} span={4}>
               <Upload {...props}>
                 <Button>

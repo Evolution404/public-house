@@ -22,10 +22,15 @@ let uploadHelper = (data, url)=>{
 }
 
 const FileUploadAPI = {
-  // 导入公用房信息
+  // 导入公用房基本信息
   ULPH(formData){
     formData.append('module', 'gongyongfang-jibenxinxi')
     return uploadHelper(formData, '/tb-gongyongfang-jibenxinxi/import-excel')
+  },
+  // 导入公用房信息
+  ULPHDetail(formData){
+    formData.append('module', 'gongyongfang')
+    return uploadHelper(formData, '/tb-gongyongfang/import-excel')
   },
   // 上传图纸
   // formData中包括index代表公用房的序号
