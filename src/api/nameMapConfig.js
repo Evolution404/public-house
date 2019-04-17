@@ -60,8 +60,26 @@ const mapNameF2B = {
   reservationStatus: 'yuyuezhuangtai',
   reservationPerson: 'yuyueren',
   dismissReason: 'yuanyin',
-  house: '', // 房屋
-  time: '', // 时间
+  phone: 'lianxidianhua',
+  reservationPurpose: 'yuyueyongtu',
+  refuseReason: 'jujueyuanyin',
+  startTime: 'kaishishijian',
+  stopTime: 'jieshushijian',
+  housePic: 'photolist',
+  drawings: 'imglist',
+  approvalDocument: 'pizhunwenshulist',
+  totalUseTime: 'zongshiyongshijian', // 总使用时间
+  avgDailyUseTime: 'rijunshiyongshijian', // 日均使用时间
+  meetingRoom: 'huiyishi', // 会议室
+  meetingRoomId: 'huiyishiid', // 会议室
+  auditPerson: 'shenpiren', // 审批人
+  auditTime: 'shenpishijian', // 审批时间
+  applyTIme: 'shenqingshijian', // 申请时间
+  applicant: 'shenqingren', // 申请人
+  useLength: 'shiyongshichang', // 使用时长
+  useTime: 'shiyongshiduan', // 使用时段
+  useDate: 'shiyongriqi', // 使用日期
+
 }
 let mapNameB2F = {}
 for (let i in mapNameF2B){

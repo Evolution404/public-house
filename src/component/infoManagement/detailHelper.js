@@ -7,6 +7,7 @@ import Map from '../../routerMap'
 import Zmage from 'react-zmage'
 import {Row, Col, Checkbox} from 'antd'
 import Table from '../common/table'
+import {host} from '../../api/apiConfig'
 const CheckboxGroup = Checkbox.Group;
 
 class PicDisplay extends Component{
@@ -226,13 +227,13 @@ class DetailHelper extends Component{
           <Row style={{marginTop: 20}}>
             <Col span={3}>房屋图纸:</Col>
             <Col offset={1} span={20}>
-              <PicDisplay imgList={this.props.drawings}></PicDisplay>
+              <PicDisplay imgList={this.props.drawings?this.props.drawings.map(i=>host+i.tupianlujing):[]}></PicDisplay>
             </Col>
           </Row>
           <Row style={{marginTop: 20}}>
             <Col span={3}>房屋照片:</Col>
             <Col offset={1} span={20}>
-              <PicDisplay imgList={this.props.housePic}></PicDisplay>
+              <PicDisplay imgList={this.props.housePic?this.props.housePic.map(i=>host+i.tupianlujing):[]}></PicDisplay>
             </Col>
           </Row>
           <Row style={{marginTop: 20}}>

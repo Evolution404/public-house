@@ -17,11 +17,18 @@ class ECharts extends Component{
     // 绘制图表
     myChart.setOption(this.props.option);
   }
-  componentDidUpdate(){
+  componentWillUpdate(){
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById(this.props.id));
     // 绘制图表
     myChart.setOption(this.props.option);
+  }
+  componentWillReceiveProps(nextProps){
+    // 基于准备好的dom，初始化echarts实例
+    // document.getElementById(this.props.id).innerHTML = ""
+    var myChart = echarts.init(document.getElementById(nextProps.id));
+    // 绘制图表
+    myChart.setOption(nextProps.option);
   }
   render(){
     let style={

@@ -1,8 +1,9 @@
 import React, {Component} from 'react'
-import {Row, Col, Form, Button, message} from 'antd'
+import {Row, Col, Form, Button, message, Empty, Spin} from 'antd'
 import MainContainer from '../common/mainContainer'
 import UsingNature from '../common/usingNature'
 import Split from '../common/split'
+import Upload from '../common/upload'
 import API from '../../api'
 import {ScientificBuilding,
   LogisticsBuilding,
@@ -25,6 +26,7 @@ function Title(){
 class MainForm extends Component{
   state = {
     type: '',
+    loading: false,
   }
   setType = (props)=>{
     this.setState({type: props[0]})
@@ -46,6 +48,7 @@ class MainForm extends Component{
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
+        this.setState({loading: true})
         API.addPH(values)
         .then(()=>{
           message.success('添加成功')
@@ -55,6 +58,9 @@ class MainForm extends Component{
           if(err.response){
             message.error(err.response.data.title)
           }
+        })
+        .finally(()=>{
+          this.setState({loading: false})
         })
       }
     })
@@ -68,30 +74,51 @@ class MainForm extends Component{
       '4':<CollegePartyBuilding {...this.props}></CollegePartyBuilding>,
     }
     return (
-      <Form onSubmit={this.handleSubmit}>
-        <Item labelCol={{span:3}} wrapperCol={{span:8}} label="使用性质">
-          {getFieldDecorator('usingNature', {
-            getValueFromEvent: this.setType,
-            rules:[{required: true, message:'请选择使用性质'}]
-          })(
-            <UsingNature changeOnSelect={false}></UsingNature>
-          )}
-        </Item>
-        {
-          changeForm[this.state.type]
-        }
-        <Row>
-          <Col span={4} offset={10}>
-            <Button type='primary' onClick={this.staging}>暂时保存</Button>
-          </Col>
-          <Col span={4}>
-            <Button type='primary' htmlType='submit'>提交审核</Button>
-          </Col>
-          <Col span={4}>
-            <Button type='primary' onClick={this.reset}>重置</Button>
-          </Col>
-        </Row>
-      </Form>
+      <Spin spinning={this.state.loading}>
+        <Form onSubmit={this.handleSubmit}>
+          <Item labelCol={{span:3}} wrapperCol={{span:8}} label="使用性质">
+            {getFieldDecorator('usingNature', {
+              getValueFromEvent: this.setType,
+              rules:[{required: true, message:'请选择使用性质'}]
+            })(
+              <UsingNature changeOnSelect={false}></UsingNature>
+            )}
+          </Item>
+          {
+            this.state.type?(
+              <div>
+                {
+                  changeForm[this.state.type]
+                }
+                <Item labelCol={{span:3}} label="房屋照片">
+                  {
+                    getFieldDecorator('housePic', )(
+                      <Upload></Upload>
+                    )
+                  }
+                </Item>
+              </div>
+            ):(
+              <Row>
+                <Col offset={6}>
+                  <Empty style={{marginBottom: 20}} description="请先选择使用性质"></Empty>
+                </Col>
+              </Row>
+            )
+          }
+          <Row>
+            <Col span={4} offset={10}>
+              <Button type='primary' onClick={this.staging}>暂时保存</Button>
+            </Col>
+            <Col span={4}>
+              <Button type='primary' htmlType='submit'>提交审核</Button>
+            </Col>
+            <Col span={4}>
+              <Button type='primary' onClick={this.reset}>重置</Button>
+            </Col>
+          </Row>
+        </Form>
+      </Spin>
     )
   }
 }

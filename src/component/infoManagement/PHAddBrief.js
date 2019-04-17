@@ -1,8 +1,9 @@
 import React, {Component} from 'react'
 import {Row, Col, Form, Select, Input, Button, InputNumber,
-  Checkbox, Upload, Icon, message, Spin} from 'antd'
+  Checkbox, Icon, message, Spin} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
+import Upload from '../common/upload'
 import {BuildingSelect, FloorSelect} from '../common/select'
 import API from '../../api'
 const {Item} = Form
@@ -98,11 +99,7 @@ class MainForm extends Component{
         </Row>
         <Item labelCol={{span:3}} wrapperCol={{span:12}} label="房屋照片">
           {getFieldDecorator('housePic', )(
-            <Upload action='//jsonplaceholder.typicode.com/posts/' listType='picture'>
-              <Button>
-                <Icon type="upload" /> 上传
-              </Button>
-            </Upload>
+            <Upload></Upload>
           )}
         </Item>
         <Row>

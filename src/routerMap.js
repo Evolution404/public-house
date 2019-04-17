@@ -41,6 +41,7 @@ import MeetingRoomReservation from './component/meetingRoomManagement/meetingRoo
 import ReservationAudit from './component/meetingRoomManagement/reservationAudit'
 import MyReservation from './component/meetingRoomManagement/myReservation'
 import UseStatistical from './component/meetingRoomManagement/useStatistical'
+import UseStatisticalDetail from './component/meetingRoomManagement/useStatisticalDetail'
 
 // 公寓管理
 import ARealtimeMonitor from './component/apartmentManagement/aRealtimeMonitor'
@@ -204,6 +205,11 @@ const routerMap = {
     path:'/UseStatistical',
     name:'使用统计',
     component: UseStatistical
+  },
+  UseStatisticalDetail: {
+    path:'/UseStatisticalDetail/:id',
+    name:'使用统计详细',
+    component: UseStatisticalDetail
   },
   ARealtimeMonitor: {
     path:'/ARealtimeMonitor',

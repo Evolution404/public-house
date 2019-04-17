@@ -1,9 +1,11 @@
 import React, {Component} from 'react'
 import {Form, Row, Col, Select, Input, Button, message, Empty} from 'antd'
+import moment from 'moment'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Table from '../common/table'
 import {SButton} from '../common/button'
+import {DeptSelect, BuildingSelect} from '../common/select'
 import API from '../../api'
 
 const Item = Form.Item
@@ -14,16 +16,17 @@ class MyReservation extends Component{
     tableList: [],
     tableLoading: false,
     isSearched: false,
+    filter: {}
   }
   search = type=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        this.setState({tableLoading: true, isSearched: true})
         console.log('Received values of form: ', values);
         values = {
           ...values,
           type,
         }
+        this.setState({tableLoading: true, isSearched: true, filter: values})
         API.searchMyReservation(values)
         .then((rs)=>{
           this.setState({tableList: rs})
@@ -37,9 +40,23 @@ class MyReservation extends Component{
       }
     })
   }
+  refresh = ()=>{
+    this.setState({tableLoading: true})
+    API.searchMyReservation(this.state.filter)
+    .then((rs)=>{
+      this.setState({tableList: rs})
+    })
+    .catch(err=>{
+      message.error('刷新失败')
+    })
+    .finally(()=>{
+      this.setState({tableLoading: false})
+    })
+  }
   retryReservation = id=>{
     API.retryReservation(id)
     .then(()=>{
+      this.refresh()
       message.success('再次预约成功, 请等待审核')
     })
     .catch(err=>{
@@ -49,6 +66,7 @@ class MyReservation extends Component{
   cancleReservation = id=>{
     API.cancleReservation(id)
     .then(()=>{
+      this.refresh()
       message.success('取消预约成功')
     })
     .catch(err=>{
@@ -62,40 +80,60 @@ class MyReservation extends Component{
         dataIndex: 'id',
       },
       {
-        title: '时间',
-        dataIndex: 'time',
-      },
-      {
         title: '房屋部门',
-        dataIndex: 'houseDept',
+        dataIndex: 'dept',
       },
       {
-        title: '位置',
-        dataIndex: 'location',
+        title: '楼宇',
+        dataIndex: 'building',
       },
       {
-        title: '预约人',
-        dataIndex: 'reservationPerson',
+        title: '楼层',
+        dataIndex: 'floor',
+      },
+      {
+        title: '房间号',
+        dataIndex: 'roomNum',
       },
       {
         title: '联系电话',
-        dataIndex: 'phoen',
+        dataIndex: 'phone',
+      },
+      {
+        title: '开始时间',
+        dataIndex: 'startTime',
+        render: text=>{
+          return moment(text).format('YYYY-MM-DD HH:mm')
+        }
+      },
+      {
+        title: '结束时间',
+        dataIndex: 'stopTime',
+        render: text=>{
+          return moment(text).format('YYYY-MM-DD HH:mm')
+        }
       },
       {
         title: '预约用途',
-        dataIndex: 'purpose',
+        dataIndex: 'reservationPurpose',
+      },
+      {
+        title: '预约状态',
+        dataIndex: 'reservationStatus',
       },
       {
         title: '操作',
         render: (text, record, index)=>(
           <div>
             <div style={{display: 'inline-block', padding: '0 10px'}}>
-              <SButton text='再次预约'
-              onClick={this.retryReservation.bind(this, record.id)}/>
+              <SButton disable={record.reservationStatus==='未审批'}
+                text='再次预约'
+                onClick={this.retryReservation.bind(this, record.id)}/>
             </div>
             <div style={{display: 'inline-block', padding: '0 10px'}}>
-              <SButton  text='取消预约'
-              onClick={this.cancleReservation.bind(this, record.id)}/>
+              <SButton disable={record.reservationStatus!=='未审批'}
+                text='取消预约'
+                onClick={this.cancleReservation.bind(this, record.id)}/>
             </div>
           </div>
       )
@@ -106,16 +144,16 @@ class MyReservation extends Component{
       <Form labelCol={{span:12}} wrapperCol={{span: 12}}>
         <Row>
           <Col span={6}>
-            <Item label="房屋部门名称">
-              {getFieldDecorator('houseDept',)(
-                <Select></Select>
+            <Item label="部门">
+              {getFieldDecorator('dept',)(
+                <DeptSelect></DeptSelect>
               )}
             </Item>
           </Col>
           <Col span={5}>
-            <Item label="楼宇名称">
-              {getFieldDecorator('buildingName',)(
-                <Select></Select>
+            <Item label="楼宇">
+              {getFieldDecorator('building',)(
+                <BuildingSelect></BuildingSelect>
               )}
             </Item>
           </Col>
@@ -130,7 +168,10 @@ class MyReservation extends Component{
             <Item label="预约状态">
               {getFieldDecorator('reservationStatus',)(
                 <Select>
-                  <Option value="待审核">待审核</Option>
+                  <Option value="">所有</Option>
+                  <Option value="已审批">已审批</Option>
+                  <Option value="未审批">未审批</Option>
+                  <Option value="已驳回">已驳回</Option>
                 </Select>
               )}
             </Item>
@@ -139,19 +180,19 @@ class MyReservation extends Component{
         <Row>
           <Col offset={1} span={2}>
             <Button type="primary"
-              onClick={this.search.bind(this, 'oneWeek')}>最近一周</Button>
+              onClick={this.search.bind(this, 1)}>最近一周</Button>
           </Col>
           <Col span={2}>
             <Button type="primary"
-            onClick={this.search.bind(this, 'onMonth')}>最近一月</Button>
+            onClick={this.search.bind(this, 2)}>最近一月</Button>
           </Col>
           <Col span={2}>
             <Button type="primary"
-            onClick={this.search.bind(this, 'threeMonth')}>最近三月</Button>
+            onClick={this.search.bind(this, 3)}>最近三月</Button>
           </Col>
           <Col span={2}>
             <Button type="primary"
-            onClick={this.search.bind(this, 'halfYear')}>最近半年</Button>
+            onClick={this.search.bind(this, 4)}>最近半年</Button>
           </Col>
         </Row>
       </Form>

@@ -15,6 +15,7 @@ class Import extends Component{
       if(err)return
       const { fileList } = this.state;
       const formData = new FormData();
+      debugger
       fileList.forEach((file) => {
         formData.append('file', file);
       });

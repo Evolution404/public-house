@@ -145,8 +145,8 @@ class Import extends Component{
     const formData = new FormData();
     fileList.forEach((file) => {
       formData.append('file', file);
-    });
-    formData.append('index', this.props.index)
+    })
+    formData.append('id', this.props.index)
 
     this.setState({
       uploading: true,

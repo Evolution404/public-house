@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
-import {message, Row, Col, Form, Select, Input, Button, Checkbox, Upload, Icon} from 'antd'
+import {message, Row, Col, Form, Select, Input, Button, Checkbox, Icon} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
+import Upload from '../common/upload'
 import API from '../../api'
 const {Item} = Form
 const Option = Select.Option
@@ -84,13 +85,7 @@ class MainForm extends Component{
         </Row>
         <Item labelCol={{span:3}} wrapperCol={{span:12}} label="房屋图纸">
           {getFieldDecorator('drawings', {})(
-            <Upload listType='picture'
-              defaultFileList={this.props.drawings}
-            >
-              <Button>
-                <Icon type="upload" /> 上传
-              </Button>
-            </Upload>
+            <Upload fileList={this.props.drawings} disableRemove></Upload>
           )}
         </Item>
         <Row>

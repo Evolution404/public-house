@@ -25,30 +25,37 @@ class ReservationModal extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
-        let postData = {
-          id: this.props.id,
-          ...values,
-        }
-        API.startReservation(postData)
-        .then(()=>{
-          this.hideModal()
-          let content = <div>
-            <p>您已经预约</p>
-            <p>2019-02-24 星期日</p>
-            <p>上午8:00-10:00时段</p>
-            <p>研究院中517会议室</p>
-            <div></div>
-            <p>系统已给会议室管理人员发送了通知,请耐心等候审核结果</p>
-          </div>
-          notification.success({
-            message: '预约申请成功',
-            duration: 0,
-            description: content,
+        if(values.startStopTime){
+          let start = values.startStopTime[0]
+          let end = values.startStopTime[1]
+          let startStopTime =
+            values.startStopTime.map(i=>Math.round((i.valueOf())/1000))
+          values.startStopTime = startStopTime
+          let postData = {
+            id: this.props.id,
+            ...values,
+          }
+          let record = this.props.data
+          API.startReservation(postData)
+          .then(()=>{
+            this.hideModal()
+            let content = <div>
+              <p>您已经预约</p>
+              <p>{start.format('YYYY-MM-DD HH:mm:ss')}
+                -{end.format('YYYY-MM-DD HH:mm:ss')}</p>
+              <p>{`${record.building}${record.floor}层${record.roomNum}`}</p>
+              <p>系统已给会议室管理人员发送了通知,请耐心等候审核结果</p>
+            </div>
+            notification.success({
+              message: '预约申请成功',
+              duration: 0,
+              description: content,
+            })
           })
-        })
-        .catch(err=>{
-          message.error('预约失败')
-        })
+          .catch(err=>{
+            message.error('预约失败')
+          })
+        }
       }
     })
   }
@@ -68,7 +75,9 @@ class ReservationModal extends Component {
       >
         <Form labelCol={{span: 5}} wrapperCol={{span:14}}>
           <Item label="预约时段">
-            {getFieldDecorator('startStopTime',)(
+            {getFieldDecorator('startStopTime',{
+              rules: [{required: true, message: '请选择预约时段'}]
+            })(
               <RangePicker
                 showTime={{ format: 'HH:mm' }}
                 format="YYYY-MM-DD HH:mm"
@@ -77,12 +86,16 @@ class ReservationModal extends Component {
             )}
           </Item>
           <Item label="预约用途">
-            {getFieldDecorator('purpose',)(
+            {getFieldDecorator('reservationPurpose',{
+              rules: [{required: true, message: '请输入预约用途'}]
+            })(
               <Input/>
             )}
           </Item>
           <Item label="联系电话">
-            {getFieldDecorator('phone',)(
+            {getFieldDecorator('phone',{
+              rules: [{required: true, message: '请输入联系电话'}]
+            })(
               <Input/>
             )}
           </Item>
@@ -102,13 +115,14 @@ class MeetingRoomReservation extends Component{
     reservationModal: {
       visible: false,
       id: 0,
+      data:{},
     },
   }
-  openReservationModal = id=>{
-    this.setState({reservationModal:{visible: true, id}})
+  openReservationModal = record=>{
+    this.setState({reservationModal:{visible: true, id:record.id, data:record}})
   }
   closeReservationModal = ()=>{
-    this.setState({reservationModal:{visible: false, id: 0}})
+    this.setState({reservationModal:{visible: false, id: 0, data:{}}})
   }
   search = ()=>{
     this.props.form.validateFields((err, values) => {
@@ -173,7 +187,7 @@ class MeetingRoomReservation extends Component{
               </Link></Route>
             </div>
             <div style={{display: 'inline-block', padding: '0 10px'}}>
-              <SButton onClick={this.openReservationModal.bind(this, record.id)} text='开始预约'/>
+              <SButton onClick={this.openReservationModal.bind(this, record)} text='开始预约'/>
             </div>
           </div>
       )

@@ -35,8 +35,8 @@ const FileUploadAPI = {
   // 上传图纸
   // formData中包括index代表公用房的序号
   ULDrawings(formData){
-    formData.append('module', '')
-    return uploadHelper(formData, '')
+    formData.append('module', 'jibenxinxi-tupian')
+    return uploadHelper(formData, '/tb-gongyongfang-jibenxinxi-tupian/upload-img')
   },
   // 上传教学单位工作量
   ULTeachingUnitWorkLoad(formData){
@@ -85,3 +85,4 @@ const FileUploadAPI = {
 }
 
 export default FileUploadAPI
+export {uploadHelper}

@@ -162,5 +162,78 @@ class ReservationAuditSearch extends Component{
 ReservationAuditSearch =
   Form.create({ name: 'ReservationAuditSearch' })(ReservationAuditSearch)
 
+class MyPHSearch extends Component{
+  search = ()=>{
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        this.props.onSearch(values)
+      }
+    })
+  }
+  render(){
+    const { getFieldDecorator } = this.props.form
+    return (
+      <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
+        <Row>
+          <Col span={5}>
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="使用性质">
+              {getFieldDecorator('usingNature',{
+                rules: [{required: true, message: '请选择使用性质'}]
+              })(
+                <UsingNature size="small"/>
+              )}
+            </Item>
+          </Col>
+          <Col span={5}>
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="审批状态">
+              {getFieldDecorator('auditStatus',)(
+                <Select size="small">
+                  <Option value="">所有</Option>
+                  <Option value="已批准">已批准</Option>
+                  <Option value="未上报">未上报</Option>
+                  <Option value="已上报">已上报</Option>
+                  <Option value="已驳回">已驳回</Option>
+                </Select>
+              )}
+            </Item>
+          </Col>
+          <Col span={5}>
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="楼宇名称">
+              {getFieldDecorator('buildingName',)(
+                  <BuildingSelect size="small"></BuildingSelect>
+              )}
+            </Item>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={5}>
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="房间号">
+              {getFieldDecorator('roomNum',)(
+                  <Input size="small"></Input>
+              )}
+            </Item>
+          </Col>
+          <Col span={5}>
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="房屋状态">
+              {getFieldDecorator('status',)(
+                <Select size="small">
+                  <Option value="">所有</Option>
+                  <Option value="已租">已租</Option>
+                  <Option value="待租">待租</Option>
+                </Select>
+              )}
+            </Item>
+          </Col>
+          <Col style={{marginTop: 5}} offset={1} span={2}>
+            <Button block onClick={this.search} type="primary">搜索</Button>
+          </Col>
+        </Row>
+      </Form>
+    )
+  }
+}
+
+MyPHSearch = Form.create({ name: 'myph_search' })(MyPHSearch)
+
 export default WrappedSearch
-export {ReservationAuditSearch}
+export {ReservationAuditSearch, MyPHSearch}

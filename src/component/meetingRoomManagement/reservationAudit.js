@@ -23,16 +23,9 @@ class RefuseModal extends Component {
           id: this.props.id,
           ...values,
         }
-        API.refuseReservation(postData)
-        .then(()=>{
+        this.props.onRefuse(postData)
+        .finally(()=>{
           this.hideModal()
-          notification.success({
-            message: '拒绝成功',
-            description: '已经将拒绝原因发送给申请人',
-          })
-        })
-        .catch(err=>{
-          message.error('拒绝失败')
         })
       }
     })
@@ -53,7 +46,9 @@ class RefuseModal extends Component {
       >
         <Form labelCol={{span: 5}} wrapperCol={{span:14}}>
           <Item label="拒绝原因">
-            {getFieldDecorator('reason',)(
+            {getFieldDecorator('refuseReason',{
+              rules: [{required: true, message: '请输入拒绝原因'}]
+            })(
               <Input/>
             )}
           </Item>
@@ -73,10 +68,11 @@ class ReservationAudit extends Component{
     refuseModal: {
       visible: false,
       id: 0,
-    }
+    },
+    filter: {},
   }
   search = (values)=>{
-    this.setState({tableLoading: true, isSearched: true})
+    this.setState({tableLoading: true, isSearched: true, filter: values})
     API.searchReservationAudit(values)
     .then(rs=>{
       this.setState({
@@ -90,9 +86,25 @@ class ReservationAudit extends Component{
       this.setState({tableLoading: false})
     })
   }
+  refresh = ()=>{
+    return API.searchReservationAudit(this.state.filter)
+    .then(rs=>{
+      this.setState({
+        tableList: rs
+      })
+    })
+    .catch(err=>{
+      message.error('刷新失败, 请重试')
+    })
+    .finally(()=>{
+      this.setState({tableLoading: false})
+    })
+
+  }
   onAgree = id=>{
     API.agreeReservation(id)
     .then(()=>{
+      this.refresh()
       notification.success({
         message: '同意成功',
         description: '完成审批,系统已给申请人发送了审批结果通知',
@@ -100,6 +112,19 @@ class ReservationAudit extends Component{
     })
     .catch(err=>{
       message.error('操作失败')
+    })
+  }
+  refuse = (data)=>{
+    return API.refuseReservation(data)
+    .then(()=>{
+      this.refresh()
+      notification.success({
+        message: '拒绝成功',
+        description: '已经将拒绝原因发送给申请人',
+      })
+    })
+    .catch(err=>{
+      message.error('拒绝失败')
     })
   }
   onRefuse = id=>{
@@ -111,6 +136,21 @@ class ReservationAudit extends Component{
   closeRefuseModal = ()=>{
     this.setState({refuseModal:{visible: false, id: 0}})
   }
+  refresh = (filter)=>{
+    this.setState({tableLoading: true})
+    API.searchReservationAudit(this.state.filter)
+    .then(rs=>{
+      this.setState({
+        tableList: rs
+      })
+    })
+    .catch(err=>{
+      message.error('刷新失败, 请重试')
+    })
+    .finally(()=>{
+      this.setState({tableLoading: false})
+    })
+  }
   render(){
     let columns = [
       {
@@ -118,16 +158,20 @@ class ReservationAudit extends Component{
         dataIndex: 'id',
       },
       {
-        title: '时间',
-        dataIndex: 'time',
-      },
-      {
         title: '房屋部门',
-        dataIndex: 'houseDept',
+        dataIndex: 'dept',
       },
       {
-        title: '位置',
-        dataIndex: 'location',
+        title: '楼宇',
+        dataIndex: 'building',
+      },
+      {
+        title: '楼层',
+        dataIndex: 'floor',
+      },
+      {
+        title: '房间号',
+        dataIndex: 'roomNum',
       },
       {
         title: '预约人',
@@ -135,21 +179,31 @@ class ReservationAudit extends Component{
       },
       {
         title: '联系电话',
-        dataIndex: 'phoen',
+        dataIndex: 'phone',
       },
       {
         title: '预约用途',
-        dataIndex: 'purpose',
+        dataIndex: 'reservationPurpose',
+      },
+      {
+        title: '预约状态',
+        dataIndex: 'reservationStatus',
+      },
+      {
+        title: '拒绝原因',
+        dataIndex: 'refuseReason',
       },
       {
         title: '操作',
         render: (text, record, index)=>(
           <div>
             <div style={{display: 'inline-block', padding: '0 10px'}}>
-              <SButton onClick={this.onAgree.bind(this, record.id)} text='同意'/>
+              <SButton disable={record.reservationStatus!=='未审批'}
+                onClick={this.onAgree.bind(this, record.id)} text='同意'/>
             </div>
             <div style={{display: 'inline-block', padding: '0 10px'}}>
-              <SButton onClick={this.onRefuse.bind(this, record.id)} text='拒绝'/>
+              <SButton disable={record.reservationStatus!=='未审批'}
+                onClick={this.onRefuse.bind(this, record.id)} text='拒绝'/>
             </div>
           </div>
       )
@@ -165,7 +219,7 @@ class ReservationAudit extends Component{
           <Empty description="请先搜索"></Empty>
         )
       }
-      <WrappedRefuseModal close={this.closeRefuseModal} {...this.state.refuseModal} />
+      <WrappedRefuseModal onRefuse={this.refuse} close={this.closeRefuseModal} {...this.state.refuseModal} />
     </MainContainer>
   }
 }

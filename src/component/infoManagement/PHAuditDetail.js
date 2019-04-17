@@ -29,7 +29,7 @@ class PHAuditDetail extends Component{
   }
   // 批准回调
   approval = ()=>{
-    API.aprovalPH(this.state.id)
+    API.aprovalPH(this.state.id, this.state.opinion)
     .then(()=>{
       message.success('批准成功')
     })
@@ -39,7 +39,7 @@ class PHAuditDetail extends Component{
   }
   // 驳回回调
   rejected = ()=>{
-    API.rejectedPH(this.state.id)
+    API.rejectedPH(this.state.id, this.state.opinion)
     .then(()=>{
       message.success('驳回成功')
     })

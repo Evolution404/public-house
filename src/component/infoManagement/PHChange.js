@@ -1,9 +1,10 @@
 import React, {Component} from 'react'
-import {Empty, message, Row, Col, Form, Select, Input, Button, Cascader, Checkbox, Upload, Icon, Spin} from 'antd'
+import {Empty, message, Row, Col, Form, Select, Input, Button, Cascader, Checkbox, Icon, Spin} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import UsingNature, { UsingNatureBrief } from '../common/usingNature'
 import {BuildingSelect, FloorSelect} from '../common/select'
+import Upload from '../common/upload'
 import {ScientificBuilding,
   LogisticsBuilding,
   BusinessBuilding,
@@ -103,8 +104,21 @@ class MainForm extends Component{
     let self = this
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        console.log(values)
         this.props.change(values, self.props.type, self.props.id)
       }
+    })
+  }
+  removeHousePic = (id)=>{
+    return new Promise((resolve, reject)=>{
+      API.deleteHousePic(id)
+      .then(()=>{
+        resolve()
+      })
+      .catch(err=>{
+        reject()
+        message.error('删除图片失败')
+      })
     })
   }
   render(){
@@ -135,27 +149,15 @@ class MainForm extends Component{
           changeForm[this.state.type]
         }
         <Item labelCol={{span:3}} wrapperCol={{span:12}} label="房屋照片">
-          {getFieldDecorator('housePic', {})(
-            <Upload action='//jsonplaceholder.typicode.com/posts/'
-              listType='picture'
-              defaultFileList={this.props.housePic}
-            >
-              <Button>
-                <Icon type="upload" /> 上传
-              </Button>
-            </Upload>
+          {getFieldDecorator('housePic', {
+          })(
+            <Upload fileList={info.housePic}
+              onRemove={this.removeHousePic}></Upload>
           )}
         </Item>
         <Item labelCol={{span:3}} wrapperCol={{span:12}} label="批准文书">
-          {getFieldDecorator('housePic', {})(
-            <Upload action='//jsonplaceholder.typicode.com/posts/'
-              listType='picture'
-              defaultFileList={this.props.housePic}
-            >
-              <Button>
-                <Icon type="upload" /> 上传
-              </Button>
-            </Upload>
+          {getFieldDecorator('approvalDocument', {})(
+            <Upload disableRemove fileList={info.approvalDocument}></Upload>
           )}
         </Item>
         <Row>
@@ -216,8 +218,7 @@ class PHChange extends Component{
       this.setState({type: values.type})
     API.changeFilterPH(values)
     .then(rs=>{
-      this.setState({formInfo: rs, id:rs.id})
-      this.setState({hasSearched: true})
+      this.setState({formInfo: rs, id:rs.id, hasSearched: true})
     })
     .catch(err=>{
       message.error('搜索失败')

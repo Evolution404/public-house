@@ -4,12 +4,12 @@ import {
   Link
 } from "react-router-dom";
 import Map from '../../routerMap'
-import {Input, Select, Form, Row, Col, Button, message, Spin, Card, Tag, Empty} from 'antd'
+import {Input, Select, Form, Row, Col, Button, message, Spin, Card, Tag, Empty, Upload} from 'antd'
 import API from '../../api'
 import Split from '../common/split'
 import Table from '../common/table'
 import {SButton} from '../common/button'
-import Search from '../common/search'
+import {MyPHSearch} from '../common/search'
 import MainContainer from '../common/mainContainer'
 import columns from './typeColumns'
 
@@ -133,7 +133,7 @@ class MyPH extends Component{
       <Spin spinning={this.state.infoLoading}>
         <PersonalInfo data={this.state.personnelInfo}></PersonalInfo>
       </Spin>
-      <Search onSearch={this.search}></Search>
+      <MyPHSearch onSearch={this.search}></MyPHSearch>
       <Split></Split>
       {
         this.state.isSearched?(

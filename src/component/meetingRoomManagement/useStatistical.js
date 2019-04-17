@@ -1,7 +1,12 @@
 import React, {Component} from 'react'
+import {
+  HashRouter as Router,
+  Link
+} from "react-router-dom";
 import {Form, Row, Col, Select, Input, Button, message, DatePicker, Empty} from 'antd'
+import Map from '../../routerMap'
 import {SButton} from '../common/button'
-import {DeptSelect} from '../common/select'
+import {DeptSelect, BuildingSelect} from '../common/select'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Table from '../common/table'
@@ -10,37 +15,17 @@ import {host} from '../../api/apiConfig'
 import Histogram from '../common/histogram'
 
 const Item = Form.Item
-const {RangePicker} = DatePicker;
+const {RangePicker} = DatePicker
 
 class UseStatistical extends Component{
   state = {
     dept: '',
+    hasSearched: false,
     startStopTime: [],
     tableList: [],
     tableLoading: false,
     isSearched: false,
-    graphData: {
-      '类别1': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别2': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别3': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别4': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别5': {
-          '项目1':100,
-          '项目2':200,
-      },
-    },
+    graphData: {},
   }
   search = ()=>{
     this.props.form.validateFields((err, values) => {
@@ -55,7 +40,8 @@ class UseStatistical extends Component{
         this.setState({dept: values.dept, startStopTime: values.startStopTime})
         API.searchUseStatistical(values)
         .then((rs)=>{
-          this.setState({tableList: rs})
+          const {tableList, graphData} = rs
+          this.setState({tableList, graphData, hasSearched: true})
         })
         .catch(err=>{
           message.error('查询失败')
@@ -78,26 +64,28 @@ class UseStatistical extends Component{
       let downloadElement = document.createElement('a');
       let href = host+rs
       downloadElement.href = href;
-      downloadElement.download = '预约管理统计.xls'
       document.body.appendChild(downloadElement)
       downloadElement.click()
       document.body.removeChild(downloadElement)
-      window.URL.revokeObjectURL(href)
     })
   }
   render(){
     let columns = [
       {
         title: '序号',
-        dataIndex: 'id',
+        dataIndex: 'meetingRoomId',
       },
       {
         title: '部门',
         dataIndex: 'dept',
       },
       {
-        title: '会议室',
-        dataIndex: 'meetingRoom',
+        title: '楼宇',
+        dataIndex: 'building',
+      },
+      {
+        title: '房间号',
+        dataIndex: 'roomNum',
       },
       {
         title: '总使用时间(小时)',
@@ -111,7 +99,11 @@ class UseStatistical extends Component{
         title: '操作',
         render: (text, record, index)=>(
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton text='详细'></SButton>
+            <Router>
+              <Link to={Map.UseStatisticalDetail.path.replace(':id', record.meetingRoomId+'-'+this.state.startStopTime.join('-'))}>
+                <SButton text='详细'></SButton>
+              </Link>
+            </Router>
           </div>
       )
       }
@@ -130,7 +122,7 @@ class UseStatistical extends Component{
           <Col span={5}>
             <Item label="楼宇">
               {getFieldDecorator('building',)(
-                <Select></Select>
+                <BuildingSelect></BuildingSelect>
               )}
             </Item>
           </Col>
@@ -145,7 +137,9 @@ class UseStatistical extends Component{
         <Row>
           <Col span={12}>
             <Item labelCol={{span:6}} wrapperCol={{span:12}} label="起止时间">
-              {getFieldDecorator('startStopTime',)(
+              {getFieldDecorator('startStopTime',{
+                rules: [{required: true, message: '请选择起止时间'}]
+              })(
                 <RangePicker
                   showTime={{ format: 'HH:mm' }}
                   format="YYYY-MM-DD HH:mm"
@@ -170,9 +164,13 @@ class UseStatistical extends Component{
         this.state.isSearched?(
           <div>
             <Table columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
-            <Histogram id="graph"
-              title="图表对比（部门各会议室总使用时间、日均使用时间对比情况）"
-              data={this.state.graphData}></Histogram>
+            {
+              this.state.tableLoading||(
+                <Histogram id="graph"
+                  title="图表对比（部门各会议室总使用时间、日均使用时间对比情况）"
+                  data={this.state.graphData}></Histogram>
+              )
+            }
           </div>
         ):(
           <Empty description="请先搜索"></Empty>

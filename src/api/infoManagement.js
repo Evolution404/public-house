@@ -1,40 +1,59 @@
 import axios from './apiConfig'
+import {uploadHelper} from './fileUpload'
 import {MapB2F, MapF2B} from './nameMapConfig'
 
 const PHAdd = {
   // 公用房新增
-  
   // 新增公用房
   addPH(values){
+    let leixing = parseInt(values['usingNature'][0])
+    let jutiyongtu = values['usingNature'][1]
+    let deviceConfig = values['deviceConfig']
+    let mapValues = MapF2B(values)
+    let data = {
+      leixing,
+      obj:{
+        ...mapValues,
+        jutiyongtu,
+      }
+    }
+    if(leixing==='4'&&deviceConfig){
+      data.obj = {
+        ...data.obj,
+        touyingyi: deviceConfig.indexOf(0)>-1,
+        yinxiang: deviceConfig.indexOf(1)>-1,
+        maikefeng: deviceConfig.indexOf(2)>-1,
+        baiban: deviceConfig.indexOf(3)>-1,
+        diannao: deviceConfig.indexOf(4)>-1,
+      }
+    }
+    delete data.obj.photolist
+    let formData = new FormData()
+    formData.append('leixing', leixing)
+    formData.append('obj', JSON.stringify(data.obj))
     return new Promise((resolve, reject)=>{
-      let leixing = parseInt(values['usingNature'][0])
-      let jutiyongtu = values['usingNature'][1]
-      let deviceConfig = values['deviceConfig']
-      values = MapF2B(values)
-      let data = {
-        leixing,
-        obj:{
-          ...values,
-          jutiyongtu,
-        }
-      }
-      if(leixing==='4'&&deviceConfig){
-        data.obj = {
-          ...data.obj,
-          touyingyi: deviceConfig.indexOf(0)>-1,
-          yinxiang: deviceConfig.indexOf(1)>-1,
-          maikefeng: deviceConfig.indexOf(2)>-1,
-          baiban: deviceConfig.indexOf(3)>-1,
-          diannao: deviceConfig.indexOf(4)>-1,
-        }
-      }
-      let formData = new FormData()
-      formData.append('leixing', leixing)
-      formData.append('obj', JSON.stringify(data.obj))
       axios.post('/tb-gongyongfang/create', formData)
       .then(rs=>{
-        // 成功调用
-        resolve()
+        if(!values.housePic){
+          resolve()
+          return
+        }
+        // 上传房屋照片
+        let imgForm = new FormData()
+        imgForm.append('louceng', data.obj.louceng)
+        imgForm.append('louyu', data.obj.louyu)
+        imgForm.append('fangjianhao', data.obj.fangjianhao)
+        imgForm.append('module', 'gongyongfang-zhaopian')
+        values.housePic.forEach(item=>{
+          imgForm.append('file', item)
+        })
+        uploadHelper(imgForm, '/tb-gongyongfang-zhaopian/upload-img')
+        .then(()=>{
+          resolve()
+        })
+        .catch(err=>{
+          reject(err)
+        })
       })
       .catch(err=>{
         reject(err)
@@ -119,9 +138,14 @@ const PHAuditDetail = {
   // 公用房详细信息
 
   // 公用房审核详细界面批准接口
-  aprovalPH(index){
+  aprovalPH(index, opinion){
+    let data = new FormData()
+    data.append('leixing', index.split('-')[0])
+    data.append('id', index.split('-')[1])
+    data.append('shenpizhuangtai', '已审批')
+    data.append('yuanyin', opinion)
     return new Promise((resolve, reject)=>{
-      axios.post('/aprovalPH', {index})
+      axios.post('/tb-gongyongfang/change-approval-status', data)
       .then(rs=>{
         // 成功后调用
         resolve()
@@ -133,9 +157,14 @@ const PHAuditDetail = {
     })
   },
   // 公用房审核详细界面拒绝接口
-  rejectedPH(index){
+  rejectedPH(index, opinion){
+    let data = new FormData()
+    data.append('leixing', index.split('-')[0])
+    data.append('id', index.split('-')[1])
+    data.append('shenpizhuangtai', '已驳回')
+    data.append('yuanyin', opinion)
     return new Promise((resolve, reject)=>{
-      axios.post('/rejectedPH', {index})
+      axios.post('/tb-gongyongfang/change-approval-status', data)
       .then(rs=>{
         // 成功后调用
         resolve()
@@ -182,7 +211,19 @@ const PHAuditDetail = {
 
 const PHChange = {
   // 公用房变更
+  deleteHousePic(id){
+    return new Promise((resolve, reject)=>{
+      axios.delete('/tb-gongyongfang-zhaopian/delete/'+id)
+      .then(rs=>{
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
 
+  },
   // 公用房变更的搜索接口
   changeFilterPH(filter){
     let data = {}
@@ -266,52 +307,70 @@ const PHChange = {
       obj.diannao = deviceConfig.indexOf(4)>-1?'是':'否'
     }
     obj.jutiyongtu = values.usingNature[1]
+    let data = new FormData()
+    let url = ''
     // 判断类型是否修改了
     // 没修改
     if(oldType===values.usingNature[0]){
+      url = '/tb-gongyongfang/update'
       obj.id = oldId
       obj = {
         ...rawData,
         ...obj,
       }
-      let data = new FormData();
       data.append('leixing', values.usingNature[0])
       data.append('obj', JSON.stringify(obj))
-      return new Promise((resolve, reject)=>{
-        axios.post('/tb-gongyongfang/update',data)
-        .then(rs=>{
-          // 将后台传来数据转换成如下格式
-          resolve()
-        })
-        .catch(err=>{
-          reject(err)
-          console.log(err)
-        })
-      })
-
     // 修改了
     }else{
+      url = '/tb-gongyongfang/change'
       obj = {
-        ...rawData,
         ...obj,
       }
-      let data = new FormData();
       data.append('id_old', oldId)
       data.append('leixing_old', oldType)
       data.append('leixing', values.usingNature[0])
       data.append('obj', JSON.stringify(obj))
-      return new Promise((resolve, reject)=>{
-        axios.post('/tb-gongyongfang/change',data)
-        .then(rs=>{
-          // 将后台传来数据转换成如下格式
-          resolve()
-        })
-        .catch(err=>{
-          reject(err)
-          console.log(err)
-        })
-      })
     }
+    let promiseList = []
+    let formPromise = new Promise((resolve, reject)=>{
+      axios.post(url, data)
+      .then(rs=>{
+        // 将后台传来数据转换成如下格式
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+    promiseList.push(formPromise)
+    if(values.housePic){
+      let housePicData = new FormData()
+      values.housePic.forEach(i=>{
+        housePicData.append('file', i)
+      })
+      housePicData.append('module', 'gongyongfang-zhaopian')
+      housePicData.append('louyu', obj.louyu)
+      housePicData.append('louceng', obj.louceng)
+      housePicData.append('fangjianhao', obj.fangjianhao)
+      let housePicPromise =
+        uploadHelper(housePicData, '/tb-gongyongfang-zhaopian/upload-img')
+      promiseList.push(housePicPromise)
+    }
+    if(values.approvalDocument){
+      let approvalDocumentData = new FormData()
+      values.approvalDocument.forEach(i=>{
+        approvalDocumentData.append('file', i)
+      })
+      approvalDocumentData.append('module', 'gongyongfang-pizhunwenshu')
+      approvalDocumentData.append('louyu', obj.louyu)
+      approvalDocumentData.append('louceng', obj.louceng)
+      approvalDocumentData.append('fangjianhao', obj.fangjianhao)
+      let approvalDocumentPromise =
+        uploadHelper(approvalDocumentData, '/tb-gongyongfang-pizhunwenshu/upload-img')
+      promiseList.push(approvalDocumentPromise)
+    }
+    return Promise.all(promiseList)
   },
 }
 
@@ -336,6 +395,7 @@ const PHChangeBrief = {
           areaConfig.push(1)
         let data = {
           areaConfig,
+          drawings: rs.data.tupianList,
           ...MapB2F(rs.data),
         }
         resolve(data)
@@ -361,22 +421,26 @@ const PHChangeBrief = {
       if(values.areaConfig.indexOf(1)>-1)
         shifoujianyifang = '是'
     }
-    values = {
+    let newValues = {
       ...MapF2B(values),
       shifoudixiashi,
       shifoujianyifang,
     }
-    return new Promise((resolve, reject)=>{
-      axios.post('/tb-gongyongfang-jibenxinxi/update', values)
-      .then(rs=>{
-        // 将后台传来数据转换成如下格式
-        resolve(rs.data)
+    let promiseList = []
+    let formPromise = axios.post('/tb-gongyongfang-jibenxinxi/update', newValues)
+    promiseList.push(formPromise)
+    if(values.drawings){
+      let drawingsData = new FormData()
+      // /tb-gongyongfang-jibenxinxi-tupian/upload-img
+      drawingsData.append('id', values.id)
+      drawingsData.append('module', 'gongyongfang-jibenxinxi-tupian')
+      values.drawings.forEach(file=>{
+        drawingsData.append('file', file)
       })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
+      let drawingsPromise = uploadHelper(drawingsData, '/tb-gongyongfang-jibenxinxi-tupian/upload-img')
+      promiseList.push(drawingsPromise)
+    }
+    return Promise.all(promiseList)
   },
 }
 
