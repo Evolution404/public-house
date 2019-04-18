@@ -7,6 +7,7 @@ import Table from '../common/table'
 import {SButton} from '../common/button'
 import {DeptSelect, BuildingSelect} from '../common/select'
 import API from '../../api'
+import ReservationModal from './reservationModal'
 
 const Item = Form.Item
 const Option = Select.Option
@@ -16,7 +17,18 @@ class MyReservation extends Component{
     tableList: [],
     tableLoading: false,
     isSearched: false,
-    filter: {}
+    filter: {},
+    reservationModal: {
+      visible: false,
+      id: 0,
+      data:{},
+    },
+  }
+  openReservationModal = record=>{
+    this.setState({reservationModal:{visible: true, id:record.id, data:record}})
+  }
+  closeReservationModal = ()=>{
+    this.setState({reservationModal:{visible: false, id: 0, data:{}}})
   }
   search = type=>{
     this.props.form.validateFields((err, values) => {
@@ -51,16 +63,6 @@ class MyReservation extends Component{
     })
     .finally(()=>{
       this.setState({tableLoading: false})
-    })
-  }
-  retryReservation = id=>{
-    API.retryReservation(id)
-    .then(()=>{
-      this.refresh()
-      message.success('再次预约成功, 请等待审核')
-    })
-    .catch(err=>{
-      message.error('再次预约失败, 请重试')
     })
   }
   cancleReservation = id=>{
@@ -128,7 +130,7 @@ class MyReservation extends Component{
             <div style={{display: 'inline-block', padding: '0 10px'}}>
               <SButton disable={record.reservationStatus==='未审批'}
                 text='再次预约'
-                onClick={this.retryReservation.bind(this, record.id)}/>
+                onClick={this.openReservationModal.bind(this, record)}/>
             </div>
             <div style={{display: 'inline-block', padding: '0 10px'}}>
               <SButton disable={record.reservationStatus!=='未审批'}
@@ -204,6 +206,10 @@ class MyReservation extends Component{
           <Empty description="请先搜索"></Empty>
         )
       }
+      <ReservationModal
+        request={API.retryReservation}
+        refresh={this.refresh}
+        {...this.state.reservationModal} close={this.closeReservationModal} />
     </MainContainer>
   }
 }

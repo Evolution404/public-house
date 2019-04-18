@@ -11,12 +11,15 @@ import MainContainer from '../common/mainContainer'
 import {LButton, SButton} from '../common/button'
 import Split from '../common/split'
 import Table from '../common/table'
-import {BuildingSelect} from '../common/select'
+import {BuildingSelect, FloorSelect} from '../common/select'
 const confirm = Modal.confirm
 const Item = Form.Item
 
 
 class Search extends Component{
+  state = {
+    building: '',
+  }
   search = ()=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
@@ -25,6 +28,11 @@ class Search extends Component{
       }
     })
   }
+  buildingChange = building=>{
+    if(building!==this.state.building)
+      this.setState({building})
+    return building
+  }
   render(){
     const { getFieldDecorator } = this.props.form
     return (
@@ -32,7 +40,9 @@ class Search extends Component{
         <Row>
           <Col span={6}>
             <Item label="楼宇名称">
-              {getFieldDecorator('buildingName',)(
+              {getFieldDecorator('buildingName',{
+                getValueFromEvent: this.buildingChange,
+              })(
                 <BuildingSelect></BuildingSelect>
               )}
             </Item>
@@ -40,7 +50,8 @@ class Search extends Component{
           <Col span={6}>
             <Item label="楼层">
               {getFieldDecorator('floor',)(
-                <Input></Input>
+                <FloorSelect
+                  building={this.state.building}></FloorSelect>
               )}
             </Item>
           </Col>

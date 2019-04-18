@@ -4,7 +4,7 @@ import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import {DeptSelect} from '../common/select'
 import Table from '../common/table'
-import {host} from '../../api/apiConfig'
+import download from '../common/download'
 import {Form, Row, Col, Select, Input, Button, message, DatePicker, Empty} from 'antd'
 import moment from 'moment'
 
@@ -37,8 +37,8 @@ class Search extends Component{
               }
             </Item>
           </Col>
-          <Col span={5}>
-            <Item label="起止时间">
+          <Col span={9}>
+            <Item labelCol={{span:6}} label="起止时间">
               {
                 getFieldDecorator('startStopTime')(
                   <RangePicker
@@ -50,7 +50,7 @@ class Search extends Component{
               }
             </Item>
           </Col>
-          <Col style={{marginTop: 5}} span={5} offset={3}>
+          <Col style={{marginTop: 5}} span={2} offset={2}>
             <Button type="primary">搜索</Button>
           </Col>
         </Row>
@@ -132,12 +132,7 @@ class UseStatisticalDetail extends Component{
     }
     API.exportUseStatisticalDetail(info)
     .then(rs=>{
-      let downloadElement = document.createElement('a');
-      let href = host+rs
-      downloadElement.href = href;
-      document.body.appendChild(downloadElement)
-      downloadElement.click()
-      document.body.removeChild(downloadElement)
+      download(rs)
     })
     .catch(err=>{
       message.error('导出失败')
@@ -152,11 +147,9 @@ class UseStatisticalDetail extends Component{
   render(){
     return (
       <MainContainer name="预约管理">
-        <Search></Search>
-        <Split></Split>
-        <Row>
-          <Col span={12}><h2 style={{textAlign: 'right'}}>研究院中517会议室使用情况明细</h2></Col>
-          <Col offset={2} span={2}><Button onClick={this.export} type="primary">导出到文件</Button></Col>
+        <h2 style={{textAlign: 'center'}}>研究院中517会议室使用情况明细</h2>
+        <Row style={{marginBottom: 25}}>
+          <Col offset={17} span={2}><Button onClick={this.export} type="primary">导出到文件</Button></Col>
           <Col offset={1} span={2}><Button onClick={this.print} type="primary">打印</Button></Col>
         </Row>
         <div id="printArea">

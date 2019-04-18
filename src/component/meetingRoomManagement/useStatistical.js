@@ -11,7 +11,7 @@ import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Table from '../common/table'
 import API from '../../api'
-import {host} from '../../api/apiConfig'
+import download from '../common/download'
 import Histogram from '../common/histogram'
 
 const Item = Form.Item
@@ -26,6 +26,8 @@ class UseStatistical extends Component{
     tableLoading: false,
     isSearched: false,
     graphData: {},
+    isPrinting: false,
+    printData: {},
   }
   search = ()=>{
     this.props.form.validateFields((err, values) => {
@@ -61,12 +63,28 @@ class UseStatistical extends Component{
     }
     API.exportUseStatistical(data)
     .then(rs=>{
-      let downloadElement = document.createElement('a');
-      let href = host+rs
-      downloadElement.href = href;
-      document.body.appendChild(downloadElement)
-      downloadElement.click()
-      document.body.removeChild(downloadElement)
+      download(rs)
+    })
+  }
+  getCanvasURL = (id)=>{
+    return document.querySelector(`#${id} canvas`).toDataURL()
+  }
+  print = ()=>{
+    let printData = {
+      graph: this.getCanvasURL('graph'),
+    }
+    this.setState({isPrinting: true, printData}, ()=>{
+      // 直接执行有可能图片没有加载完成
+      // 使用一个interval直到找到图片才开始打印
+      let interval = setInterval(()=>{
+        if(document.querySelectorAll('#printArea img').length>0){
+          clearInterval(interval)
+          window.document.body.innerHTML =
+            window.document.getElementById('printArea').innerHTML
+          window.print()
+          window.location.reload()
+        }
+      }, 100)
     })
   }
   render(){
@@ -114,7 +132,9 @@ class UseStatistical extends Component{
         <Row>
           <Col span={6}>
             <Item label="部门名称">
-              {getFieldDecorator('dept',)(
+              {getFieldDecorator('dept',{
+                rules:[{required: true, message: '请选择部门'}]
+              })(
                 <DeptSelect></DeptSelect>
               )}
             </Item>
@@ -158,24 +178,30 @@ class UseStatistical extends Component{
         <Col span={2}><Button
             onClick={this.export}
             type="primary">导出到文件</Button></Col>
-        <Col offset={1} span={2}><Button block type="primary">打印</Button></Col>
+        <Col offset={1} span={2}><Button block onClick={this.print}
+          type="primary">打印</Button></Col>
       </Row>
-      {
-        this.state.isSearched?(
-          <div>
-            <Table columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
-            {
-              this.state.tableLoading||(
-                <Histogram id="graph"
-                  title="图表对比（部门各会议室总使用时间、日均使用时间对比情况）"
-                  data={this.state.graphData}></Histogram>
-              )
-            }
-          </div>
-        ):(
-          <Empty description="请先搜索"></Empty>
-        )
-      }
+      <div id="printArea">
+        {
+          this.state.isSearched?(
+            <div>
+              <Table columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
+              {
+                !this.state.isPrinting&&!this.state.tableLoading&&(
+                  <Histogram id="graph"
+                    title="图表对比（部门各会议室总使用时间、日均使用时间对比情况）"
+                    data={this.state.graphData}></Histogram>
+                )
+              }
+              {this.state.isPrinting&&(
+                <img style={{width:500}} src={this.state.printData.graph} alt=""/>
+              )}
+            </div>
+          ):(
+            <Empty description="请先搜索"></Empty>
+          )
+        }
+      </div>
     </MainContainer>
   }
 }

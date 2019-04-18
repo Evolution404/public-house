@@ -98,6 +98,7 @@ class FloorSelect extends Component{
   state = {
     floors: '',
     loading: false,
+    value: undefined,
   }
   componentWillMount(){
     if(this.props.building)
@@ -117,10 +118,17 @@ class FloorSelect extends Component{
     })
   }
   componentWillReceiveProps(nextProps){
-    if(nextProps.building!==this.props.building)
-    this.setState({building: nextProps.building},()=>{
-      this.getFloors()
-    })
+    if(nextProps.building!==this.props.building){
+      this.setState({value: undefined})
+      this.setState({building: nextProps.building},()=>{
+        this.getFloors()
+      })
+
+    }
+  }
+  onChange = (value)=>{
+    this.setState({value})
+    this.props.onChange(value)
   }
   render(){
     let options = []
@@ -130,7 +138,11 @@ class FloorSelect extends Component{
       )
     }
     return (
-      <Select {...this.props} loading={this.state.loading}>
+      <Select {...this.props}
+        value={this.state.value}
+        onChange={this.onChange}
+        placeholder={this.props.building||'请先选择楼宇'}
+        loading={this.state.loading}>
         {
           options
         }

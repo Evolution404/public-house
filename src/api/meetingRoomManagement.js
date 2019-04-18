@@ -60,10 +60,16 @@ const meetingRoomReservation = {
     //    phone: xx, 联系电话
     // }
     let data = MapF2B(info)
+    data.huiyishiid = info.id
     data.kaishishijian = info.startStopTime[0]
     data.jieshushijian = info.startStopTime[1]
+    delete data.id
+    let formData = new FormData()
+    Object.keys(data).forEach(key=>{
+      formData.append(key, data[key])
+    })
     return new Promise((resolve, reject)=>{
-      axios.post('/tb-huiyishi-yuyue/order', data)
+      axios.post('/tb-huiyishi-yuyue/order', formData)
       .then(rs=>{
         // 不需要返回结果, 确保成功调用resolve
         resolve()
@@ -117,9 +123,15 @@ const myReservation = {
     })
   },
   // 再次预约
-  retryReservation(id){
+  retryReservation(info){
+    let formData = new FormData()
+    formData.append('huiyishiyuyueid', info.id)
+    formData.append('lianxidianhua', info.phone)
+    formData.append('yuyueyongtu', info.reservationPurpose)
+    formData.append('kaishishijian', info.startStopTime[0])
+    formData.append('jieshushijian', info.startStopTime[1])
     return new Promise((resolve, reject)=>{
-      axios.post('/retryReservation', {id})
+      axios.post('/tb-huiyishi-yuyue/orderagain', formData)
       .then(rs=>{
         // 成功调用
         resolve()
