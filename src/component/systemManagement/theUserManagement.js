@@ -1,7 +1,9 @@
 import React, {Component} from 'react'
 import MainContainer from '../common/mainContainer'
 import {Input, Empty,Button,Form, Row, Col, message, Modal, Select, Upload, Icon} from 'antd'
+import moment from 'moment'
 import {SButton} from '../common/button'
+import {DeptSelect} from '../common/select'
 import Split from '../common/split'
 import Table from '../common/table'
 import API from '../../api'
@@ -82,8 +84,12 @@ class DisplayTable extends Component{
         dataIndex: 'dutyGrade',
       },
       {
-        title: '部门',
+        title: '机关部门',
         dataIndex: 'dept',
+      },
+      {
+        title: '学院部门',
+        dataIndex: 'collegeDept',
       },
     ]
     columns.push({
@@ -180,12 +186,14 @@ class AddModal extends Component {
               </Select>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='所属部门'>
-            {getFieldDecorator('dept', )(
-              <Select>
-                <Option value="学院">学院</Option>
-                <Option value="部处">部处</Option>
-              </Select>
+          <Item style={{marginBottom: '0px'}}  label='所属机关部门'>
+            {getFieldDecorator('dept',)(
+              <DeptSelect></DeptSelect>
+            )}
+          </Item>
+          <Item style={{marginBottom: '0px'}}  label='所属学院'>
+            {getFieldDecorator('collegeDept',)(
+              <DeptSelect></DeptSelect>
             )}
           </Item>
         </Form>
@@ -200,8 +208,8 @@ class DisplayLabel extends Component{
     return (
       <div style={{padding: '5px 0', fontWeight: '700'}}>
         <Row>
-          <Col span={12}>{this.props.label}</Col>
-          <Col span={12}>{this.props.value}</Col>
+          <Col offset={3} span={5}>{this.props.label+':'}</Col>
+          <Col offset={2} span={10}>{this.props.value}</Col>
         </Row>
       </div>
     )
@@ -229,6 +237,11 @@ class DetailModal extends Component {
           <DisplayLabel label="姓名" value={data.name}/>
           <DisplayLabel label="职称级别" value={data.proTitleLevel}/>
           <DisplayLabel label="职务级别" value={data.dutyGrade}/>
+          <DisplayLabel label="机关部门" value={data.dept}/>
+          <DisplayLabel label="学院部门" value={data.collegeDept}/>
+          <DisplayLabel label="创建时间" value={moment(data.createTime).format('YYYY-MM-DD HH:mm')}/>
+          <DisplayLabel label="更新时间" value={moment(data.updateTime).format('YYYY-MM-DD HH:mm')}/>
+          <DisplayLabel label="备注" value={data.note}/>
       </Modal>
     )
   }
@@ -315,12 +328,14 @@ class ChangeModal extends Component {
               </Select>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='所属部门'>
+          <Item style={{marginBottom: '0px'}}  label='所属机关部门'>
             {getFieldDecorator('dept', {initialValue: data.dept})(
-              <Select>
-                <Option value="学院">学院</Option>
-                <Option value="部处">部处</Option>
-              </Select>
+              <DeptSelect></DeptSelect>
+            )}
+          </Item>
+          <Item style={{marginBottom: '0px'}}  label='所属学院'>
+            {getFieldDecorator('collegeDept', {initialValue: data.collegeDept})(
+              <DeptSelect></DeptSelect>
             )}
           </Item>
         </Form>

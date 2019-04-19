@@ -13,79 +13,27 @@ let render = (text)=>moment(text).format('YYYY-MM-DD HH:mm')
 const Item = Form.Item
 const {RangePicker} = DatePicker
 
-class Search extends Component{
-  render(){
-    const { getFieldDecorator } = this.props.form
-    return (
-      <Form  labelCol={{span: 10}} wrapperCol={{span:14}}>
-        <Row>
-          <Col span={4}>
-            <Item label="部门名称">
-              {
-                getFieldDecorator('dept')(
-                  <DeptSelect></DeptSelect>
-                )
-              }
-            </Item>
-          </Col>
-          <Col span={4}>
-            <Item label="房间号">
-              {
-                getFieldDecorator('roomNum')(
-                  <DeptSelect></DeptSelect>
-                )
-              }
-            </Item>
-          </Col>
-          <Col span={9}>
-            <Item labelCol={{span:6}} label="起止时间">
-              {
-                getFieldDecorator('startStopTime')(
-                  <RangePicker
-                    showTime={{ format: 'HH:mm' }}
-                    format="YYYY-MM-DD HH:mm"
-                    placeholder={['开始时间', '结束时间']}
-                  />
-                )
-              }
-            </Item>
-          </Col>
-          <Col style={{marginTop: 5}} span={2} offset={2}>
-            <Button type="primary">搜索</Button>
-          </Col>
-        </Row>
-      </Form>
-    )
-  }
-}
-Search = Form.create({ name: 'search' })(Search)
 
 let columns = [
   {
-    title: '序号',
-    dataIndex: 'id',
+    title: '申请人',
+    dataIndex: 'applicant',
   },
   {
-    title: '预约人',
-    dataIndex: 'reservationPerson',
+    title: '使用时长(小时)',
+    dataIndex: 'useLength',
   },
   {
-    title: '预约用途',
-    dataIndex: 'reservationPurpose',
+    title: '使用日期',
+    dataIndex: 'useDate',
   },
   {
-    title: '联系电话',
-    dataIndex: 'phone',
+    title: '使用时段',
+    dataIndex: 'useTime',
   },
   {
-    title: '开始时间',
-    dataIndex: 'startTime',
-    render,
-  },
-  {
-    title: '结束时间',
-    dataIndex: 'stopTime',
-    render,
+    title: '申请时间',
+    dataIndex: 'applyTIme',
   },
   {
     title: '审批人',
@@ -103,19 +51,21 @@ class UseStatisticalDetail extends Component{
     hasSearched: false,
     loading: false,
     tableList: [],
+    building: '',
   }
   componentWillMount(){
     let id = this.props.match.params.id
     if(id===':id') {return}
     let [meetingRoomId, startTime, stopTime] = id.split('-')
-    this.setState({isJump: true, meetingRoomId, startTime, stopTime})
+    this.setState({meetingRoomId, startTime, stopTime})
     this.search(id)
   }
   search = (id)=>{
     this.setState({loading: true})
     API.useStatisticalDetail(id)
     .then((rs)=>{
-      this.setState({tableList: rs})
+      const {tableList, building} = rs
+      this.setState({tableList, building})
     })
     .catch(err=>{
       message.error('搜索失败')
@@ -147,7 +97,7 @@ class UseStatisticalDetail extends Component{
   render(){
     return (
       <MainContainer name="预约管理">
-        <h2 style={{textAlign: 'center'}}>研究院中517会议室使用情况明细</h2>
+        <h2 style={{textAlign: 'center'}}>{this.state.building}会议室使用情况明细</h2>
         <Row style={{marginBottom: 25}}>
           <Col offset={17} span={2}><Button onClick={this.export} type="primary">导出到文件</Button></Col>
           <Col offset={1} span={2}><Button onClick={this.print} type="primary">打印</Button></Col>

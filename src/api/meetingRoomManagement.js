@@ -321,7 +321,9 @@ const useStatistical = {
         params: data
       })
       .then(rs=>{
-        let data = rs.data.map(i=>MapB2F(i))
+        let data = {}
+        data.building = rs.data.huiyishimingcheng
+        data.tableList = rs.data.resultlist.map(i=>MapB2F(i))
         resolve(data)
       })
       .catch(err=>{

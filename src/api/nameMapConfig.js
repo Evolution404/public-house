@@ -10,6 +10,7 @@ const mapNameF2B = {
   uc: 'chujiyixia',
   note: 'beizhu',
   dept: 'bumen',
+  collegeDept: 'xueyuanBumen',
   undergraduate: 'benkeshengshu',
   masterDegree: 'shuoshishengshu',
   doctor: 'boshishengshu',
@@ -79,6 +80,8 @@ const mapNameF2B = {
   useLength: 'shiyongshichang', // 使用时长
   useTime: 'shiyongshiduan', // 使用时段
   useDate: 'shiyongriqi', // 使用日期
+  createTime: 'chuangjianshijian', // 创建时间
+  updateTime: 'gengxinshijian', // 更新时间
 
 }
 let mapNameB2F = {}

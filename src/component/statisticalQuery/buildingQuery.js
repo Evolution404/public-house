@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import {Select, Button, Form, Row, Col, message, Empty, Spin} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
+import {BuildingSelect} from '../common/select'
 import Zmage from 'react-zmage'
 import API from '../../api'
 import {host} from '../../api/apiConfig'
@@ -28,13 +29,7 @@ class Search extends Component{
               {getFieldDecorator('buildingName',{
                 rules: [{required: true, message: '请选择楼宇名称'}]
               })(
-                <Select>
-                  {
-                    this.props.optionList.map(name=>(
-                      <Option key={name} value={name}>{name}</Option>
-                    ))
-                  }
-                </Select>
+                <BuildingSelect></BuildingSelect>
               )}
             </Item>
           </Col>

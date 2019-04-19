@@ -55,6 +55,10 @@ class UseStatistical extends Component{
     })
   }
   export = ()=>{
+    if(!document.querySelector('#graph canvas')){
+      message.error('找不到图片, 请先搜索')
+      return
+    }
     let graph = document.querySelector('#graph canvas').toDataURL()
     let data = {
       dept: this.state.dept,
@@ -70,6 +74,10 @@ class UseStatistical extends Component{
     return document.querySelector(`#${id} canvas`).toDataURL()
   }
   print = ()=>{
+    if(!document.querySelector('#graph canvas')){
+      message.error('找不到图片, 请先搜索')
+      return
+    }
     let printData = {
       graph: this.getCanvasURL('graph'),
     }
