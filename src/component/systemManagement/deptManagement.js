@@ -4,7 +4,7 @@ import {SButton} from '../common/button'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Table, {TableUtil}from '../common/table'
-import YearSelect from '../common/yearSelect'
+import { YearSelect } from '../common/select'
 import API from '../../api'
 const Item = Form.Item
 const confirm = Modal.confirm;

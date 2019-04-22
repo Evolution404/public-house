@@ -34,7 +34,7 @@ class MyTable extends Component{
       <Table {...this.props} 
         dataSource={data}
         columns={columns}
-        pagination={pagination}
+        pagination={!this.props.noPaginnation&&pagination}
         locale={locale}
         bordered={true}
         rowSelection={rowSelection}/>

@@ -25,6 +25,13 @@ http.interceptors.request.use(config=>{
 },err=>{
   return Promise.reject(err)
 })
+let wrapper = (promise) => {
+   return promise.then(function(){
+       return [null, ...arguments]
+   }).catch(err => {
+       return [err, null]
+   })
+}
 
 export default http
-export {host}
+export {host, wrapper}

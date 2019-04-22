@@ -5,7 +5,7 @@ import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Table from '../common/table'
 import Histogram from '../common/histogram'
-import YearSelect from '../common/yearSelect'
+import { YearSelect } from '../common/select'
 
 const Item = Form.Item
 const Option = Select.Option

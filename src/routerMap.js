@@ -137,7 +137,7 @@ const routerMap = {
     component: OverallAccount
   },
   DepartmentAccount: {
-    path:'/DepartmentAccount',
+    path:'/DepartmentAccount/:id',
     name:'部门核算',
     component: DepartmentAccount
   },

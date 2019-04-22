@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {
   HashRouter as Router,
   Link
-} from "react-router-dom";
+} from "react-router-dom"
 import Map from '../../routerMap'
 import {Button,Form, Row, Col, message, Modal, Upload,
   Icon, Input} from 'antd'

@@ -1,20 +1,20 @@
 import React, {Component} from 'react'
-import {Form, Select, Row, Col, Button} from 'antd'
+import {
+  HashRouter as Router,
+  Link
+} from "react-router-dom"
+import {Form, Row, Col, Button, Spin, message, Empty} from 'antd'
 import MainContainer from '../common/mainContainer'
+import {YearSelect} from '../common/select'
 import Split from '../common/split'
 import Table from '../common/table'
 import {SButton} from '../common/button'
 import ECharts from '../common/echarts'
 import Histogram from '../common/histogram'
+import API, {wrapper} from '../../api'
+import Map from '../../routerMap'
 
 const Item = Form.Item
-const Option = Select.Option
-// data = [
-//  {
-//    name: xx,
-//    value: xx,
-//  },
-// ]
 class DeptContrast1 extends Component {
   render(){
     let option = {
@@ -66,49 +66,53 @@ class AcademyHouseTable extends Component{
       },
       {
         title: '部门',
-        dataIndex: 'dept',
+        dataIndex: 'bumen',
       },
       {
         title: '定额面积(DE)',
           children: [
             {
               title: '办公用房(BG)',
-              dataIndex: 'BG',
+              dataIndex: 'bangongyongfang_de',
             },
             {
-              title: '办公用房(GY)',
-              dataIndex: 'GY',
+              title: '公用用房(GY)',
+              dataIndex: 'gongyongyongfang_de',
             },
             {
               title: '实验实习用房(SS)',
-              dataIndex: 'SS',
+              dataIndex: 'shiyanshixiyongfang_de',
             },
             {
               title: '超大设备用房补贴(CB)',
-              dataIndex: 'CB',
+              dataIndex: 'chaodashebeiyongfangbutie_de',
             },
             {
               title: '重点实验室用房补贴(ZB)',
-              dataIndex: 'ZB',
+              dataIndex: 'zhongdianshiyanshiyongfangbutie_de',
             },
             {
               title: '调节用房(TJ)',
-              dataIndex: 'TJ',
+              dataIndex: 'tiaojieyongfang_de',
             },
           ]
       },
       {
         title: '实际面积',
-        dataIndex: 'realArea',
+        dataIndex: 'shijiheji',
       },
       {
         title: '超额面积',
-        dataIndex: 'excessArea',
+        dataIndex: 'mianji_ce',
       },
       {
         title: '操作',
-        render: (text)=>{
-          return <SButton text="详细"/>
+        render: (text, record)=>{
+          return <Router>
+            <Link to={Map.DepartmentAccount.path.replace(':id', '2-'+record.id)}>
+              <SButton text="详细"/>
+            </Link>
+          </Router>
         }
       }
     ]
@@ -133,24 +137,28 @@ class PartyHouseTable extends Component{
       },
       {
         title: '部门名称',
-        dataIndex: 'deptName'
+        dataIndex: 'bumen'
       },
       {
         title: '定额面积',
-        dataIndex: 'fixedArea'
+        dataIndex: 'dingemianji'
       },
       {
         title: '实际面积',
-        dataIndex: 'realArea'
+        dataIndex: 'shijimianji'
       },
       {
         title: '超额面积',
-        dataIndex: 'excessArea'
+        dataIndex: 'mianji_ce'
       },
       {
         title: '操作',
-        render: (text)=>{
-          return <SButton text="详细"/>
+        render: (text, record)=>{
+          return <Router>
+            <Link to={Map.DepartmentAccount.path.replace(':id', '1-'+record.id)}>
+              <SButton text="详细"/>
+            </Link>
+          </Router>
         }
       },
     ]
@@ -168,94 +176,55 @@ class PartyHouseTable extends Component{
 
 class OverallAccount extends Component{
   state = {
+    partyHouseTableList: [],
+    academyHouseTableList: [],
+    loading: false,
+    tip: '',
     year: '',
     isPrinting: false,
     printData: {},
-    DeptContrast1: [
-      {
-        name: '1',
-        value: 0.1,
-      },
-      {
-        name: '2',
-        value: 0.2,
-      },
-      {
-        name: '3',
-        value: 0.3,
-      },
-    ],
-    DeptContrast2: {
-      '类别1': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别2': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别3': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别4': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别5': {
-          '项目1':100,
-          '项目2':200,
-      },
-    },
-    DeptContrast3: {
-      '类别1': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别2': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别3': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别4': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别5': {
-          '项目1':100,
-          '项目2':200,
-      },
-    },
-    CollegeContrast4: {
-      '类别1': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别2': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别3': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别4': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别5': {
-          '项目1':100,
-          '项目2':200,
-      },
-    },
+    DeptContrast1: [],
+    DeptContrast2: {},
+    DeptContrast3: {},
+    CollegeContrast4: {},
   }
-  handleYearChange = (e)=>{
+  setInitState = ()=>{
+    this.setState({loading: false, year: '',
+                  DeptContrast1: [], DeptContrast2: {}, DeptContrast3: [], CollegeContrast4: {}})
+  }
+  handleYearChange = async (year)=>{
     this.setState({
-      year: e.target.value
+      year,
     })
+    // 先核算信息
+    this.setState({loading: true, tip: '计算核算信息中...'})
+    let [err] = await wrapper(API.accountingData(year))
+    if(err){
+      if(err.response)
+        message.error(err.response.data.title)
+      else
+        message.error('核算信息失败')
+      this.setInitState()
+      return
+    }
+    this.setState({tip: '加载核算信息中...'})
+    let [geterr, data] = await wrapper(API.getAccountingData(year))
+    console.log(data)
+    if(geterr){
+      this.setState({loading: false, year: '',
+                    DeptContrast1: [], DeptContrast2: {}, DeptContrast3: [], CollegeContrast4: {}})
+      if(geterr.response)
+        message.error(geterr.response.data.title)
+      else
+        message.error('加载核算信息失败')
+      this.setInitState()
+      return
+    }
+    // 处理data
+    this.setState({partyHouseTableList: data[0].data,
+                  DeptContrast1: data[0].bingtu.map(item=>({name: item.bumen, value:item.shijimianji})),
+                  DeptContrast3: data[0].zhuzhuangtu,
+                  academyHouseTableList: data[1], loading: false})
   }
   getCanvasURL = (id)=>{
     return document.querySelector(`#${id} canvas`).toDataURL()
@@ -282,22 +251,16 @@ class OverallAccount extends Component{
     })
   }
   render(){
-    let testPartyData = [{
-      id:1,
-      deptName:1,
-      fixedArea:1,
-      realArea:1,
-      excessArea:1,
-    }]
     let imgStyle = {
       width: 300,
     }
     return <MainContainer name="核算结果">
-      <Item labelCol={{span:2}} wrapperCol={{span:4}} label='年份'>
-        <Select onChange={this.handleYearChange} defaultValue="0">
-          <Option value="0">--请选择年份--</Option>
-        </Select>
-      </Item>
+      <Form>
+        <Item labelCol={{span:2}} wrapperCol={{span:2}} label='年份'>
+          <YearSelect onChange={this.handleYearChange} placeholder="请选择年份" size="default"></YearSelect>
+        </Item>
+      </Form>
+      <Spin spinning={this.state.loading} tip={this.state.tip}>
       <Row>
         <Col span={12} style={{fontSize: '20px', textAlign: 'right'}}>
           全校公用房使用总体情况
@@ -310,68 +273,82 @@ class OverallAccount extends Component{
         </Col>
       </Row>      
       <Split/>
-      <div id="printArea">
-        <Row>
-          <Col span={20} offset={1}>
-            <PartyHouseTable data={testPartyData}/>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={20} offset={1}>
-            <AcademyHouseTable data={[{id:1}]}/>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
+      {
+        this.state.year?(
+          <div id="printArea">
+            <Row>
+              <Col span={20} offset={1}>
+                <PartyHouseTable data={this.state.partyHouseTableList}/>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={20} offset={1}>
+                <AcademyHouseTable data={this.state.academyHouseTableList}/>
+              </Col>
+            </Row>
             {
-              !this.state.isPrinting&&(
-                <DeptContrast1 data={this.state.DeptContrast1}></DeptContrast1>
+              this.state.loading||(
+                <div>
+                  <Row>
+                    <Col span={12}>
+                      {
+                        !this.state.isPrinting&&(
+                          <DeptContrast1 data={this.state.DeptContrast1}></DeptContrast1>
+                        )
+                      }
+                      {this.state.isPrinting&&(
+                        <img style={imgStyle} src={this.state.printData.DeptContrast1} alt=""/>
+                      )}
+                    </Col>
+                    <Col span={12}>
+                      {
+                        !this.state.isPrinting&&(
+                          <Histogram id="DeptContrast2"
+                            title="部门情况对比2（各学院实际总面积、人均使用面积对比图表）"
+                            data={this.state.DeptContrast2}></Histogram>
+                        )
+                      }
+                      {this.state.isPrinting&&(
+                        <img style={imgStyle} src={this.state.printData.DeptContrast2} alt=""/>
+                      )}
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col span={12}>
+                      {
+                        !this.state.isPrinting&&(
+                          <Histogram id="DeptContrast3"
+                            title="部门情况对比3（各部门公用房额定面积、实际使用面积对比图表）"
+                            data={this.state.DeptContrast3}></Histogram>
+                        )
+                      }
+                      {this.state.isPrinting&&(
+                        <img style={imgStyle} src={this.state.printData.DeptContrast3} alt=""/>
+                      )}
+                    </Col>
+                    <Col span={12}>
+                      {
+                        !this.state.isPrinting&&(
+                          <Histogram id="CollegeContrast4"
+                            title="学院情况对比4（各学院分项实际使用面积对比图表）"
+                            data={this.state.CollegeContrast4}></Histogram>
+                        )
+                      }
+                      {this.state.isPrinting&&(
+                        <img style={imgStyle} src={this.state.printData.CollegeContrast4} alt=""/>
+                      )}
+                    </Col>
+                  </Row>
+                </div>
               )
             }
-            {this.state.isPrinting&&(
-              <img style={imgStyle} src={this.state.printData.DeptContrast1} alt=""/>
-            )}
-          </Col>
-          <Col span={12}>
-            {
-              !this.state.isPrinting&&(
-                <Histogram id="DeptContrast2"
-                  title="部门情况对比2（各学院实际总面积、人均使用面积对比图表）"
-                  data={this.state.DeptContrast2}></Histogram>
-              )
-            }
-            {this.state.isPrinting&&(
-              <img style={imgStyle} src={this.state.printData.DeptContrast2} alt=""/>
-            )}
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>
-            {
-              !this.state.isPrinting&&(
-                <Histogram id="DeptContrast3"
-                  title="部门情况对比3（各部门公用房额定面积、实际使用面积对比图表）"
-                  data={this.state.DeptContrast3}></Histogram>
-              )
-            }
-            {this.state.isPrinting&&(
-              <img style={imgStyle} src={this.state.printData.DeptContrast3} alt=""/>
-            )}
-          </Col>
-          <Col span={12}>
-            {
-              !this.state.isPrinting&&(
-                <Histogram id="CollegeContrast4"
-                  title="学院情况对比4（各学院分项实际使用面积对比图表）"
-                  data={this.state.CollegeContrast4}></Histogram>
-              )
-            }
-            {this.state.isPrinting&&(
-              <img style={imgStyle} src={this.state.printData.CollegeContrast4} alt=""/>
-            )}
-          </Col>
-        </Row>
-      </div>
+          </div>
+
+        ):(
+          <Empty description="请先选择年份"></Empty>
+        )
+      }
+      </Spin>
     </MainContainer>
   }
 }
