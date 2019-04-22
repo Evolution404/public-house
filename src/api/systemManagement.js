@@ -4,9 +4,15 @@ import Map from '../routerMap'
 
 const deptManagement = {
   // 部门管理
-  getDepts(){
+  getDepts(type){
+    let data = {}     
+    if(type!=='0'){
+      data.bumenleixing=type
+    }
     return new Promise((resolve, reject)=>{
-      axios.get('/tb-bumen/get/all/bumengmingcheng')
+      axios.get('/tb-bumen/get/all/bumengmingcheng', {
+        params: data,
+      })
       .then(rs=>{
         resolve(rs.data)
       })

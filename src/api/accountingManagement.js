@@ -55,20 +55,31 @@ const overallAccount = {
       .then(rs=>{
         if(type==='2'){
           let tableData = []
-          tableData.push({slash:'定额面积(DE)', ...rs.data.tabledata['dingemianji']})
-          tableData.push({slash:'实际面积(SJ)', ...rs.data.tabledata['shijimianji']})
-          tableData.push({slash:'超额面积(CE)', ...rs.data.tabledata['chaoemianji']})
-          resolve({dept:rs.data.bumen, tableData, totalData:rs.data.totaldata})
+          tableData.push({slash:'定额面积(DE)', ...rs.data.datalist['dingemianji']})
+          tableData.push({slash:'实际面积(SJ)', ...rs.data.datalist['shijimianji']})
+          tableData.push({slash:'超额面积(CE)', ...rs.data.datalist['chaoemianji']})
+          let graphData = {
+            pieData: rs.data.bingtu,
+            hisData: rs.data.zhuzhuangtu,
+          }
+          resolve({dept:rs.data.bumen, tableData, totalData:rs.data.totaldata, graphData})
           return
         }
-        resolve({dept:rs.data.bumen, tableData:rs.data.tabledata, totalData:rs.data.totaldata})
+        let graphData = rs.data.zhuzhuangtu
+        for(let key in graphData){
+          graphData[key] = {'面积':graphData[key]}
+        }
+        resolve({dept:rs.data.bumen, tableData:rs.data.datalist,
+                graphData,
+                totalData:rs.data.totaldata})
       })
       .catch(err=>{
         reject(err)
       })
     })
   },
-  getDeptAccountingDataByInfo(type, info){
+  getDeptAccountingDataByInfo(info){
+    let type = info.type
     // 党政机关
     let url, data={}
     if(type==='1'){
@@ -84,13 +95,23 @@ const overallAccount = {
       .then(rs=>{
         if(type==='2'){
           let tableData = []
-          tableData.push({slash:'定额面积(DE)', ...rs.data.tabledata['dingemianji']})
-          tableData.push({slash:'实际面积(SJ)', ...rs.data.tabledata['shijimianji']})
-          tableData.push({slash:'超额面积(CE)', ...rs.data.tabledata['chaoemianji']})
-          resolve({dept:rs.data.bumen, tableData, totalData:rs.data.totaldata})
+          tableData.push({slash:'定额面积(DE)', ...rs.data.datalist['dingemianji']})
+          tableData.push({slash:'实际面积(SJ)', ...rs.data.datalist['shijimianji']})
+          tableData.push({slash:'超额面积(CE)', ...rs.data.datalist['chaoemianji']})
+          let graphData = {
+            pieData: rs.data.bingtu,
+            hisData: rs.data.zhuzhuangtu,
+          }
+          resolve({dept:rs.data.bumen, tableData, totalData:rs.data.totaldata, graphData})
           return
         }
-        resolve({dept:rs.data.bumen, tableData:rs.data.tabledata, totalData:rs.data.totaldata})
+        let graphData = rs.data.zhuzhuangtu
+        for(let key in graphData){
+          graphData[key] = {'面积':graphData[key]}
+        }
+        resolve({dept:rs.data.bumen, tableData:rs.data.datalist,
+                graphData,
+                totalData:rs.data.totaldata})
       })
       .catch(err=>{
         reject(err)

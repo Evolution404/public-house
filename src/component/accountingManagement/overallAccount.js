@@ -9,50 +9,18 @@ import {YearSelect} from '../common/select'
 import Split from '../common/split'
 import Table from '../common/table'
 import {SButton} from '../common/button'
-import ECharts from '../common/echarts'
 import Histogram from '../common/histogram'
+import PieChart from '../common/pieChart'
 import API, {wrapper} from '../../api'
 import Map from '../../routerMap'
 
 const Item = Form.Item
 class DeptContrast1 extends Component {
   render(){
-    let option = {
-      title: {
-        text: '部门情况对比1（各部门实际公用房使用面积对比图表）',
-        textStyle: {
-          fontSize: 15,
-        },
-      },
-      tooltip : {
-        trigger: 'item',
-        formatter: "{a} <br/>{b} : {c} ({d}%)"
-      },
-      legend: {
-          type: 'scroll',
-          orient: 'vertical',
-          right: 10,
-          top: 20,
-          bottom: 20,
-      },
-      series : [
-          {
-              name: '部门',
-              type: 'pie',
-              radius : '55%',
-              center: ['40%', '50%'],
-              data: this.props.data,
-              itemStyle: {
-                  emphasis: {
-                      shadowBlur: 10,
-                      shadowOffsetX: 0,
-                      shadowColor: 'rgba(0, 0, 0, 0.5)'
-                  }
-              }
-          }
-      ]
-    }
-    return <ECharts id="DeptContrast1" option={option}></ECharts>
+    return <PieChart id="DeptContrast1"
+      title="各部门实际公用房使用面积对比图表"
+      data={this.props.data}
+      ></PieChart>
   }
 }
 
@@ -192,39 +160,79 @@ class OverallAccount extends Component{
     this.setState({loading: false, year: '',
                   DeptContrast1: [], DeptContrast2: {}, DeptContrast3: [], CollegeContrast4: {}})
   }
-  handleYearChange = async (year)=>{
-    this.setState({
-      year,
+  account = ()=>{
+    this.props.form.validateFields(async (formerr, values)=>{
+      if(formerr)
+        return
+      let year = values.year
+      this.setState({
+        year,
+      })
+      // 先核算信息
+      this.setState({loading: true, tip: '计算核算信息中...'})
+      let [err] = await wrapper(API.accountingData(year))
+      if(err){
+        if(err.response)
+          message.error(err.response.data.title)
+        else
+          message.error('核算信息失败')
+        this.setInitState()
+        return
+      }
+      this.setState({tip: '加载核算信息中...'})
+      let [geterr, data] = await wrapper(API.getAccountingData(year))
+      console.log(data)
+      if(geterr){
+        this.setState({loading: false, year: '',
+                      DeptContrast1: [], DeptContrast2: {}, DeptContrast3: [], CollegeContrast4: {}})
+        if(geterr.response)
+          message.error(geterr.response.data.title)
+        else
+          message.error('加载核算信息失败')
+        this.setInitState()
+        return
+      }
+      // 处理data
+      this.setState({partyHouseTableList: data[0].datalist,
+                    DeptContrast1: data[0].bingtu,
+                    DeptContrast3: data[0].zhuzhuangtu,
+                    academyHouseTableList: data[1].datalist,
+                    DeptContrast2: data[1].zhuzhuangtu[0],
+                    CollegeContrast4: data[1].zhuzhuangtu[1],
+                    loading: false})
     })
-    // 先核算信息
-    this.setState({loading: true, tip: '计算核算信息中...'})
-    let [err] = await wrapper(API.accountingData(year))
-    if(err){
-      if(err.response)
-        message.error(err.response.data.title)
-      else
-        message.error('核算信息失败')
-      this.setInitState()
-      return
-    }
-    this.setState({tip: '加载核算信息中...'})
-    let [geterr, data] = await wrapper(API.getAccountingData(year))
-    console.log(data)
-    if(geterr){
-      this.setState({loading: false, year: '',
-                    DeptContrast1: [], DeptContrast2: {}, DeptContrast3: [], CollegeContrast4: {}})
-      if(geterr.response)
-        message.error(geterr.response.data.title)
-      else
-        message.error('加载核算信息失败')
-      this.setInitState()
-      return
-    }
-    // 处理data
-    this.setState({partyHouseTableList: data[0].data,
-                  DeptContrast1: data[0].bingtu.map(item=>({name: item.bumen, value:item.shijimianji})),
-                  DeptContrast3: data[0].zhuzhuangtu,
-                  academyHouseTableList: data[1], loading: false})
+  }
+  search = async(year)=>{
+    this.props.form.validateFields( async (err, values)=>{
+      if(err)
+        return
+      let year = values.year
+      this.setState({
+        year,
+      })
+      this.setState({loading: true,tip: '加载核算信息中...'})
+      let [geterr, data] = await wrapper(API.getAccountingData(year))
+      console.log(data)
+      if(geterr){
+        this.setState({loading: false, year: '',
+                      DeptContrast1: [], DeptContrast2: {}, DeptContrast3: [], CollegeContrast4: {}})
+        if(geterr.response)
+          message.error(geterr.response.data.title)
+        else
+          message.error('加载核算信息失败')
+        this.setInitState()
+        return
+      }
+      // 处理data
+      this.setState({partyHouseTableList: data[0].datalist,
+                    DeptContrast1: data[0].bingtu,
+                    DeptContrast3: data[0].zhuzhuangtu,
+                    academyHouseTableList: data[1].datalist,
+                    DeptContrast2: data[1].zhuzhuangtu[0],
+                    CollegeContrast4: data[1].zhuzhuangtu[1],
+                    loading: false})
+    })
+
   }
   getCanvasURL = (id)=>{
     return document.querySelector(`#${id} canvas`).toDataURL()
@@ -254,11 +262,22 @@ class OverallAccount extends Component{
     let imgStyle = {
       width: 300,
     }
+    const { getFieldDecorator } = this.props.form
     return <MainContainer name="核算结果">
       <Form>
-        <Item labelCol={{span:2}} wrapperCol={{span:2}} label='年份'>
-          <YearSelect onChange={this.handleYearChange} placeholder="请选择年份" size="default"></YearSelect>
-        </Item>
+        <Row>
+          <Col span={4}>
+            <Item labelCol={{span:12}} wrapperCol={{span:12}} label='年份'>
+              {getFieldDecorator('year',{
+                rules: [{required: true, message: '请选择年份'}]
+              })(
+                <YearSelect placeholder="请选择年份" size="default"></YearSelect>
+              )}
+            </Item>
+          </Col>
+          <Col style={{marginTop: 5}} onClick={this.search} offset={1} span={2}><Button type="primary">查询</Button></Col>
+          <Col style={{marginTop: 5}} onClick={this.account} span={2}><Button type="primary">核算</Button></Col>
+        </Row>
       </Form>
       <Spin spinning={this.state.loading} tip={this.state.tip}>
       <Row>
@@ -304,7 +323,7 @@ class OverallAccount extends Component{
                       {
                         !this.state.isPrinting&&(
                           <Histogram id="DeptContrast2"
-                            title="部门情况对比2（各学院实际总面积、人均使用面积对比图表）"
+                            title="各学院实际总面积、人均使用面积对比图表"
                             data={this.state.DeptContrast2}></Histogram>
                         )
                       }
@@ -318,7 +337,7 @@ class OverallAccount extends Component{
                       {
                         !this.state.isPrinting&&(
                           <Histogram id="DeptContrast3"
-                            title="部门情况对比3（各部门公用房额定面积、实际使用面积对比图表）"
+                            title="各部门公用房定额面积、实际使用面积对比图表"
                             data={this.state.DeptContrast3}></Histogram>
                         )
                       }
@@ -330,7 +349,7 @@ class OverallAccount extends Component{
                       {
                         !this.state.isPrinting&&(
                           <Histogram id="CollegeContrast4"
-                            title="学院情况对比4（各学院分项实际使用面积对比图表）"
+                            title="各学院分项实际使用面积对比图表"
                             data={this.state.CollegeContrast4}></Histogram>
                         )
                       }
@@ -352,5 +371,5 @@ class OverallAccount extends Component{
     </MainContainer>
   }
 }
-
+OverallAccount = Form.create({ name: 'OverallAccount' })(OverallAccount)
 export default OverallAccount

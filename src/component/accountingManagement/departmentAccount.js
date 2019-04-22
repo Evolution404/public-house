@@ -2,11 +2,48 @@ import React, {Component} from 'react'
 import {Form, Select, Row, Col, Button, Tag, Empty, message, Spin} from 'antd'
 import MainContainer from '../common/mainContainer'
 import {DeptSelect, YearSelect} from '../common/select'
+import Histogram from '../common/histogram'
+import PieChart from '../common/pieChart'
 import Split from '../common/split'
 import API from '../../api'
 import Table from '../common/table'
 
+const Option = Select.Option
 const Item = Form.Item
+
+class Graph extends Component{
+  render(){
+    let graphData = this.props.graphData
+    let rs = this.props.type==="1"?(
+          <div style={{marginTop: 50}}>
+            {
+              !this.props.isPrinting&&(
+                <Histogram id="graph"
+                  title="定额面积、实际面积、人均面积对比情况"
+                  data={graphData}></Histogram>
+              )
+            }
+            {this.props.isPrinting&&(
+              <img style={{width: 300}} src={this.props.printData.graphData} alt=""/>
+            )}
+          </div>
+        ):(
+          <Row style={{marginTop: 50}}>
+            <Col span={12}>
+              <PieChart
+                data={graphData.pieData}
+                title="各分项实际面积对比情况" id="graph1"></PieChart>
+            </Col>
+            <Col span={12}>
+              <Histogram id="graph2"
+                title="各分项定额面积、实际面积、人均面积对比情况"
+                data={graphData.hisData}></Histogram>
+            </Col>
+          </Row>
+        )
+    return rs
+  }
+}
 
 class MyTag extends Component{
   render(){
@@ -144,13 +181,32 @@ class PartyHouse extends Component{
 class DepartmentAccount extends Component{
   state = {
     hasSearched: false,
+    isPrinting: false,
+    printData: {},
+    graphData: {},
     loading: false,
     year: 0,
     dept: '',
     type: '',
+    formtype: '', // form里使用的临时type
     id: '',
     tableData: [],
     totalData: {},
+  }
+  setInitState = ()=>{
+    this.setState({
+      hasSearched: false,
+      isPrinting: false,
+      printData: {},
+      graphData: {},
+      loading: false,
+      year: 0,
+      dept: '',
+      type: '',
+      id: '',
+      tableData: [],
+      totalData: {},
+    })
   }
   componentDidMount(){
     let pathId = this.props.match.params.id
@@ -160,9 +216,9 @@ class DepartmentAccount extends Component{
     API.getDeptAccountingDataById(type, id)
     .then(rs=>{
       this.setState(rs)
-      console.log(rs)
     })
     .catch(err=>{
+      this.setInitState()
       if(err.response)
         message.error(err.response.data.title)
       else
@@ -170,15 +226,17 @@ class DepartmentAccount extends Component{
     })
     .finally(()=>{this.setState({loading: false})})
   }
-  getDataByInfo(type){
+  getDataByInfo = ()=>{
     this.props.form.validateFields((err, values)=>{
       if(!err){
+        let type = values.type
         this.setState({type, hasSearched: true, loading: true})
-        API.getDeptAccountingDataByInfo(type, values)
+        API.getDeptAccountingDataByInfo(values)
         .then(rs=>{
           this.setState(rs)
         })
         .catch(err=>{
+          this.setInitState()
           if(err.response)
             message.error(err.response.data.title)
           else
@@ -188,13 +246,16 @@ class DepartmentAccount extends Component{
       }
     })
   }
+  onTypeChange = (formtype)=>{
+    this.setState({formtype})
+  }
   render(){
     const { getFieldDecorator } = this.props.form
     return <MainContainer name="核算管理">
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
           <Col span={4}>
-            <Item labelCol={{span:5}} wrapperCol={{span:18}} label="年份">
+            <Item labelCol={{span:12}} wrapperCol={{span:12}} label="年份">
               {getFieldDecorator('year',{
                 rules: [{required: true, message: '请选择年份'}]
               })(
@@ -202,23 +263,30 @@ class DepartmentAccount extends Component{
               )}
             </Item>
           </Col>
-          <Col offset={1} span={5}>
-            <Item labelCol={{span:7}} wrapperCol={{span:16}} label="部门名称">
+          <Col span={4}>
+            <Item labelCol={{span:12}} wrapperCol={{span:12}} label="部门类型">
+              {getFieldDecorator('type',{
+                rules: [{required: true, message: '请选择部门类型'}]
+              })(
+                <Select onChange={this.onTypeChange}>
+                  <Option value="1">党政机关</Option>
+                  <Option value="2">学院部门</Option>
+                </Select>
+              )}
+            </Item>
+          </Col>
+          <Col span={5}>
+            <Item labelCol={{span:8}} wrapperCol={{span:16}} label="部门名称">
               {getFieldDecorator('dept',{
                 rules: [{required: true, message: '请选择部门'}]
               })(
-                <DeptSelect></DeptSelect>
+                <DeptSelect type={this.state.formtype}></DeptSelect>
               )}
             </Item>
           </Col>
           <Col offset={1} span={2}>
             <div style={{marginTop:'5px'}}>
-              <Button onClick={this.getDataByInfo.bind(this, "1")} type='primary'>党政机关核算</Button>
-            </div>
-          </Col>
-          <Col offset={1} span={2}>
-            <div style={{marginTop:'5px'}}>
-              <Button onClick={this.getDataByInfo.bind(this, "2")} type='primary'>教学单位核算</Button>
+              <Button onClick={this.getDataByInfo} type='primary'>查询核算信息</Button>
             </div>
           </Col>
           <Col offset={1} span={2}>
@@ -249,6 +317,14 @@ class DepartmentAccount extends Component{
                 <PartyHouse tableData={this.state.tableData}></PartyHouse>
               ):(
                 <AcademyHouse tableData={this.state.tableData}></AcademyHouse>
+              )
+            }
+            {
+              this.state.loading||(
+                <Graph type={this.state.type}
+                  printData={this.state.printData}
+                  graphData={this.state.graphData}
+                  isPrinting={this.state.isPrinting}></Graph>
               )
             }
           </Spin>

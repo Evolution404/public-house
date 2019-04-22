@@ -34,35 +34,6 @@ class MySelect extends Component{
 
 export default MySelect
 
-class DeptSelect extends Component{
-  state = {
-    depts: [],
-    loading: true,
-  }
-  componentDidMount(){
-    API.getDepts()
-    .then(rs=>{
-      this.setState({depts: rs})
-    })
-    .catch(err=>{
-      message.error('加载部门信息失败')
-    })
-    .finally(()=>{
-      this.setState({loading: false})
-    })
-  }
-  render(){
-    return (
-      <Select {...this.props} loading={this.state.loading}>
-        {
-          this.state.depts.map(item=>(
-            <Option key={item} value={item}>{item}</Option>
-          ))
-        }
-      </Select>
-    )
-  }
-}
 
 class BuildingSelect extends Component{
   state = {
@@ -86,6 +57,54 @@ class BuildingSelect extends Component{
       <Select {...this.props} loading={this.state.loading}>
         {
           this.state.building.map(item=>(
+            <Option key={item} value={item}>{item}</Option>
+          ))
+        }
+      </Select>
+    )
+  }
+}
+
+class DeptSelect extends Component{
+  state = {
+    depts: [],
+    loading: true,
+    value: undefined,
+  }
+  onChange = (value)=>{
+    this.setState({value})
+    this.props.onChange(value)
+  }
+  getDept = (type)=>{
+    this.setState({loading: true})
+    API.getDepts(type)
+    .then(rs=>{
+      this.setState({depts: rs})
+    })
+    .catch(err=>{
+      message.error('加载部门信息失败')
+    })
+    .finally(()=>{
+      this.setState({loading: false})
+    })
+  }
+  componentDidMount(){
+    this.getDept("0")
+  }
+  componentWillReceiveProps(nextProps){
+    if(nextProps.type!==this.props.type){
+      this.setState({value: undefined})
+      this.getDept(nextProps.type)
+    }
+  }
+  render(){
+    return (
+      <Select {...this.props}
+        onChange={this.onChange}
+        value={this.state.value}
+        loading={this.state.loading}>
+        {
+          this.state.depts.map(item=>(
             <Option key={item} value={item}>{item}</Option>
           ))
         }
