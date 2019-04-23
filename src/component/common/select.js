@@ -89,7 +89,7 @@ class DeptSelect extends Component{
     })
   }
   componentDidMount(){
-    this.getDept("0")
+    this.getDept(this.props.type||"0")
   }
   componentWillReceiveProps(nextProps){
     if(nextProps.type!==this.props.type){
@@ -187,5 +187,116 @@ class YearSelect extends Component{
     )
   }
 }
+class LabSelect extends Component{
+  state = {
+    labs: [],
+    loading: false,
+    value: undefined,
+  }
+  componentWillMount(){
+    if(this.props.year&&this.props.dept)
+      this.getLabs()
+  }
+  getLabs(){
+    if(!(this.props.year&&this.props.dept))
+      return
+    this.setState({loading: true})
+    API.getLabs(this.props.year, this.props.dept)
+    .then(rs=>{
+      this.setState({labs: rs})
+    })
+    .catch(err=>{
+      message.error('加载实验室信息失败')
+    })
+    .finally(()=>{
+      this.setState({loading: false})
+    })
+  }
+  componentWillReceiveProps(nextProps){
+    if(nextProps.year!==this.props.year||nextProps.dept!==this.props.dept){
+      this.setState({value: undefined})
+      this.setState({year: nextProps.year, dept: nextProps.dept},()=>{
+        this.getLabs()
+      })
 
-export {DeptSelect, BuildingSelect, FloorSelect, YearSelect}
+    }
+  }
+  onChange = (value)=>{
+    this.setState({value})
+    this.props.onChange(value)
+  }
+  render(){
+    return (
+      <Select {...this.props}
+        value={this.state.value}
+        onChange={this.onChange}
+        placeholder={(this.props.year&&this.props.dept)?
+          `${this.props.year}年${this.props.dept}`:'请先选择年份和部门'}
+        loading={this.state.loading}>
+        {
+          this.state.labs.map(item=>(
+            <Option key={item} value={item}>{item}</Option>
+          ))
+        }
+      </Select>
+    )
+  }
+}
+
+class ClassroomSelect extends Component{
+  state = {
+    classrooms: [],
+    loading: false,
+    value: undefined,
+  }
+  componentWillMount(){
+    if(this.props.year&&this.props.dept)
+      this.getClassrooms()
+  }
+  getClassrooms(){
+    if(!(this.props.year&&this.props.dept))
+      return
+    this.setState({loading: true})
+    API.getClassrooms(this.props.year, this.props.dept)
+    .then(rs=>{
+      this.setState({classrooms: rs})
+    })
+    .catch(err=>{
+      message.error('加载教室信息失败')
+    })
+    .finally(()=>{
+      this.setState({loading: false})
+    })
+  }
+  componentWillReceiveProps(nextProps){
+    if(nextProps.year!==this.props.year||nextProps.dept!==this.props.dept){
+      this.setState({value: undefined})
+      this.setState({year: nextProps.year, dept: nextProps.dept},()=>{
+        this.getClassrooms()
+      })
+
+    }
+  }
+  onChange = (value)=>{
+    this.setState({value})
+    this.props.onChange(value)
+  }
+  render(){
+    return (
+      <Select {...this.props}
+        value={this.state.value}
+        onChange={this.onChange}
+        placeholder={(this.props.year&&this.props.dept)?
+          `${this.props.year}年${this.props.dept}`:'请先选择年份和部门'}
+        loading={this.state.loading}>
+        {
+          this.state.classrooms.map(item=>(
+            <Option key={item} value={item}>{item}</Option>
+          ))
+        }
+      </Select>
+    )
+  }
+}
+
+export {DeptSelect, BuildingSelect, FloorSelect, YearSelect, LabSelect, ClassroomSelect}

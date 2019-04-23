@@ -5,7 +5,7 @@ import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Table from '../common/table'
 import Histogram from '../common/histogram'
-import { YearSelect } from '../common/select'
+import { YearSelect, DeptSelect, LabSelect } from '../common/select'
 
 const Item = Form.Item
 const Option = Select.Option
@@ -13,7 +13,10 @@ const Option = Select.Option
 class LabPerformance extends Component{
   state = {
     year: 0,
-    deptName: '',
+    dept: '',
+    // 实时搜索实验室使用的临时状态
+    formYear: '',
+    formDept: '',
     tableList: [],
     isSearched: false,
     tableLoading: false,
@@ -49,7 +52,7 @@ class LabPerformance extends Component{
         this.setState({isSearched: true, tableLoading: true})
         API.searchLabPerformance(values)
         .then(rs=>{
-          this.setState({tableList: rs})
+          this.setState(rs)
         })
         .catch(err=>{
           message.error('搜索失败')
@@ -63,28 +66,39 @@ class LabPerformance extends Component{
   render(){
     let columns = [
       {
-        title: '序号',
-        dataIndex: 'id',
-        sorter: (a, b) => a.id - b.id,
+        title: '年份',
+        dataIndex: 'nianfen',
+        sorter: (a, b) => a.nianfen - b.nianfen,
       },
       {
         title: '部门',
-        dataIndex: 'dept',
+        dataIndex: 'bumen',
+        sorter: (a, b) => a.bumen.localeCompare(b.bumen),
       },
       {
-        title: '实验室',
-        dataIndex: 'lab',
-        sorter: (a, b) => a.lab - b.lab,
+        title: '楼宇',
+        dataIndex: 'louyu',
+        sorter: (a, b) => a.louyu.localeCompare(b.louyu),
+      },
+      {
+        title: '楼层',
+        dataIndex: 'louceng',
+        sorter: (a, b) => a.louceng - b.louceng,
+      },
+      {
+        title: '房间号',
+        dataIndex: 'fangjianhao',
+        sorter: (a, b) => a.fangjianhao - b.fangjianhao,
       },
       {
         title: '课程名',
-        dataIndex: 'courseName',
-        sorter: (a, b) => a.courseName - b.courseName,
+        dataIndex: 'kechengming',
+        sorter: (a, b) => a.kechengming.localeCompare(b.kechengming),
       },
       {
         title: '学时数',
-        dataIndex: 'schoolNum',
-        sorter: (a, b) => a.schoolNum - b.schoolNum,
+        dataIndex: 'xueshishu',
+        sorter: (a, b) => a.xueshishu - b.xueshishu,
       },
     ]
     const { getFieldDecorator } = this.props.form
@@ -94,25 +108,23 @@ class LabPerformance extends Component{
           <Col span={3}>
             <Item labelCol={{span:8}} wrapperCol={{span:15}} label="年份">
               {getFieldDecorator('year',)(
-                <YearSelect size="normal"></YearSelect>
+                <YearSelect onChange={formYear=>this.setState({formYear})} size="default"></YearSelect>
               )}
             </Item>
           </Col>
           <Col offset={1} span={5}>
             <Item labelCol={{span:7}} wrapperCol={{span:16}} label="部门名称">
-              {getFieldDecorator('deptName',)(
-                <Select>
-                  <Option value="部门1">部门1</Option>
-                </Select>
+              {getFieldDecorator('dept',)(
+                <DeptSelect onChange={formDept=>this.setState({formDept})} type="2"></DeptSelect>
               )}
             </Item>
           </Col>
           <Col offset={1} span={4}>
             <Item labelCol={{span:7}} wrapperCol={{span:16}} label="实验室">
-              {getFieldDecorator('deptName',)(
-                <Select>
-                  <Option value="实验室1">实验室1</Option>
-                </Select>
+              {getFieldDecorator('roomNum',)(
+                <LabSelect year={this.state.formYear}
+                  dept={this.state.formDept}
+                ></LabSelect>
               )}
             </Item>
           </Col>

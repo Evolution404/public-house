@@ -1,10 +1,11 @@
 import React, {Component} from 'react'
-import {Form, Select, Row, Col, Button, message, Empty} from 'antd'
+import {Form, Select, Row, Col, Button, message, Empty, Spin} from 'antd'
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Table from '../common/table'
 import Histogram from '../common/histogram'
+import { YearSelect, DeptSelect, ClassroomSelect } from '../common/select'
 
 const Item = Form.Item
 const Option = Select.Option
@@ -12,34 +13,17 @@ const Option = Select.Option
 class ClassroomPerformance extends Component{
   state = {
     year: 0,
-    deptName: '',
-    isSearched: false,
+    dept: '',
+    // 实时搜索教室使用的临时状态
+    formYear: '',
+    formDept: '',
+    loading: false,
+    hasSearched: false,
     tableList: [],
     totalSchool: 0,
     printData: {},
     isPrinting: false,
-    graphData: {
-      '类别1': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别2': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别3': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别4': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别5': {
-          '项目1':100,
-          '项目2':200,
-      },
-    },
+    graphData: {},
   }
   getCanvasURL = (id)=>{
     return document.querySelector(`#${id} canvas`).toDataURL()
@@ -65,14 +49,15 @@ class ClassroomPerformance extends Component{
   search = ()=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        this.setState({isSearched: true})
+        this.setState({hasSearched: true, loading: true})
         API.searchClassroomPerformance(values)
         .then(rs=>{
-          this.setState({tableList: rs})
+          this.setState(rs)
         })
         .catch(err=>{
           message.error('搜索失败')
         })
+        .finally(()=>this.setState({loading: false}))
         console.log('Received values of form: ', values);
       }
     })
@@ -80,28 +65,39 @@ class ClassroomPerformance extends Component{
   render(){
     let columns = [
       {
-        title: '序号',
-        dataIndex: 'id',
-        sorter: (a, b) => a.id - b.id,
+        title: '年份',
+        dataIndex: 'nianfen',
+        sorter: (a, b) => a.nianfen - b.nianfen,
       },
       {
         title: '部门',
-        dataIndex: 'dept',
+        dataIndex: 'bumen',
+        sorter: (a, b) => a.bumen.localeCompare(b.bumen),
       },
       {
-        title: '教室',
-        dataIndex: 'lab',
-        sorter: (a, b) => a.lab - b.lab,
+        title: '楼宇',
+        dataIndex: 'louyu',
+        sorter: (a, b) => a.louyu.localeCompare(b.louyu),
+      },
+      {
+        title: '楼层',
+        dataIndex: 'louceng',
+        sorter: (a, b) => a.louceng - b.louceng,
+      },
+      {
+        title: '房间号',
+        dataIndex: 'fangjianhao',
+        sorter: (a, b) => a.fangjianhao - b.fangjianhao,
       },
       {
         title: '课程名',
-        dataIndex: 'courseName',
-        sorter: (a, b) => a.courseName - b.courseName,
+        dataIndex: 'kechengming',
+        sorter: (a, b) => a.kechengming.localeCompare(b.kechengming),
       },
       {
         title: '学时数',
-        dataIndex: 'schoolNum',
-        sorter: (a, b) => a.schoolNum - b.schoolNum,
+        dataIndex: 'xueshishu',
+        sorter: (a, b) => a.xueshishu - b.xueshishu,
       },
     ]
     const { getFieldDecorator } = this.props.form
@@ -111,27 +107,24 @@ class ClassroomPerformance extends Component{
           <Col span={3}>
             <Item labelCol={{span:8}} wrapperCol={{span:15}} label="年份">
               {getFieldDecorator('year',)(
-                <Select>
-                  <Option value="2019">2019</Option>
-                </Select>
+                <YearSelect onChange={formYear=>this.setState({formYear})} size="default"></YearSelect>
               )}
             </Item>
           </Col>
           <Col offset={1} span={5}>
             <Item labelCol={{span:7}} wrapperCol={{span:16}} label="部门名称">
-              {getFieldDecorator('deptName',)(
-                <Select>
-                  <Option value="部门1">部门1</Option>
-                </Select>
+              {getFieldDecorator('dept',)(
+                <DeptSelect onChange={formDept=>this.setState({formDept})} type="2"></DeptSelect>
               )}
             </Item>
           </Col>
           <Col offset={1} span={4}>
             <Item labelCol={{span:7}} wrapperCol={{span:16}} label="教室">
-              {getFieldDecorator('deptName',)(
-                <Select>
-                  <Option value="教室1">教室1</Option>
-                </Select>
+              {getFieldDecorator('roomNum',)(
+                <ClassroomSelect
+                  year={this.state.formYear}
+                  dept={this.state.formDept}
+                ></ClassroomSelect>
               )}
             </Item>
           </Col>
@@ -153,37 +146,39 @@ class ClassroomPerformance extends Component{
         </Row>
       </Form>
       <Split/>
-      <div id="printArea">
-        <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>教室使用效益</div>
-        {
-          this.state.isSearched?(
-            <div>
-              <Row>
-                <Col offset={1}>
-                  <p style={{fontSize: '17px'}}>总学时数: {this.state.totalSchool}</p>
-                </Col>
-              </Row>
-              <Table columns={columns} data={this.state.tableList}></Table>
-              <Row style={{marginTop: 30}}>
-                <Col offset={1} span={12}>
-                  {
-                    !this.state.isPrinting&&(
-                      <Histogram id="graph"
-                        title="图表对比（各教学单位使用效益、米均效益对比情况）"
-                        data={this.state.graphData}></Histogram>
-                    )
-                  }
-                  {this.state.isPrinting&&(
-                    <img style={{width:500}} src={this.state.printData.graph} alt=""/>
-                  )}
-                </Col>
-              </Row>
-            </div>
-          ):(
-            <Empty description="请先搜索"></Empty>
-          )
-        }
-      </div>
+      <Spin spinning={this.state.loading}>
+        <div id="printArea">
+          <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>教室使用效益</div>
+          {
+            this.state.hasSearched?(
+              <div>
+                <Row>
+                  <Col offset={1}>
+                    <p style={{fontSize: '17px'}}>总学时数: {this.state.totalSchool}</p>
+                  </Col>
+                </Row>
+                <Table columns={columns} data={this.state.tableList}></Table>
+                <Row style={{marginTop: 30}}>
+                  <Col offset={1} span={12}>
+                    {
+                      !this.state.loading&&!this.state.isPrinting&&(
+                        <Histogram id="graph"
+                          title="各教学单位使用效益、米均效益对比情况"
+                          data={this.state.graphData}></Histogram>
+                      )
+                    }
+                    {this.state.isPrinting&&(
+                      <img style={{width:500}} src={this.state.printData.graph} alt=""/>
+                    )}
+                  </Col>
+                </Row>
+              </div>
+            ):(
+              <Empty description="请先搜索"></Empty>
+            )
+          }
+        </div>
+      </Spin>
     </MainContainer>
   }
 }

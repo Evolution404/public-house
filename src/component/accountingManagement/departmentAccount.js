@@ -32,6 +32,7 @@ class Graph extends Component{
             <Col span={12}>
               <PieChart
                 data={graphData.pieData}
+                desc='房屋分类'
                 title="各分项实际面积对比情况" id="graph1"></PieChart>
             </Col>
             <Col span={12}>

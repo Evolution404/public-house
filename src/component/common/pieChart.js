@@ -23,7 +23,7 @@ class PieChart extends Component {
       },
       series : [
           {
-              name: '部门',
+              name: this.props.desc||'',
               type: 'pie',
               radius : '55%',
               center: ['40%', '50%'],

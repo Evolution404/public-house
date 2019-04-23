@@ -20,6 +20,7 @@ class DeptContrast1 extends Component {
     return <PieChart id="DeptContrast1"
       title="各部门实际公用房使用面积对比图表"
       data={this.props.data}
+      desc="部门"
       ></PieChart>
   }
 }

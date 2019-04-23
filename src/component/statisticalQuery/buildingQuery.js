@@ -80,12 +80,7 @@ class BuildingQuery extends Component{
   state = {
     buildingName: '',
     imgData: [],
-    loading: true,
-    buildingNameList: [],
-  }
-  componentDidMount(){
-    // TODO 请求楼宇名称选项列表
-    this.setState({buildingNameList:['xxxx楼'], loading: false})
+    loading: false,
   }
   search = ({buildingName})=>{
     this.setState({loading: true})
@@ -102,6 +97,8 @@ class BuildingQuery extends Component{
             imgData.push({text,src:host+imgPath})
           })
         })
+        if(imgData.length===0)
+          message.error("未获取到图片信息")
         this.setState({imgData})
       }
     })
@@ -113,7 +110,7 @@ class BuildingQuery extends Component{
   render(){
     return <MainContainer name="统计查询">
       <Spin spinning={this.state.loading}>
-        <WrappedSearch optionList={this.state.buildingNameList} onSearch={this.search}/>
+        <WrappedSearch onSearch={this.search}/>
         <Split/>
         {this.state.imgData.length>0?(
           <div>

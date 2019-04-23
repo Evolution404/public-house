@@ -1,30 +1,24 @@
 import axios from './apiConfig'
+import {MapB2F, MapF2B} from './nameMapConfig'
 
 const businessPerformance = {
   // 商业用房绩效
 
   // 搜索商业用房使用效益
   searchBusinessPerformance(info){
-    // info = {
-    //    year: xx,
-    //    deptName: xx,
-    // }
     return new Promise((resolve, reject)=>{
-      axios.post('/searchScientificPerformance', info)
+      axios.get('/tb-chanye-shangye-yongfang/get/shangyeyongfangshiyongjixiao',
+                 {
+                   params: {bumen: info.dept},
+                 })
       .then(rs=>{
-        // 处理成tableList
-        // {
-        //    id: 1, 序号
-        //    college: xx, 学院
-        //    PH: xx, 公用房
-        //    area: xx, 面积
-        //    user: xx, 使用者
-        //    rentPrice: xx, 租金单价
-        //    annualRent: xx, 年租金
-        //    year: xx, 年份
-        //    averagePerformance: xx, 米均效益
-        // }
-        resolve(rs.data)
+        let data = {}
+        data.tableList = rs.data.resultlist
+        data.graphData = rs.data.zhuzhuangtu
+        data.totalArea = rs.data.heji.zongmianji
+        data.totalRent = rs.data.heji.zongzujin
+        data.avgPerformance = rs.data.heji.zongmijunxiaoyi
+        resolve(data)
       })
       .catch(err=>{
         reject(err)
@@ -37,9 +31,11 @@ const businessPerformance = {
 const checkWorkload = {
   // 工作量查看
 
-  searchWorkLoad(deptName){
+  searchWorkLoad(dept){
     return new Promise((resolve, reject)=>{
-      axios.post('/searchWorkLoad', deptName)
+      axios.get('/tb-jiaoxue-keyan-gongzuoliang/get/all', {
+        params: {bumen: dept},
+      })
       .then(rs=>{
         // 处理成tableList
         // {
@@ -59,16 +55,26 @@ const checkWorkload = {
 }
 const classroomPerformance = {
   // 教室绩效
-
+  // 搜索教室
+  getClassrooms(nianfen, bumen){
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-jiaoshi-shiyanshi-kechengxinxi/get/jiaoshi',{
+        params: {nianfen, bumen}
+      })
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
   // 搜索教室使用效益
   searchClassroomPerformance(info){
-    // info = {
-    //    year: xx,
-    //    deptName: xx,
-    //    lab: xx,
-    // }
     return new Promise((resolve, reject)=>{
-      axios.post('/searchClassroomPerformance', info)
+      axios.get('/tb-jiaoshi-shiyanshi-kechengxinxi/get/jiaoshijixiao', {
+        params: MapF2B(info),
+      })
       .then(rs=>{
         // 处理成tableList
         // {
@@ -78,7 +84,11 @@ const classroomPerformance = {
         //    courseName: xx, 课程名
         //    schoolNum: xx, 学时数
         // }
-        resolve(rs.data)
+        let data = {}
+        data.tableList = rs.data.resultlist
+        data.totalSchool = rs.data.zongxueshishu
+        data.graphData = rs.data.zhuzhuangtu
+        resolve(data)
       })
       .catch(err=>{
         reject(err)
@@ -94,15 +104,26 @@ const dataImport = {
 const labPerformance = {
   // 实验室绩效
 
+  // 搜索实验室
+  getLabs(nianfen, bumen){
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-jiaoshi-shiyanshi-kechengxinxi/get/shiyanshi',{
+        params: {nianfen, bumen}
+      })
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
   // 搜索实验室使用效益
   searchLabPerformance(info){
-    // info = {
-    //    year: xx,
-    //    deptName: xx,
-    //    lab: xx,
-    // }
     return new Promise((resolve, reject)=>{
-      axios.post('/searchLabPerformance', info)
+      axios.get('/tb-jiaoshi-shiyanshi-kechengxinxi/get/shiyanshijixiao', {
+        params: MapF2B(info)
+      })
       .then(rs=>{
         // 处理成tableList
         // {
@@ -112,7 +133,11 @@ const labPerformance = {
         //    courseName: xx, 课程名
         //    schoolNum: xx, 学时数
         // }
-        resolve(rs.data)
+        let data = {}
+        data.tableList = rs.data.resultlist
+        data.graphData = rs.data.zhuzhuangtu
+        data.totalSchool = rs.data.zongxueshishu
+        resolve(data)
       })
       .catch(err=>{
         reject(err)
@@ -132,7 +157,10 @@ const scientificPerformance = {
     //    deptName: xx,
     // }
     return new Promise((resolve, reject)=>{
-      axios.post('/searchScientificPerformance', info)
+      axios.get('/tb-keyantuandui-keyangongzuoliang/get/keyandanweishiyongjixiao', 
+      {
+        params: MapF2B(info),
+      })
       .then(rs=>{
         // 处理成tableList
         // {
@@ -144,7 +172,10 @@ const scientificPerformance = {
         //    usePerformance: xx, 使用效益
         //    averagePerformance: xx, 米均效益
         // }
-        resolve(rs.data)
+        let data = {}
+        data.tableList = rs.data.resultlist
+        data.graphData = rs.data.zhuzhuangtu
+        resolve(data)
       })
       .catch(err=>{
         reject(err)
@@ -160,11 +191,14 @@ const teachingUnitPerformance = {
   searchTeachingUnitPHUsePerformance(info){
     // {
     //    year: xx,
-    //    deptName: xx,
+    //    dept: xx,
     // }
     return new Promise((resolve, reject)=>{
-      axios.post('/searchTeachingUnitPHUsePerformance', info)
+      axios.get('/tb-jiaoxue-keyan-gongzuoliang/get/jiaoxuedanweishiyongjixiao',{
+        params: MapF2B(info),
+      })
       .then(rs=>{
+        let data = {}
         // 处理成tableList
         // {
         //    id: 1, 序号
@@ -176,7 +210,9 @@ const teachingUnitPerformance = {
         //    usePerformance: xx, 使用效益
         //    averagePerformance: xx, 米均效益
         // }
-        resolve(rs.data)
+        data.tableList = rs.data.resultlist
+        data.graphData = rs.data.zhuzhuangtu
+        resolve(data)
       })
       .catch(err=>{
         reject(err)

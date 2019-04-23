@@ -14,7 +14,7 @@ class Import extends Component{
     const { fileList } = this.state;
     const formData = new FormData();
     fileList.forEach((file) => {
-      formData.append('files[]', file);
+      formData.append('file', file);
     });
 
     this.setState({
@@ -32,7 +32,10 @@ class Import extends Component{
       this.setState({
         uploading: false,
       });
-      message.error('上传失败');
+      if(err.response)
+        message.error(err.response.data.title)
+      else
+        message.error('上传失败');
     })
   }
 
@@ -104,11 +107,6 @@ class DataImport extends Component{
       {
         text: '导入规范分',
         uploadHelper: API.ULSpecificationPoints,
-        templateLink: '',
-      },
-      {
-        text: '导入商业用房数据',
-        uploadHelper: API.ULBusiness,
         templateLink: '',
       },
       {

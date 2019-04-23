@@ -40,23 +40,23 @@ const FileUploadAPI = {
   },
   // 上传教学单位工作量
   ULTeachingUnitWorkLoad(formData){
-    return uploadHelper(formData, '')
+    formData.append('module', 'keyan-gongyongfang')
+    return uploadHelper(formData, '/tb-jiaoxue-keyan-gongzuoliang/import-excel')
   },
   // 上传科研单位工作量
   ULScientificUnitWorkLoad(formData){
-    return uploadHelper(formData, '')
+    formData.append('module', 'keyantuandui-keyangongzuoliang')
+    return uploadHelper(formData, '/tb-keyantuandui-keyangongzuoliang/import-excel')
   },
   // 上传规范分
   ULSpecificationPoints(formData){
-    return uploadHelper(formData, '')
-  },
-  // 上传商业用房数据
-  ULBusiness(formData){
-    return uploadHelper(formData, '')
+    formData.append('module', 'guifan-guanlifen')
+    return uploadHelper(formData, '/tb-guifan-guanlifen/import-excel')
   },
   // 上传教室承担课程信息
   ULClassroom(formData){
-    return uploadHelper(formData, '')
+    formData.append('module', 'jiaoshi-shiyanshi-kechengxinxi')
+    return uploadHelper(formData, '/tb-jiaoshi-shiyanshi-kechengxinxi/import-excel')
   },
   // 导入学院部门信息
   ULXYDept(formData){

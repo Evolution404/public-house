@@ -1,9 +1,11 @@
 import React, {Component} from 'react'
-import {Form, Select, Row, Col, Button, message} from 'antd'
+import {Form, Select, Row, Col, Button, message, Spin, Empty} from 'antd'
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
+import {DeptSelect} from '../common/select'
 import Split from '../common/split'
 import Table from '../common/table'
+import Histogram from '../common/histogram'
 
 const Item = Form.Item
 const Option = Select.Option
@@ -11,8 +13,12 @@ const Option = Select.Option
 class BusinessPerformance extends Component{
   state = {
     year: 0,
-    deptName: '',
+    dept: '',
+    loading: false,
+    hasSearched: false,
+    isPrinting: false,
     tableList: [],
+    graphData: {},
     totalArea: 0,
     totalRent: 0,
     avgPerformance: 0,
@@ -20,13 +26,15 @@ class BusinessPerformance extends Component{
   search = ()=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        this.setState({dept: values.dept, loading: true, hasSearched: true})
         API.searchBusinessPerformance(values)
         .then(rs=>{
-          this.setState({tableList: rs})
+          this.setState(rs)
         })
         .catch(err=>{
           message.error('搜索失败')
         })
+        .finally(()=>this.setState({loading: false}))
         console.log('Received values of form: ', values);
       }
     })
@@ -34,69 +42,64 @@ class BusinessPerformance extends Component{
   render(){
     let columns = [
       {
-        title: '序号',
-        dataIndex: 'id',
-        sorter: (a, b) => a.id - b.id,
+        title: '部门',
+        dataIndex: 'bumen',
+        sorter: (a, b) => a.bumen.localeCompare(b.bumen),
       },
       {
-        title: '学院',
-        dataIndex: 'college',
+        title: '楼宇',
+        dataIndex: 'louyu',
+        sorter: (a, b) => a.louyu.localeCompare(b.louyu),
       },
       {
-        title: '公用房',
-        dataIndex: 'PH',
-        sorter: (a, b) => a.PH - b.PH,
+        title: '楼层',
+        dataIndex: 'louceng',
+        sorter: (a, b) => a.louceng - b.louceng,
       },
       {
-        title: '面积',
-        dataIndex: 'area',
-        sorter: (a, b) => a.area - b.area,
+        title: '房间号',
+        dataIndex: 'fangjianhao',
+        sorter: (a, b) => a.fangjianhao - b.fangjianhao,
+      },
+      {
+        title: '使用面积',
+        dataIndex: 'shiyongmianji',
+        sorter: (a, b) => a.shiyongmianji - b.shiyongmianji,
       },
       {
         title: '使用者',
-        dataIndex: 'user',
-        sorter: (a, b) => a.user - b.user,
+        dataIndex: 'shiyongzhe',
+        sorter: (a, b) => a.shiyongzhe - b.shiyongzhe,
       },
       {
         title: '租金单价',
-        dataIndex: 'rentPrice',
-        sorter: (a, b) => a.rentPrice - b.rentPrice,
+        dataIndex: 'zujindanjia',
+        sorter: (a, b) => a.zujindanjia - b.zujindanjia,
       },
       {
         title: '年租金',
-        dataIndex: 'annualRent',
-        sorter: (a, b) => a.annualRent - b.annualRent,
+        dataIndex: 'nianzujin',
+        sorter: (a, b) => a.nianzujin - b.nianzujin,
       },
       {
-        title: '年份',
-        dataIndex: 'year',
-        sorter: (a, b) => a.year - b.year,
+        title: '租金类型',
+        dataIndex: 'zujinleixing',
+        sorter: (a, b) => a.zujinleixing.localeCompare(b.zujinleixing),
       },
       {
         title: '米均效益',
-        dataIndex: 'averagePerformance',
-        sorter: (a, b) => a.averagePerformance - b.averagePerformance,
+        dataIndex: 'mijunxiaoyi',
+        sorter: (a, b) => a.mijunxiaoyi - b.mijunxiaoyi,
       },
     ]
     const { getFieldDecorator } = this.props.form
     return <MainContainer name="效益管理">
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
-          <Col span={4}>
-            <Item labelCol={{span:5}} wrapperCol={{span:18}} label="年份">
-              {getFieldDecorator('year',)(
-                <Select>
-                  <Option value="2019">2019</Option>
-                </Select>
-              )}
-            </Item>
-          </Col>
           <Col offset={1} span={5}>
             <Item labelCol={{span:7}} wrapperCol={{span:16}} label="部门名称">
-              {getFieldDecorator('deptName',)(
-                <Select>
-                  <Option value="部门1">部门1</Option>
-                </Select>
+              {getFieldDecorator('dept',)(
+                <DeptSelect></DeptSelect>
               )}
             </Item>
           </Col>
@@ -118,17 +121,35 @@ class BusinessPerformance extends Component{
         </Row>
       </Form>
       <Split/>
-      <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>公用房使用效益</div>
-      <div style={{display: 'flex',
-        fontSize: '15px',
-        fontWeight: '500',
-        justifyContent: 'space-around'
-      }}>
-        <span>总面积: {this.state.totalArea}MM</span>
-        <span>总租金: {this.state.totalRent}元</span>
-        <span>米均效益: {this.state.avgPerformance}元/平米</span>
-      </div>
-      <Table columns={columns} data={this.state.tableList}></Table>
+      <Spin spinning={this.state.loading}>
+        {
+          this.state.hasSearched?(
+            <div>
+              <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>公用房使用效益</div>
+              <div style={{display: 'flex',
+                fontSize: '15px',
+                fontWeight: '500',
+                justifyContent: 'space-around'
+              }}>
+                <span>总面积: {this.state.totalArea}MM</span>
+                <span>总租金: {this.state.totalRent}元</span>
+                <span>米均效益: {this.state.avgPerformance}元/平米</span>
+              </div>
+              <Table columns={columns} data={this.state.tableList}></Table>
+              {
+                (!this.state.loading&&!this.state.isPrinting)&&(
+                  <Histogram id="graph"
+                    title={(this.state.dept?"本":"各")+"单位各商业用房面积、使用效益、米均效益对比情况"}
+                    data={this.state.graphData}
+                  ></Histogram>
+                )
+              }
+            </div>
+          ):(
+            <Empty description="请先搜索"></Empty>
+          )
+        }
+      </Spin>
     </MainContainer>
   }
 }

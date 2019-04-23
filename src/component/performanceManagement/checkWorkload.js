@@ -3,6 +3,7 @@ import {Button, Form, Row, Col, message, Select, Empty} from 'antd'
 import API from '../../api'
 import Table, {TableUtil}from '../common/table'
 import MainContainer from '../common/mainContainer'
+import {DeptSelect} from '../common/select'
 import Split from '../common/split'
 const Item = Form.Item
 const Option = Select.Option
@@ -25,10 +26,8 @@ class Search extends Component{
         <Row>
           <Col span={7}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
-              {getFieldDecorator('deptName',)(
-                <Select>
-                  <Option value="部门1">部门1</Option>
-                </Select>
+              {getFieldDecorator('dept',)(
+                <DeptSelect></DeptSelect>
               )}
             </Item>
           </Col>
@@ -46,9 +45,32 @@ const WrappedSearch = Form.create({ name: 'search' })(Search)
 
 class DisplayTable extends Component{
   render(){
-    const columns = TableUtil.mapColumns([
-      '序号', '部门', '教学工作量', '科研工作量'
-    ])
+    const columns = [
+      {
+        title: '序号',
+        dataIndex: 'id',
+      },
+      {
+        title: '年份',
+        dataIndex: 'nianfen',
+      },
+      {
+        title: '部门',
+        dataIndex: 'bumen',
+      },
+      {
+        title: '教学工作量',
+        dataIndex: 'jiaoxuegongzuoliang',
+      },
+      {
+        title: '科研工作量',
+        dataIndex: 'keyangongzuoliang',
+      },
+      {
+        title: '备注',
+        dataIndex: 'beizhu',
+      },
+    ]
     return <Table columns={columns} {...this.props}/>
   }
 }
@@ -60,12 +82,12 @@ class CheckWorkload extends Component{
     isSearched: false,
     tableLoading: false,
   }
-  search = ({deptName})=>{
+  search = ({dept})=>{
     this.setState({
-      deptName,
+      dept,
     })
     this.setState({tableLoading: true, isSearched: true})
-    API.searchWorkLoad(deptName)
+    API.searchWorkLoad(dept)
     .then(rs=>{
       this.setState({
         tableList: rs,

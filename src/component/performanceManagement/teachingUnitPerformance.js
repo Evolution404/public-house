@@ -1,11 +1,12 @@
 import React, {Component} from 'react'
-import {Form, Select, Row, Col, Button, message} from 'antd'
+import {Form, Select, Row, Col, Button, message, Spin, Empty} from 'antd'
 import {SButton} from '../common/button'
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Table from '../common/table'
 import Histogram from '../common/histogram'
+import {YearSelect, DeptSelect} from '../common/select'
 
 const Item = Form.Item
 const Option = Select.Option
@@ -13,32 +14,13 @@ const Option = Select.Option
 class TeachingUnitPerformance extends Component{
   state = {
     year: 0,
-    deptName: '',
+    hasSearched: false,
+    dept: '',
+    loading: false,
     tableList: [],
     printData: {},
     isPrinting: false,
-    graphData: {
-      '类别1': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别2': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别3': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别4': {
-          '项目1':100,
-          '项目2':200,
-      },
-      '类别5': {
-          '项目1':100,
-          '项目2':200,
-      },
-    },
+    graphData: {},
   }
   getCanvasURL = (id)=>{
     return document.querySelector(`#${id} canvas`).toDataURL()
@@ -64,65 +46,54 @@ class TeachingUnitPerformance extends Component{
   search = ()=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        this.setState({loading: true, hasSearched: true})
         API.searchTeachingUnitPHUsePerformance(values)
         .then(rs=>{
-          this.setState({tableList: rs})
+          this.setState(rs)
         })
         .catch(err=>{
           message.error('搜索失败')
         })
-        console.log('Received values of form: ', values);
+        .finally(()=>this.setState({loading: false}))
       }
     })
   }
   render(){
     let columns = [
       {
-        title: '序号',
-        dataIndex: 'id',
-        sorter: (a, b) => a.id - b.id,
-      },
-      {
         title: '学院',
-        dataIndex: 'college',
+        dataIndex: 'xueyuan',
+        sorter: (a, b) => a.xueyuan.localeCompare(b.xueyuan),
       },
       {
         title: '教学工作量',
-        dataIndex: 'teachingWorkLoad',
-        sorter: (a, b) => a.teachingWorkLoad - b.teachingWorkLoad,
+        dataIndex: 'jiaoxuegongzuoliang',
+        sorter: (a, b) => a.jiaoxuegongzuoliang - b.jiaoxuegongzuoliang,
       },
       {
         title: '科研工作量',
-        dataIndex: 'scientificWorkLoad',
-        sorter: (a, b) => a.scientificWorkLoad - b.scientificWorkLoad,
+        dataIndex: 'keyangongzuoliang',
+        sorter: (a, b) => a.keyangongzuoliang - b.keyangongzuoliang,
       },
       {
         title: '规范管理分',
-        dataIndex: 'specificationPoints',
-        sorter: (a, b) => a.specificationPoints - b.specificationPoints,
+        dataIndex: 'guifanguanlifen',
+        sorter: (a, b) => a.guifanguanlifen - b.guifanguanlifen,
       },
       {
         title: '公用房面积',
-        dataIndex: 'PHArea',
-        sorter: (a, b) => a.PHArea - b.PHArea,
+        dataIndex: 'gongyongfangmianji',
+        sorter: (a, b) => a.gongyongfangmianji - b.gongyongfangmianji,
       },
       {
         title: '使用效益',
-        dataIndex: 'usePerformance',
-        sorter: (a, b) => a.usePerformance - b.usePerformance,
+        dataIndex: 'shiyongxiaoyi',
+        sorter: (a, b) => a.shiyongxiaoyi - b.shiyongxiaoyi,
       },
       {
         title: '米均效益',
-        dataIndex: 'averagePerformance',
-        sorter: (a, b) => a.averagePerformance - b.averagePerformance,
-      },
-      {
-        title: '操作',
-        render: (text, record, index)=>(
-            <div style={{display: 'inline-block', padding: '0 10px'}}>
-              <SButton onClick={this.props.delete.bind(this,index)} text='详细'/>
-            </div>
-        )
+        dataIndex: 'mijunxiaoyi',
+        sorter: (a, b) => a.mijunxiaoyi - b.mijunxiaoyi,
       },
     ]
     const { getFieldDecorator } = this.props.form
@@ -130,20 +101,18 @@ class TeachingUnitPerformance extends Component{
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
           <Col span={4}>
-            <Item labelCol={{span:5}} wrapperCol={{span:18}} label="年份">
-              {getFieldDecorator('year',)(
-                <Select>
-                  <Option value="2019">2019</Option>
-                </Select>
+            <Item labelCol={{span:12}} wrapperCol={{span:12}} label="年份">
+              {getFieldDecorator('year',{
+                rules: [{required: true, message: '请选择年份'}]
+              })(
+                <YearSelect size="default"></YearSelect>
               )}
             </Item>
           </Col>
           <Col offset={1} span={5}>
             <Item labelCol={{span:7}} wrapperCol={{span:16}} label="部门名称">
-              {getFieldDecorator('deptName',)(
-                <Select>
-                  <Option value="部门1">部门1</Option>
-                </Select>
+              {getFieldDecorator('dept',)(
+                <DeptSelect type="2"></DeptSelect>
               )}
             </Item>
           </Col>
@@ -165,24 +134,32 @@ class TeachingUnitPerformance extends Component{
         </Row>
       </Form>
       <Split/>
-      <div id="printArea">
-        <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>教学单位公用房使用效益</div>
-        <Table columns={columns} data={this.state.tableList}></Table>
-        <Row style={{marginTop: 30}}>
-          <Col offset={1} span={12}>
-            {
-              !this.state.isPrinting&&(
-                <Histogram id="graph"
-                  title="图表对比（各教学单位使用效益、米均效益对比情况）"
-                  data={this.state.graphData}></Histogram>
-              )
-            }
-            {this.state.isPrinting&&(
-              <img style={{width:500}} src={this.state.printData.graph} alt=""/>
-            )}
-          </Col>
-        </Row>
-      </div>
+      <Spin spinning={this.state.loading}>
+        {
+          this.state.hasSearched?(
+            <div id="printArea">
+              <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>教学单位公用房使用效益</div>
+              <Table columns={columns} data={this.state.tableList}></Table>
+              <Row style={{marginTop: 30}}>
+                <Col offset={1} span={12}>
+                  {
+                    (!this.state.loading&&!this.state.isPrinting)&&(
+                      <Histogram id="graph"
+                        title="各教学单位使用效益、米均效益对比情况"
+                        data={this.state.graphData}></Histogram>
+                    )
+                  }
+                  {this.state.isPrinting&&(
+                    <img style={{width:500}} src={this.state.printData.graph} alt=""/>
+                  )}
+                </Col>
+              </Row>
+            </div>
+          ):(
+            <Empty description="请先搜索"></Empty>
+          )
+        }
+      </Spin>
     </MainContainer>
   }
 }
