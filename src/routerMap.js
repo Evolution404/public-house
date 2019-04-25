@@ -8,6 +8,8 @@ import PHAdd from './component/infoManagement/PHAdd'
 import PHAddBrief from './component/infoManagement/PHAddBrief'
 import PHChange from './component/infoManagement/PHChange'
 import PHChangeBrief from './component/infoManagement/PHChangeBrief'
+import PHTransform from './component/infoManagement/PHTransform'
+import PHTransformAudit from './component/infoManagement/PHTransformAudit'
 import PHImport from './component/infoManagement/PHImport'
 import PHImportDetail from './component/infoManagement/PHImportDetail'
 import PHAuditDetail from './component/infoManagement/PHAuditDetail'
@@ -22,6 +24,7 @@ import BuildingQuery from './component/statisticalQuery/buildingQuery'
 // 核算管理
 import OverallAccount from './component/accountingManagement/overallAccount'
 import DepartmentAccount from './component/accountingManagement/departmentAccount'
+import PersonalAccount from './component/accountingManagement/personalAccount'
 
 // 绩效管理
 import DataImport from './component/performanceManagement/dataImport'
@@ -91,6 +94,16 @@ const routerMap = {
     name:'公用房变更',
     component: PHChangeBrief
   },
+  PHTransform: {
+    path:'/PHTransform',
+    name:'公用房改造',
+    component: PHTransform
+  },
+  PHTransformAudit: {
+    path:'/PHTransformAudit',
+    name:'公用房改造审核',
+    component: PHTransformAudit
+  },
   PHImport: {
     path:'/PHImport',
     name:'公用房导入',
@@ -140,6 +153,11 @@ const routerMap = {
     path:'/DepartmentAccount/:id',
     name:'部门核算',
     component: DepartmentAccount
+  },
+  PersonalAccount: {
+    path:'/PersonalAccount',
+    name:'个人核算',
+    component: PersonalAccount
   },
   DataImport: {
     path:'/DataImport',

@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import { Route, Link } from "react-router-dom";
 import Map from '../../routerMap'
 import
-  {Form, Select, Row, Col, Button, message, DatePicker, Checkbox, Modal, Input, notification, Empty}
+  {Form, Select, Row, Col, Button, message, DatePicker, Checkbox, Empty}
 from 'antd'
 import API from '../../api'
 import {SButton} from '../common/button'

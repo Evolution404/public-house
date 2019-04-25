@@ -53,11 +53,11 @@ const TableUtil = {
       case '已驳回':
         return <span style={{color:'#ff0000'}}>已驳回</span>
       case '已上报':
-        return <span style={{color:'#008000'}}>已上报</span>
+        return <span style={{color:'#faad14'}}>已上报</span>
       case '已批准':
-        return <span style={{color:'#ff0000'}}>已批准</span>
+        return <span style={{color:'#008000'}}>已批准</span>
       default:
-        return <span style={{color:'#333'}}>未上报</span>
+        return <span style={{color:'#333'}}>{text}</span>
     }
 
   },
@@ -65,6 +65,8 @@ const TableUtil = {
     switch(c){
       case '序号':
         return 'id'
+      case '工号':
+        return 'workNum'
       case '年份':
         return 'year'
       case '部门':

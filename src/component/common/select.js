@@ -54,7 +54,9 @@ class BuildingSelect extends Component{
   }
   render(){
     return (
-      <Select {...this.props} loading={this.state.loading}>
+      <Select
+        allowClear
+        {...this.props} loading={this.state.loading}>
         {
           this.state.building.map(item=>(
             <Option key={item} value={item}>{item}</Option>
@@ -69,7 +71,7 @@ class DeptSelect extends Component{
   state = {
     depts: [],
     loading: true,
-    value: undefined,
+    value: this.props.value,
   }
   onChange = (value)=>{
     this.setState({value})
@@ -96,15 +98,20 @@ class DeptSelect extends Component{
       this.setState({value: undefined})
       this.getDept(nextProps.type)
     }
+    if(nextProps.value!==this.props.value){
+      this.setState({value: nextProps.value})
+    }
   }
   render(){
+    let depts = this.state.depts
     return (
       <Select {...this.props}
+        allowClear
         onChange={this.onChange}
         value={this.state.value}
         loading={this.state.loading}>
         {
-          this.state.depts.map(item=>(
+          depts.map(item=>(
             <Option key={item} value={item}>{item}</Option>
           ))
         }
@@ -120,6 +127,8 @@ class FloorSelect extends Component{
     value: undefined,
   }
   componentWillMount(){
+    if(this.props.value)
+      this.setState({value: this.props.value})
     if(this.props.building)
       this.getFloors()
   }
@@ -158,6 +167,7 @@ class FloorSelect extends Component{
     }
     return (
       <Select {...this.props}
+        allowClear
         value={this.state.value}
         onChange={this.onChange}
         placeholder={this.props.building||'请先选择楼宇'}
@@ -179,7 +189,9 @@ class YearSelect extends Component{
       ))
     }
     return (
-      <Select size='small' {...this.props}>
+      <Select
+        allowClear
+        size='small' {...this.props}>
         {
           options
         }
@@ -228,6 +240,7 @@ class LabSelect extends Component{
   render(){
     return (
       <Select {...this.props}
+        allowClear
         value={this.state.value}
         onChange={this.onChange}
         placeholder={(this.props.year&&this.props.dept)?
@@ -284,6 +297,7 @@ class ClassroomSelect extends Component{
   render(){
     return (
       <Select {...this.props}
+        allowClear
         value={this.state.value}
         onChange={this.onChange}
         placeholder={(this.props.year&&this.props.dept)?
@@ -299,4 +313,56 @@ class ClassroomSelect extends Component{
   }
 }
 
-export {DeptSelect, BuildingSelect, FloorSelect, YearSelect, LabSelect, ClassroomSelect}
+class RoleSelect extends Component{
+  state = {
+    roles: [],
+    loading: true,
+    value: this.props.value||undefined,
+  }
+  onChange = (value)=>{
+    this.setState({value})
+    this.props.onChange(value)
+  }
+  getRoles = ()=>{
+    this.setState({loading: true})
+    API.getRoles()
+    .then(rs=>{
+      this.setState({roles: rs})
+    })
+    .catch(err=>{
+      message.error('加载角色信息失败')
+    })
+    .finally(()=>{
+      this.setState({loading: false})
+    })
+  }
+  componentDidMount(){
+    this.getRoles()
+  }
+  render(){
+    let roles = this.state.roles
+    return (
+      <Select {...this.props}
+        allowClear
+        onChange={this.onChange}
+        value={this.state.value}
+        loading={this.state.loading}>
+        {
+          roles.map(item=>(
+            <Option key={item.id} value={item.id}>{item.juesemingcheng}</Option>
+          ))
+        }
+      </Select>
+    )
+  }
+}
+
+export {
+  DeptSelect,
+  BuildingSelect,
+  FloorSelect,
+  YearSelect,
+  LabSelect,
+  ClassroomSelect,
+  RoleSelect,
+}

@@ -1,12 +1,11 @@
 import React, {Component} from 'react'
-import {Button, Form, Row, Col, message, Select, Empty} from 'antd'
+import {Button, Form, Row, Col, message, Empty} from 'antd'
 import API from '../../api'
-import Table, {TableUtil}from '../common/table'
+import Table from '../common/table'
 import MainContainer from '../common/mainContainer'
 import {DeptSelect} from '../common/select'
 import Split from '../common/split'
 const Item = Form.Item
-const Option = Select.Option
 
 class Search extends Component{
   handleSubmit = (e) => {

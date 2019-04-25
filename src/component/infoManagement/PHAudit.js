@@ -48,8 +48,8 @@ class SearchForm extends Component{
           <Col span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="审批状态">
               {getFieldDecorator('auditStatus',)(
-                <Select>
-                  <Option value="所有">所有</Option>
+                <Select allowClear>
+                  <Option value="">所有</Option>
                   <Option value="已批准">已批准</Option>
                   <Option value="已驳回">已驳回</Option>
                   <Option value="已上报">已上报</Option>

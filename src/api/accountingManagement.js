@@ -120,7 +120,41 @@ const overallAccount = {
   },
 }
 
+const personalAccount = {
+  accountingPersonalInfo(values){
+    // 不需要年份
+    delete values.nianfen
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-geren-yongfang-tongji/hesuan', {
+        params: values,
+      })
+      .then(()=>{
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
+  searchPersonnelAccountingInfo(values){
+    // 不需要工号
+    delete values.gonghao
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-geren-yongfang-tongji/get/all', {
+        params: values,
+      })
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
+}
+
 export default {
   ...departmentAccount,
   ...overallAccount,
+  ...personalAccount,
 }

@@ -3,7 +3,7 @@ import {
   HashRouter as Router,
   Link
 } from "react-router-dom";
-import {Form, Row, Col, Select, Input, Button, message, DatePicker, Empty} from 'antd'
+import {Form, Row, Col, Input, Button, message, DatePicker, Empty} from 'antd'
 import Map from '../../routerMap'
 import {SButton} from '../common/button'
 import {DeptSelect, BuildingSelect} from '../common/select'

@@ -9,11 +9,19 @@ class MyUpload extends Component{
   state = {
     previewVisible: false,
     previewImage: '',
-    fileList: this.props.fileList?
+    fileList: (this.props.fileList?
     this.props.fileList.map(({id, tupianlujing})=>({uid:id,
-                                                   url:host+tupianlujing})):[]
+                                                   url:host+tupianlujing})):[])
   }
-  
+  componentWillMount(){
+    if(this.props.value&&this.props.value.length>0)
+      this.setState({fileList: this.props.value})
+  }
+
+  componentWillReceiveProps(nextProps){
+    if(this.props.defaultIsFile&&nextProps.value)
+      this.setState({fileList: nextProps.value})
+  }
   handleCancel = () => this.setState({ previewVisible: false })
   beforeUpload = (file) => {
     this.setState(state => ({
@@ -40,7 +48,10 @@ class MyUpload extends Component{
               const index = state.fileList.indexOf(file)
               const newFileList = state.fileList.slice()
               newFileList.splice(index, 1);
-              this.props.onChange(newFileList.map(i=>i['originFileObj']))
+              if(this.props.defaultIsFile)
+                this.props.onChange(newFileList)
+              else
+                this.props.onChange(newFileList.map(i=>i['originFileObj']))
               return {
                 fileList: newFileList,
             }
@@ -65,7 +76,10 @@ class MyUpload extends Component{
   handleChange = ({fileList}) => {
     this.setState({fileList})
     fileList = fileList.filter(i=>!i.url)
-    this.props.onChange(fileList.map(i=>i['originFileObj']))
+    if(this.props.defaultIsFile)
+      this.props.onChange(fileList)
+    else
+      this.props.onChange(fileList.map(i=>i['originFileObj']))
   }
   render(){
     const { previewVisible, previewImage, fileList } = this.state

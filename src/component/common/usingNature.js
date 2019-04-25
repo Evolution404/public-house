@@ -237,5 +237,15 @@ let parseType = (type)=>{
     return '学院党政机关用房'
   }
 }
+let parseId = (type)=>{
+  if(type==='科研用房')
+    return 1
+  if(type==='后勤保障公共用房')
+    return 2
+  if(type==='产业商业用房')
+    return 3
+  if(type==='学院党政机关用房')
+    return 4
+}
 export default UsingNature
-export {UsingNatureBrief, parseType}
+export {UsingNatureBrief, parseType, parseId}

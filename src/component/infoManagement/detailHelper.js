@@ -1,9 +1,4 @@
 import React, {Component} from 'react'
-import {
-  HashRouter as Router,
-  Link
-} from "react-router-dom";
-import Map from '../../routerMap'
 import Zmage from 'react-zmage'
 import {Row, Col, Checkbox} from 'antd'
 import Table from '../common/table'
@@ -26,7 +21,7 @@ class PicDisplay extends Component{
   }
 }
 
-class PersonalLink extends Component{
+/*class PersonalLink extends Component{
   render(){
     return (
       <Router>
@@ -38,7 +33,7 @@ class PersonalLink extends Component{
       </Router>            
     )
   }
-}
+}*/
 class HistoryInfo extends Component{
   render(){
     const columns = [

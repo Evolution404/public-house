@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
-import {Row, Col, Form, Select, Input, Button, InputNumber,
-  Checkbox, Icon, message, Spin} from 'antd'
+import {Row, Col, Form, Select, Input, Button,
+  Checkbox, message, Spin} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Upload from '../common/upload'

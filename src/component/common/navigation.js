@@ -45,12 +45,12 @@ class Sider extends Component {
   mapTitle = (text)=>{
     // 传入菜单标题返回对应的title
     let mapData = {
-      '信息管理': <Icon type="edit" />,
-      '统计查询': <Icon type="form" />,
-      '核算管理': <Icon type="copy" />,
-      '绩效管理': <Icon type="scissor" />,
+      '信息管理': <Icon type="idcard" />,
+      '统计查询': <Icon type="search" />,
+      '核算管理': <Icon type="money-collect" />,
+      '绩效管理': <Icon type="line-chart" />,
       '动态监测': <Icon type="delete" />,
-      '会议室管理': <Icon type="snippets" />,
+      '会议室管理': <Icon type="team" />,
       '公寓管理': <Icon type="diff" />,
       '系统管理': <Icon type="setting" />,
     }

@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
-import API from '../../api'
 import
-  {Form, Select, Row, Col, Button, message, DatePicker, Checkbox, Modal, Input, notification, Empty}
+  {Form, message, DatePicker, Modal, Input, notification}
 from 'antd'
 
 const Item = Form.Item

@@ -161,7 +161,33 @@ const deptManagement = {
 
 const parmManagement = {
   // 参数管理
-
+  getAllParams(){
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-canshu-peizhi/get/all')
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  setParmValue(id, canshuzhi){
+    let data = new FormData()
+    data.append('id', id)
+    data.append('canshuzhi', canshuzhi)
+    return new Promise((resolve, reject)=>{
+      axios.post('/tb-canshu-peizhi/update', data)
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
   // 设置地下室面积系数
   setBasementCoefficient(basementCoefficient){
     return new Promise((resolve, reject)=>{
@@ -383,6 +409,20 @@ const theUserManagement = {
 const userManagement = {
   // 用户管理
 
+  // 获取所有的角色接口
+  getRoles(){
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-juese/get/all')
+      .then(rs=>{
+        // 处理成一个列表
+        // 每一项包括id和juesemingcheng
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
   loginCheck(values){
     const listName2Component = {
       '信息管理':{
@@ -390,6 +430,8 @@ const userManagement = {
         '公用房列表': Map.PHList,
         '公用房新增': Map.PHAdd,
         '公用房变更': Map.PHChange,
+        '公用房改造': Map.PHTransform,
+        '公用房改造审核': Map.PHTransformAudit,
         '公用房审核': Map.PHAudit,
         '我的公用房': Map.MyPH,
       },
@@ -400,6 +442,7 @@ const userManagement = {
       '核算管理':{
         '总体核算': Map.OverallAccount,
         '部门核算': Map.DepartmentAccount,
+        '个人核算': Map.PersonalAccount,
       },
       '绩效管理':{
         '数据导入': Map.DataImport,

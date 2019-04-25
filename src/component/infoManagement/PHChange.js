@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Empty, message, Row, Col, Form, Select, Input, Button, Cascader, Checkbox, Icon, Spin} from 'antd'
+import {Empty, message, Row, Col, Form, Input, Button, Spin} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import UsingNature, { UsingNatureBrief } from '../common/usingNature'
@@ -11,9 +11,6 @@ import {ScientificBuilding,
   CollegePartyBuilding} from './commonFormItem'
 import API from '../../api'
 const {Item} = Form
-const Option = Select.Option
-const { TextArea } = Input
-const CheckboxGroup = Checkbox.Group
 
 class Search extends Component{
   state = {

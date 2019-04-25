@@ -1,5 +1,5 @@
 import axios from './apiConfig'
-import {MapB2F, MapF2B} from './nameMapConfig'
+import {MapF2B} from './nameMapConfig'
 
 const businessPerformance = {
   // 商业用房绩效

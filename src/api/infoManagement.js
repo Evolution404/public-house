@@ -1,6 +1,7 @@
 import axios from './apiConfig'
 import {uploadHelper} from './fileUpload'
 import {MapB2F, MapF2B} from './nameMapConfig'
+import {parseId} from '../component/common/usingNature'
 
 const PHAdd = {
   // 公用房新增
@@ -93,6 +94,139 @@ const PHAddBrief = {
   },
 
 }
+const PHTransform = {
+  transformSearch(louyu, louceng){
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-gongyongfang/gaizao-chaxun', {
+        params: {louyu, louceng}
+      })
+      .then(rs=>{
+        let data = []
+        for(let type in rs.data){
+          let id = parseId(type)
+          let item = {title: type, key:id, value:id, disable: true}
+          let children = rs.data[type].map(c=>({title: c,
+            value:id+'-'+c, key:(id+'-'+c)}))
+          item.children = children
+          data.push(item)
+        }
+        resolve(data)
+      })
+      .catch(err=>{
+        console.log(err)
+        reject(err)
+      })
+    })
+  },
+  transformSubmit(stepData){
+    let obj_old = {
+      louyu: stepData[0].louyu,
+      louceng: stepData[0].louceng,
+      fangjianhao: stepData[0].fangjian.map(i=>({leixing: parseInt(i.split('-')[0]),
+                                                fangjianhao: i.split('-')[1]})),
+    }
+    let obj = []
+    let imgFormList = []
+    for(let i=1;i < stepData.length;i++){
+      let curData = stepData[i]
+      let subValues = curData.subValues
+      let jiben = {
+        louyu: curData.louyu,
+        louceng: curData.louceng,
+        fangjianhao: curData.fangjianhao,
+        shiyongmianji: curData.shiyongmianji,
+        beizhu: curData.beizhu,
+        shifoudixiashi: curData.areaConfig.indexOf(0)>-1?'是':'否',
+        shifoujianyifang: curData.areaConfig.indexOf(1)>-1?'是':'否',
+        zhuangtai: curData.zhuangtai,
+      }
+      let leixing = parseInt(subValues.usingNature[0])
+      let xiangxi={
+        leixing,
+        obj: {
+          ...MapF2B(subValues),
+          louyu: curData.louyu,
+          louceng: curData.louceng,
+          fangjianhao: curData.fangjianhao,
+        },
+      }
+      if(leixing===4){
+        let deviceConfig = {
+          touyingyi: subValues.deviceConfig.indexOf(0)>-1?'是':'否',
+          yinxiang: subValues.deviceConfig.indexOf(1)>-1?'是':'否',
+          maikefeng: subValues.deviceConfig.indexOf(2)>-1?'是':'否',
+          baiban: subValues.deviceConfig.indexOf(3)>-1?'是':'否',
+          diannao: subValues.deviceConfig.indexOf(4)>-1?'是':'否',
+        }
+        xiangxi.obj = {
+          ...xiangxi.obj,
+          ...deviceConfig,
+        }
+      }
+      obj.push({jiben, xiangxi})
+      if(curData.housePic){
+        let rawFile = curData.housePic['originFileObj']
+        let imgForm = new FormData()
+        imgForm.append('file', rawFile)
+        imgForm.append('louceng', curData.louceng)
+        imgForm.append('louyu', curData.louyu)
+        imgForm.append('fangjianhao', curData.fangjianhao)
+        imgForm.append('module', 'gongyongfang-zhaopian')
+        imgFormList.push(imgForm)
+      }
+    }
+    let data = new FormData()
+    data.append('obj_old', JSON.stringify(obj_old))
+    data.append('obj', JSON.stringify(obj))
+    return new Promise((resolve, reject)=>{
+       axios.post('/tb-gongyongfang/gaizao', data)
+       .then(rs=>{
+        let uploadImgPromiseList =
+          imgFormList.map(i=>uploadHelper(i, '/tb-gongyongfang-zhaopian/upload-img'))
+         Promise.all(uploadImgPromiseList)
+         .then(rs=>{
+           resolve(rs.data)
+         })
+         .catch(err=>{
+           reject(err)
+         })
+       })
+       .catch(err=>{
+         reject(err)
+       })
+    })
+  },
+  transformAuditSearch(type){
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-gongyongfang/gaizao-shenpi-chaxun', {
+        params: {
+          leixing: type,
+        }
+      })
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })    
+  },
+  transformAudit(values){
+    let data = new FormData()
+    data.append('leixing', values.leixing)
+    data.append('id', values.id)
+    data.append('shenpi', values.shenpi)
+    return new Promise((resolve, reject)=>{
+      axios.post('/tb-gongyongfang/gaizao-shenpi', data)
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })    
+  }
+}
 
 const PHAudit = {
   // 公用房审核
@@ -142,7 +276,7 @@ const PHAuditDetail = {
     let data = new FormData()
     data.append('leixing', index.split('-')[0])
     data.append('id', index.split('-')[1])
-    data.append('shenpizhuangtai', '已审批')
+    data.append('shenpizhuangtai', '已批准')
     data.append('yuanyin', opinion)
     return new Promise((resolve, reject)=>{
       axios.post('/tb-gongyongfang/change-approval-status', data)
@@ -318,14 +452,13 @@ const PHChange = {
         ...rawData,
         ...obj,
       }
+      delete obj.imglist
       data.append('leixing', values.usingNature[0])
       data.append('obj', JSON.stringify(obj))
     // 修改了
     }else{
       url = '/tb-gongyongfang/change'
-      obj = {
-        ...obj,
-      }
+      delete obj.imglist
       data.append('id_old', oldId)
       data.append('leixing_old', oldType)
       data.append('leixing', values.usingNature[0])
@@ -627,6 +760,7 @@ const PHDetailInfo = {
 }
 
 export default {
+  ...PHTransform,
   ...PHAdd,
   ...PHAddBrief,
   ...PHAudit,

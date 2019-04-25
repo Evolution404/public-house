@@ -35,7 +35,7 @@ const mapNameF2B = {
   password: 'mima',
   oldPassword: 'jiumima',
   newPassword: 'xinmima',
-  role: 'juseId',
+  role: 'jueseId',
   buildingImgs: 'louyuTupians',
   roomNum: 'fangjianhao',
   useArea: 'shiyongmianji',

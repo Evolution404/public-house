@@ -1,13 +1,13 @@
 import React, {Component} from 'react'
 import MainContainer from '../common/mainContainer'
-import {Input, Empty, Button,Form, Row, Col, message, Modal, Select} from 'antd'
+import {Input, Empty, Button,Form, Row, Col, message, Modal} from 'antd'
 import {SButton} from '../common/button'
 import Split from '../common/split'
 import Table, {TableUtil}from '../common/table'
+import {RoleSelect} from '../common/select'
 import API from '../../api'
 const Item = Form.Item
 const confirm = Modal.confirm;
-const Option = Select.Option
 
 class Search extends Component{
   handleSubmit = (e) => {
@@ -60,7 +60,7 @@ class ButtonGroup extends Component{
 class DisplayTable extends Component{
   render(){
     const columns = TableUtil.mapColumns([
-      '序号', '用户名称', '登录账号', '所属部门', '角色'
+      '序号', '用户名称', '登录账号', '工号', '角色'
     ])
     columns.push({
       title: '操作',
@@ -101,7 +101,10 @@ class AddModal extends Component {
         message.success('添加成功')
       })
       .catch(err=>{
-        message.error('添加失败')
+        if(err.response)
+          message.error(err.response.data.title)
+        else
+          message.error('添加失败')
       })
     })
   }
@@ -180,18 +183,18 @@ class AddModal extends Component {
               <Input type='password'  onBlur={this.handleConfirmBlur}/>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='所属部门'>
-            {getFieldDecorator('dept', )(
-              <Select>
-                <Option value="1">部门1</Option>
-              </Select>
+          <Item style={{marginBottom: '0px'}}  label='工号'>
+            {getFieldDecorator('workNum', {
+              rules: [{required: true, message: '请输入工号'}]
+            })(
+              <Input></Input>
             )}
           </Item>
           <Item style={{marginBottom: '0px'}}  label='角色'>
-            {getFieldDecorator('role', )(
-              <Select>
-                <Option value={1}>角色1</Option>
-              </Select>
+            {getFieldDecorator('role', {
+              rules: [{required: true, message: '请选择角色'}]
+            })(
+              <RoleSelect></RoleSelect>
             )}
           </Item>
         </Form>
@@ -248,23 +251,31 @@ class ChangeModal extends Component {
       >
         <Form labelCol={{span:8}} wrapperCol={{span:16}} labelAlign='left'>
           <Item style={{marginBottom: '0px'}} label='登录账号'>
-            {getFieldDecorator('loginAccount',{initialValue: data.loginAccount})(
+            {getFieldDecorator('loginAccount',{
+              rules: [{required: true, message: '请输入登录账号'}],
+              initialValue: data.loginAccount})(
               <Input/>
             )}
           </Item>
           <Item style={{marginBottom: '0px'}}  label='用户名称'>
-            {getFieldDecorator('userName', {initialValue: data.userName})(
+            {getFieldDecorator('userName', {
+              rules: [{required: true, message: '请输入用户名称'}],
+              initialValue: data.userName})(
               <Input/>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='所属部门'>
-            {getFieldDecorator('dept', {initialValue: data.dept})(
-              <Select></Select>
+          <Item style={{marginBottom: '0px'}}  label='工号'>
+            {getFieldDecorator('workNum', {
+              rules: [{required: true, message: '请输入工号'}],
+              initialValue: data.workNum})(
+              <Input></Input>
             )}
           </Item>
           <Item style={{marginBottom: '0px'}}  label='角色'>
-            {getFieldDecorator('role', {initialValue: data.role})(
-              <Select></Select>
+            {getFieldDecorator('role', {
+              rules: [{required: true, message: '请选择角色'}],
+              initialValue: data.role})(
+              <RoleSelect></RoleSelect>
             )}
           </Item>
         </Form>

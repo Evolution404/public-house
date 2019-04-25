@@ -9,9 +9,8 @@ import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import {LButton, SButton} from '../common/button'
 import Split from '../common/split'
-import Table from '../common/table'
+import Table, {TableUtil} from '../common/table'
 import Search from '../common/search'
-import columns from './typeColumns'
 
 const confirm = Modal.confirm;
 
@@ -49,11 +48,212 @@ class DisplayTable extends Component{
     }
   }
   render(){
-    let tableColumns = JSON.parse(JSON.stringify(columns))
-    // 未上报
-    // 已上报
-    // 已驳回
-    // 已批准
+    let tableColumns = [
+      [
+        {
+          title: '序号',
+          dataIndex: 'id',
+        },
+        {
+          title: '部门',
+          dataIndex: 'dept',
+        },
+        {
+          title: '楼宇',
+          dataIndex: 'building',
+        },
+        {
+          title: '楼层',
+          dataIndex: 'floor',
+        },
+        {
+          title: '房间号',
+          dataIndex: 'roomNum',
+        },
+        {
+          title: '使用面积',
+          dataIndex: 'useArea',
+        },
+        {
+          title: '具体用途',
+          dataIndex: 'spectificPurpose',
+        },
+        {
+          title: '科研团队',
+          dataIndex: 'scientificTeam',
+        },
+        {
+          title: '年收入',
+          dataIndex: 'annualIncome',
+        },
+        {
+          title: '状态',
+          dataIndex: 'status',
+        },
+        {
+          title: '审批状态',
+          dataIndex: 'auditStatus',
+          render: (text)=>(
+            TableUtil.mapColor(text)
+          )
+        },
+        {
+          title: '租金单价',
+          dataIndex: 'rentPrice',
+        },
+        {
+          title: '租金类型',
+          dataIndex: 'rentType',
+        },
+        {
+          title: '备注',
+          dataIndex: 'note',
+        },
+      ],
+      [
+        {
+          title: '序号',
+          dataIndex: 'id',
+        },
+        {
+          title: '部门',
+          dataIndex: 'dept',
+        },
+        {
+          title: '楼宇',
+          dataIndex: 'building',
+        },
+        {
+          title: '楼层',
+          dataIndex: 'floor',
+        },
+        {
+          title: '房间号',
+          dataIndex: 'roomNum',
+        },
+        {
+          title: '使用面积',
+          dataIndex: 'useArea',
+        },
+        {
+          title: '具体用途',
+          dataIndex: 'spectificPurpose',
+        },
+        {
+          title: '状态',
+          dataIndex: 'status',
+        },
+        {
+          title: '审批状态',
+          dataIndex: 'auditStatus',
+          render: (text)=>(
+            TableUtil.mapColor(text)
+          )
+        },
+        {
+          title: '备注',
+          dataIndex: 'note',
+        },
+      ],
+      [
+        {
+          title: '序号',
+          dataIndex: 'id',
+        },
+        {
+          title: '部门',
+          dataIndex: 'dept',
+        },
+        {
+          title: '楼宇',
+          dataIndex: 'building',
+        },
+        {
+          title: '楼层',
+          dataIndex: 'floor',
+        },
+        {
+          title: '房间号',
+          dataIndex: 'roomNum',
+        },
+        {
+          title: '使用面积',
+          dataIndex: 'useArea',
+        },
+        {
+          title: '具体用途',
+          dataIndex: 'spectificPurpose',
+        },
+        {
+          title: '年收入',
+          dataIndex: 'annualIncome',
+        },
+        {
+          title: '状态',
+          dataIndex: 'status',
+        },
+        {
+          title: '审批状态',
+          dataIndex: 'auditStatus',
+          render: (text)=>(
+            TableUtil.mapColor(text)
+          )
+        },
+        {
+          title: '租金单价',
+          dataIndex: 'rentPrice',
+        },
+        {
+          title: '租金类型',
+          dataIndex: 'rentType',
+        },
+        {
+          title: '备注',
+          dataIndex: 'note',
+        },
+      ],
+      [
+        {
+          title: '序号',
+          dataIndex: 'id',
+        },
+        {
+          title: '部门',
+          dataIndex: 'dept',
+        },
+        {
+          title: '楼宇',
+          dataIndex: 'building',
+        },
+        {
+          title: '楼层',
+          dataIndex: 'floor',
+        },
+        {
+          title: '房间号',
+          dataIndex: 'roomNum',
+        },
+        {
+          title: '容纳人数',
+          dataIndex: 'galleryful',
+        },
+        {
+          title: '具体用途',
+          dataIndex: 'spectificPurpose',
+        },
+        {
+          title: '审批状态',
+          dataIndex: 'auditStatus',
+          render: (text)=>(
+            TableUtil.mapColor(text)
+          )
+        },
+        {
+          title: '备注',
+          dataIndex: 'note',
+        },
+      ],
+    ]
     let getChangeButton = (record)=>{
       let path = Map.PHChange.path.replace(':id', `${this.props.type}-${record.id}`)
       switch(record.auditStatus){
@@ -112,16 +312,16 @@ class DisplayTable extends Component{
         </Router>
       )
     }
+    tableColumns[0].push(operate)
     tableColumns[1].push(operate)
     tableColumns[2].push(operate)
     tableColumns[3].push(operate)
-    tableColumns[4].push(operate)
     if(this.props.type){
-      tableColumns = tableColumns[this.props.type]
+      tableColumns = tableColumns[this.props.type-1]
     }else{
       tableColumns = []
     }
-
+    console.log(tableColumns)
     return <Table columns={tableColumns} {...this.props}/>
   }
 }

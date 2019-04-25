@@ -1,17 +1,13 @@
 import React, {Component} from 'react'
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
-import Split from '../common/split'
-import {DeptSelect} from '../common/select'
 import Table from '../common/table'
 import download from '../common/download'
-import {Form, Row, Col, Select, Input, Button, message, DatePicker, Empty} from 'antd'
+import {Row, Col, Button, message} from 'antd'
 import moment from 'moment'
 
 let render = (text)=>moment(text).format('YYYY-MM-DD HH:mm')
 
-const Item = Form.Item
-const {RangePicker} = DatePicker
 
 
 let columns = [

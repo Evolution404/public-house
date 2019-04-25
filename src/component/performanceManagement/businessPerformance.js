@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Form, Select, Row, Col, Button, message, Spin, Empty} from 'antd'
+import {Form, Row, Col, Button, message, Spin, Empty} from 'antd'
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import {DeptSelect} from '../common/select'
@@ -8,7 +8,6 @@ import Table from '../common/table'
 import Histogram from '../common/histogram'
 
 const Item = Form.Item
-const Option = Select.Option
 
 class BusinessPerformance extends Component{
   state = {

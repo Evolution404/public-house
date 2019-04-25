@@ -1,8 +1,6 @@
-import axios ,{host} from './apiConfig'
-import NOaxios from 'axios'
+import axios from './apiConfig'
 import {MapB2F, MapF2B} from './nameMapConfig'
 
-const domainName = host+'/api/gongyongfang'
 
 const meetingRoomReservation = {
   // 会议室预约
