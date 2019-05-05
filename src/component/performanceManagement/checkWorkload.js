@@ -46,10 +46,6 @@ class DisplayTable extends Component{
   render(){
     const columns = [
       {
-        title: '序号',
-        dataIndex: 'id',
-      },
-      {
         title: '年份',
         dataIndex: 'nianfen',
       },
@@ -76,16 +72,17 @@ class DisplayTable extends Component{
 
 class CheckWorkload extends Component{
   state = {
-    deptName: '',
+    dept: '',
     tableList: [],
     isSearched: false,
     tableLoading: false,
+    current: 0,
   }
   search = ({dept})=>{
     this.setState({
       dept,
     })
-    this.setState({tableLoading: true, isSearched: true})
+    this.setState({tableLoading: true, isSearched: true, current: 1})
     API.searchWorkLoad(dept)
     .then(rs=>{
       this.setState({
@@ -100,14 +97,31 @@ class CheckWorkload extends Component{
       this.setState({tableLoading: false})
     })
   }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page:p, current: p.current})
+    API.searchWorkLoad(this.state.dept, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
+  }
 
   render(){
-    return <MainContainer name="效益管理">
+    return <MainContainer name="工作量查看">
       <WrappedSearch onSearch={this.search}/>
       <Split/>
       {
         this.state.isSearched?(
-          <DisplayTable loading={this.state.tableLoading} data={this.state.tableList}/>
+          <DisplayTable
+            current={this.state.current}
+            onChange={this.tableChange}
+            loading={this.state.tableLoading} data={this.state.tableList}/>
         ):(
           <Empty description="请先搜索"></Empty>
         )

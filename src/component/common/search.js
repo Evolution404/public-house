@@ -110,7 +110,7 @@ class ReservationAuditSearch extends Component{
         <Row>
           <Col span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
-              {getFieldDecorator('deptName',)(
+              {getFieldDecorator('dept',)(
                   <DeptSelect size="small"></DeptSelect>
               )}
             </Item>
@@ -138,7 +138,7 @@ class ReservationAuditSearch extends Component{
         <Row>
           <Col span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="楼宇名称">
-              {getFieldDecorator('buildingName',)(
+              {getFieldDecorator('building',)(
                   <BuildingSelect size="small"></BuildingSelect>
               )}
             </Item>

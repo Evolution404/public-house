@@ -16,6 +16,7 @@ class TeachingUnitPerformance extends Component{
     dept: '',
     loading: false,
     tableList: [],
+    tableLoading: false,
     printData: {},
     isPrinting: false,
     graphData: {},
@@ -44,7 +45,7 @@ class TeachingUnitPerformance extends Component{
   search = ()=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        this.setState({loading: true, hasSearched: true})
+        this.setState({loading: true, hasSearched: true, current: 1, filter: values})
         API.searchTeachingUnitPHUsePerformance(values)
         .then(rs=>{
           this.setState(rs)
@@ -55,6 +56,20 @@ class TeachingUnitPerformance extends Component{
         .finally(()=>this.setState({loading: false}))
       }
     })
+  }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page:p, current: p.current})
+    API.searchTeachingUnitPHUsePerformance(this.state.filter, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs.tableList,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
   }
   render(){
     let columns = [
@@ -89,13 +104,13 @@ class TeachingUnitPerformance extends Component{
         sorter: (a, b) => a.shiyongxiaoyi - b.shiyongxiaoyi,
       },
       {
-        title: '米均效益',
+        title: '米均效益(元/㎡)',
         dataIndex: 'mijunxiaoyi',
         sorter: (a, b) => a.mijunxiaoyi - b.mijunxiaoyi,
       },
     ]
     const { getFieldDecorator } = this.props.form
-    return <MainContainer name="效益管理">
+    return <MainContainer name="教学单位绩效">
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
           <Col span={4}>
@@ -137,7 +152,11 @@ class TeachingUnitPerformance extends Component{
           this.state.hasSearched?(
             <div id="printArea">
               <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>教学单位公用房使用效益</div>
-              <Table columns={columns} data={this.state.tableList}></Table>
+              <Table
+                loading={this.state.tableLoading}
+                current={this.state.current}
+                onChange={this.tableChange}
+                columns={columns} data={this.state.tableList}></Table>
               <Row style={{marginTop: 30}}>
                 <Col offset={1} span={12}>
                   {

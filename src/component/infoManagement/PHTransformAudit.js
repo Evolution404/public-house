@@ -45,10 +45,6 @@ class DisplayTable extends Component{
   render(){
     const columns = [
       {
-        title: '序号',
-        dataIndex: 'id',
-      },
-      {
         title: '部门',
         dataIndex: 'bumen',
       },
@@ -152,11 +148,27 @@ class PHTransformAudit extends Component{
     })
     .finally(()=>{this.setState({loading: false})})
   }
+  tableChange = (p)=>{
+    this.setState({loading: true, page:p, current: p.current})
+    API.transformAuditSearch(this.state.type, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({loading: false}))
+  }
   render(){
     return (
       <MainContainer name="改造审核">
         <Search onSearch={this.search}></Search>
         <DisplayTable loading={this.state.loading}
+          current={this.state.current}
+          onChange={this.tableChange}
           audit={this.audit}
           data={this.state.tableList}></DisplayTable>
       </MainContainer>

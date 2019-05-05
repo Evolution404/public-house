@@ -74,10 +74,6 @@ class DisplayTable extends Component{
   render(){
     const columns = [
       {
-        title: '序号',
-        dataIndex: 'id',
-      },
-      {
         title: '部门',
         dataIndex: 'dept',
       },
@@ -126,10 +122,13 @@ class PHAudit extends Component{
     type: '',
     tableList: [],
     selected: [], // 被选中的数据, 数值代表的是在tableList中的位置
+    filter: {},
+    current: 0,
+    tableLoading: false,
   }
   // filter的内容是dept, usingNature, status
   search = (filter)=>{
-    this.setState({type: filter.usingNature[0]})
+    this.setState({type: filter.usingNature[0], filter, current: 1, tableLoading: true})
     API.auditFilterPH(filter)
     .then(rs=>{
       this.setState({tableList: rs})
@@ -138,6 +137,26 @@ class PHAudit extends Component{
       message.error('获取失败, 请重试')
       console.log(e)
     })
+    .finally(()=>{this.setState({tableLoading: false})})
+  }
+  selectedChange = (newSelected)=>{
+    this.setState({
+      selected: newSelected
+    })
+  }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page:p, current: p.current})
+    API.auditFilterPH(this.state.filter, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
   }
   selectedChange = (newSelected)=>{
     this.setState({
@@ -145,11 +164,14 @@ class PHAudit extends Component{
     })
   }
   render(){
-    return <MainContainer name="公用房管理">
+    return <MainContainer name="公用房审核">
       基本信息/公用房审批
       <WrappedSearchForm onSearch={this.search}/>
       <DisplayTable
+        current={this.state.current}
+        onChange={this.tableChange}
         type={this.state.type}
+        loading={this.state.tableLoading}
         data={this.state.tableList} onSelectedChange={this.selectedChange}></DisplayTable>
     </MainContainer>
   }

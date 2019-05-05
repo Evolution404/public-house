@@ -48,7 +48,7 @@ class LabPerformance extends Component{
   search = ()=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        this.setState({isSearched: true, tableLoading: true})
+        this.setState({isSearched: true, tableLoading: true, filter: values, current: 1})
         API.searchLabPerformance(values)
         .then(rs=>{
           this.setState(rs)
@@ -61,6 +61,20 @@ class LabPerformance extends Component{
         })
       }
     })
+  }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page:p, current: p.current})
+    API.searchLabPerformance(this.state.filter, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs.tableList,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
   }
   render(){
     let columns = [
@@ -101,7 +115,7 @@ class LabPerformance extends Component{
       },
     ]
     const { getFieldDecorator } = this.props.form
-    return <MainContainer name="效益管理">
+    return <MainContainer name="实验室绩效">
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
           <Col span={3}>
@@ -158,6 +172,8 @@ class LabPerformance extends Component{
                 </Col>
               </Row>
               <Table loading={this.state.tableLoading}
+                current={this.state.current}
+                onChange={this.tableChange}
                 columns={columns} data={this.state.tableList}></Table>
               <Row style={{marginTop: 30}}>
                 <Col offset={1} span={12}>

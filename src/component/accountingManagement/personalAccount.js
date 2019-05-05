@@ -63,10 +63,6 @@ class DisplayTable extends Component{
   render(){
     const columns = [
       {
-        title: '序号',
-        dataIndex: 'id',
-      },
-      {
         title: '年份',
         dataIndex: 'nianfen',
       },
@@ -75,19 +71,19 @@ class DisplayTable extends Component{
         dataIndex: 'gonghao',
       },
       {
-        title: '行政面积定额',
+        title: '行政面积定额(㎡)',
         dataIndex: 'xingzhengmianjiDe',
       },
       {
-        title: '学院面积定额',
+        title: '学院面积定额(㎡)',
         dataIndex: 'xueyuanmianjiDe',
       },
       {
-        title: '行政面积实际',
+        title: '行政面积实际(㎡)',
         dataIndex: 'xingzhengmianjiSj',
       },
       {
-        title: '学院面积实际',
+        title: '学院面积实际(㎡)',
         dataIndex: 'xueyuanmianjiSj',
       },
     ]
@@ -101,8 +97,11 @@ class PersonalAccount extends Component{
   state = {
     tableList: [],
     hasSearched: false,
+    tableLoading: false,
     loading: false,
     tip: "",
+    current: 0,
+    filter: {},
   }
   // 核算信息
   accounting = (values)=>{
@@ -121,7 +120,7 @@ class PersonalAccount extends Component{
   }
   // 查询信息
   search = (values)=>{
-    this.setState({hasSearched: true, loading: true, tip: `加载核算信息中...`})
+    this.setState({hasSearched: true, loading: true, tip: `加载核算信息中...`, current: 1, filter: values})
     API.searchPersonnelAccountingInfo(values)
     .then(rs=>{
       this.setState({tableList: rs})
@@ -134,9 +133,23 @@ class PersonalAccount extends Component{
     })
     .finally(()=>{this.setState({loading: false})})
   }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page:p, current: p.current})
+    API.searchPersonnelAccountingInfo(this.state.filter, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
+  }
   render(){
     return (
-      <MainContainer name="核算管理">
+      <MainContainer name="个人核算">
         <Search search={this.search} accounting={this.accounting}></Search>
         <Split></Split>
         <Spin tip={this.state.tip} spinning={this.state.loading}>
@@ -146,6 +159,9 @@ class PersonalAccount extends Component{
           {
             this.state.hasSearched?(
               <DisplayTable
+                loading={this.state.tableLoading}
+                current={this.state.current}
+                onChange={this.tableChange}
                 data={this.state.tableList}></DisplayTable>
             ):(
               <Empty description="请先搜索"></Empty>

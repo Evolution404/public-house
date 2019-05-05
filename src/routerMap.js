@@ -56,6 +56,7 @@ import ParmManagement from './component/systemManagement/parmManagement'
 import BuildingManagement from './component/systemManagement/buildingManagement'
 import TheUserManagement from './component/systemManagement/theUserManagement'
 import UserManagement from './component/systemManagement/userManagement'
+import AreaSubsidiesImport from './component/systemManagement/areaSubsidiesImport'
 
 
 const routerMap = {
@@ -263,6 +264,11 @@ const routerMap = {
     path:'/UserManagement',
     name:'用户管理',
     component: UserManagement
+  },
+  AreaSubsidiesImport: {
+    path:'/AreaSubsidiesImport',
+    name:'面积补贴导入',
+    component: AreaSubsidiesImport
   },
 }
 

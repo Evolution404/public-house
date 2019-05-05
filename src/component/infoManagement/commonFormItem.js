@@ -352,7 +352,6 @@ class ScientificBuilding extends Component{
             }} ></BFR>
           )
         }
-        <SpectificPurpose {...this.props}> initialValue={initialValue.spectificPurpose}</SpectificPurpose>
         <ScientificTeam {...this.props} initialValue={initialValue.scientificTeam} ></ScientificTeam>
         <Row>
           <Col span={8}>
@@ -395,7 +394,6 @@ class LogisticsBuilding extends Component{
             }} ></BFR>
           )
         }
-        <SpectificPurpose {...this.props}> initialValue={initialValue.spectificPurpose}</SpectificPurpose>
         <Row>
           <Col span={8}>
             <UseArea {...this.props}
@@ -433,7 +431,6 @@ class BusinessBuilding extends Component{
             }} ></BFR>
           )
         }
-        <SpectificPurpose {...this.props}> initialValue={initialValue.spectificPurpose}</SpectificPurpose>
         <Row>
           <Col span={8}>
             <UseArea {...this.props} initialValue={initialValue.useArea} ></UseArea>
@@ -479,7 +476,6 @@ class CollegePartyBuilding extends Component{
           }} ></BFR>
         )
       }
-      <SpectificPurpose {...this.props}> initialValue={initialValue.spectificPurpose}</SpectificPurpose>
       <Head {...this.props} initialValue={initialValue.head} ></Head>
       <Row>
         <Col span={8}>

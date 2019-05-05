@@ -60,17 +60,17 @@ class ButtonGroup extends Component{
 class DisplayTable extends Component{
   render(){
     const columns = TableUtil.mapColumns([
-      '序号', '用户名称', '登录账号', '工号', '角色'
+      '用户名称', '登录账号', '工号', '角色'
     ])
     columns.push({
       title: '操作',
       render: (text, record, index)=>(
         <div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton onClick={this.props.delete.bind(this,index)} text='X删除'/>
+            <SButton onClick={this.props.delete.bind(this,record)} text='X删除'/>
           </div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton onClick={this.props.change.bind(this,index)} text='修改'/>
+            <SButton onClick={this.props.change.bind(this,record)} text='修改'/>
           </div>
         </div>
       )
@@ -230,8 +230,10 @@ class ChangeModal extends Component {
         form.resetFields()
       })
       .catch(err=>{
-        console.log(err)
-        message.error('更新失败')
+        if(err.response)
+          message.error(err.response.data.title)
+        else
+          message.error('更新失败')
       })
     })
   }
@@ -301,6 +303,7 @@ class UserManagement extends Component{
       id: 0,
       data: {},
     },
+    current: 0,
   }
   add = ()=>{
     this.setState({addmodal: {visible: true}})
@@ -309,6 +312,7 @@ class UserManagement extends Component{
     this.setState({
       userName,
       isSearched: true,
+      current: 1,
     })
     this.setState({tableLoading: true})
     API.searchUser(userName)
@@ -326,7 +330,7 @@ class UserManagement extends Component{
     })
   }
   refresh = ()=>{
-    this.setState({tableLoading: true})
+    this.setState({tableLoading: true}, this.state.page)
     API.searchUser(this.state.userName)
     .then(rs=>{
       this.setState({
@@ -348,11 +352,11 @@ class UserManagement extends Component{
   }
   // 删除条目处理函数
   delete = (index)=>{
-    // 转换index为一个list
-    // index大于等于0, 说明是删除单条记录 index不变
-    // index为-1 说明是删除多条记录, 从state中取到被选中的数据
-    index = index===-1?this.state.selected:[index]
-    index = index.map(i=>this.state.tableList[i].id)
+    if(index!==-1)
+      index=[index.id]
+    else{
+      index = this.state.selected.map(i=>i.id)
+    }
     let self = this
     confirm({
       title: '删除人员信息',
@@ -373,16 +377,29 @@ class UserManagement extends Component{
       onCancel() {},
     });
   }
-  change = index=>{
-    let id = this.state.tableList[index].id
-    this.setState({changemodal: {visible: true, id,
-                  data:this.state.tableList[index]}})
+  change = record=>{
+    this.setState({changemodal: {visible: true, id:record.id,
+                  data:record}})
   }
   closeAddModal = ()=>{
     this.setState({addmodal: {visible: false}})
   }
   closeChangeModal = ()=>{
     this.setState({changemodal: {visible: false, id:0, data:{}}})
+  }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page: p, current: p.current})
+    API.searchUser(this.state.userName, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
   }
   render(){
     let tableHelper = {
@@ -397,6 +414,8 @@ class UserManagement extends Component{
         <Col span={20}>
           {this.state.isSearched?(
             <DisplayTable
+              current={this.state.current}
+              onChange={this.tableChange}
               data={this.state.tableList}
               loading={this.state.tableLoading}
               onSelectedChange={this.selectedChange} {...tableHelper}/>

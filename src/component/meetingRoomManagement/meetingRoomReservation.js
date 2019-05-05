@@ -2,19 +2,20 @@ import React, {Component} from 'react'
 import { Route, Link } from "react-router-dom";
 import Map from '../../routerMap'
 import
-  {Form, Select, Row, Col, Button, message, DatePicker, Checkbox, Empty}
+  {Form, Select, Row, Col, Button, message, DatePicker, Checkbox, Empty, Cascader}
 from 'antd'
 import API from '../../api'
 import {SButton} from '../common/button'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
-import Table from '../common/table'
-import ReservationModal from './reservationModal'
+import Table, {TableUtil} from '../common/table'
+import ReservationModal, {rangeData} from './reservationModal'
+import moment from 'moment'
 
-const {RangePicker} = DatePicker;
 const CheckboxGroup = Checkbox.Group
 const Item = Form.Item
 const Option = Select.Option
+
 
 class MeetingRoomReservation extends Component{
   state = {
@@ -37,13 +38,18 @@ class MeetingRoomReservation extends Component{
     this.props.form.validateFields((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
-        this.setState({tableLoading: true, isSearched: true})
-        if(values.startStopTime){
-          let startStopTime =
-            values.startStopTime.map(i=>Math.round((i.valueOf())/1000))
-          values.startStopTime = startStopTime
+        this.setState({tableLoading: true, isSearched: true, current: 1})
+        console.log(moment(values.useDate.format('YYYY-MM-DD')+' '+values.startStopTime[0]))
+        let startStopTime = []
+        startStopTime[0] = moment(values.useDate.format('YYYY-MM-DD')+' '+values.startStopTime[0]).valueOf()/1000
+        startStopTime[1] = moment(values.useDate.format('YYYY-MM-DD')+' '+values.startStopTime[1]).valueOf()/1000
+        let filter = {
+          ...values,
+          startStopTime,
         }
-        API.searchMeetingRoomReservation(values)
+        delete filter.useDate
+        this.setState(filter)
+        API.searchMeetingRoomReservation(filter)
         .then(rs=>{
           this.setState({tableList: rs})
         })
@@ -56,12 +62,22 @@ class MeetingRoomReservation extends Component{
       }
     })
   }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page:p, current: p.current})
+    API.searchMeetingRoomReservation(this.state.filter, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
+  }
   render(){
     let columns = [
-      {
-        title: '序号',
-        dataIndex: 'id',
-      },
       {
         title: '部门',
         dataIndex: 'dept',
@@ -85,6 +101,7 @@ class MeetingRoomReservation extends Component{
       {
         title: '审批状态',
         dataIndex: 'auditStatus',
+        render: text=>TableUtil.mapColor(text)
       },
       {
         title: '操作',
@@ -110,7 +127,7 @@ class MeetingRoomReservation extends Component{
       { label: '麦克风', value: '麦克风' },
       { label: '电脑', value: '电脑' },
     ]
-    return <MainContainer name="效益管理">
+    return <MainContainer name="会议室预约">
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
           <Col span={6}>
@@ -128,25 +145,25 @@ class MeetingRoomReservation extends Component{
               )}
             </Item>
           </Col>
-          <Col span={12}>
-            <Item labelCol={{span:6}} wrapperCol={{span:12}} label="使用起止时间">
-              {getFieldDecorator('startStopTime',{
-                rules: [
-                  {required: true, message: '请选择起止时间'},
-                  {validator: (rule, value, callback)=>{
-                    let now = (new Date()).valueOf()
-                    let startTime = value[0].valueOf()
-                    if(startTime < now)
-                      callback('开始时间应该在当前时间之后')
-                    callback()
-                  }}
-                ]
+          <Col span={5}>
+            <Item labelCol={{span:12}} wrapperCol={{span:12}} label="使用日期">
+              {getFieldDecorator('useDate',{
+                rules: [{required: true, message: '请选择使用日期'}]
               })(
-                <RangePicker
-                  showTime={{ format: 'HH:mm' }}
-                  format="YYYY-MM-DD HH:mm"
-                  placeholder={['开始时间', '结束时间']}
-                />
+                <DatePicker></DatePicker>
+              )}
+            </Item>
+          </Col>
+          <Col span={5}>
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="起止时间">
+              {getFieldDecorator('startStopTime',{
+                rules: [{required: true, message: '请选择起止时间'}]
+              })(
+                <Cascader
+                  options={rangeData}
+                  expandTrigger="hover"
+                  placeholder='请选择起止时间'
+                ></Cascader>
               )}
             </Item>
           </Col>
@@ -174,7 +191,10 @@ class MeetingRoomReservation extends Component{
       <Split/>
       {
         this.state.isSearched?(
-          <Table columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
+          <Table
+            current={this.state.current}
+            onChange={this.tableChange}
+            columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
         ):(
           <Empty description="请先搜索"></Empty>
         )

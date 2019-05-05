@@ -8,9 +8,10 @@ import {
 import Header from './component/common/header'
 import Navigation from './component/common/navigation'
 import RouterMap from './routerMap'
-import { LocaleProvider } from 'antd'
+import { LocaleProvider, Spin } from 'antd'
 import zh_CN from 'antd/lib/locale-provider/zh_CN'
 import moment from 'moment'
+import API, {wrapper} from './api'
 import 'moment/locale/zh-cn'
 import 'antd/dist/antd.css'
 import './index.css'
@@ -21,6 +22,8 @@ class App extends Component{
     isLogined: false,
     navData: [],
     userData: {},
+    mobaninfo: {},
+    loading: true,
   }
   // 设置持久化数据
   // token, userData, token
@@ -28,43 +31,53 @@ class App extends Component{
     localStorage.setItem('x-auth-token', this.state.userData.token)
     localStorage.setItem('navData', JSON.stringify(this.state.navData))
     localStorage.setItem('userData', JSON.stringify(this.state.userData))
+    localStorage.setItem('mobaninfo', JSON.stringify(this.state.mobaninfo))
   }
   getPersistentData = ()=>{
     return {
       token: localStorage.getItem('x-auth-token'),
       navData: JSON.parse(localStorage.getItem('navData')),
       userData: JSON.parse(localStorage.getItem('userData')),
+      mobaninfo: JSON.parse(localStorage.getItem('mobaninfo')),
     }
   }
   clearPersistenData = ()=>{
     localStorage.removeItem('x-auth-token')
     localStorage.removeItem('navData')
     localStorage.removeItem('userData')
+    localStorage.removeItem('mobaninfo')
     this.setState({isLogined: false})
   }
-  login = ({navData, userData})=>{
-    this.setState({navData, userData},()=>{
+  login = (rs)=>{
+    this.setState(rs,()=>{
       this.setPersistentData()
       this.setState({isLogined: true})
     })
   }
-  isLoginedCheck = ()=>{
-    let {token, navData, userData} = this.getPersistentData()
+  isLoginedCheck = async ()=>{
+    let {token, navData, userData, mobaninfo} = this.getPersistentData()
     // 数据不完整, 表示未登陆
-    if(!(token&&navData&&userData))
+    if(!(token&&navData&&userData&&mobaninfo))
       return false
-
+    this.setState(this.getPersistentData())
     // TODO 对token进行有效性验证
+    let [err] = await wrapper(API.getDepts('0'))
+    if(err)
+      return false
     return true
   }
-  componentWillMount(){
-    if(this.isLoginedCheck()){
+  async componentWillMount(){
+    if(await this.isLoginedCheck()){
       this.setState({isLogined: true})
       let persistentData = this.getPersistentData()
       this.setState(persistentData)
+    }else{
+      this.clearPersistenData()
     }
+    this.setState({loading: false})
   }
   render(){
+    let node
     if(this.state.isLogined){
       let routerList = []
       for (let key in RouterMap){
@@ -74,7 +87,7 @@ class App extends Component{
             component={RouterMap[key].component} />
         routerList.push(router)
       }
-      return (
+      node = (
         <div>
             <Router>
           <Header getPersistentData={this.getPersistentData} clear={this.clearPersistenData}
@@ -99,8 +112,9 @@ class App extends Component{
 
     }else{
       let Login = RouterMap.Login.component
-      return <Login login={this.login}></Login>
+      node = <Login login={this.login}></Login>
     }
+    return <Spin spinning={this.state.loading} tip="加载中">{node}</Spin>
   }
 }
 function LocalApp(){

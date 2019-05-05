@@ -8,9 +8,9 @@ let uploadHelper = (data, url)=>{
       data,
       processData: false,  // 告诉axios不要去处理发送的数据(重要参数)
       contentType: false,  // 告诉axios不要去设置Content-Type请求头
+      timeout: 1000 * 60 * 2,
     })
     .then(rs=>{
-        console.log(rs)
         // 上传成功执行
         resolve()
     })
@@ -81,6 +81,10 @@ const FileUploadAPI = {
   ULPersonnel(formData){
     formData.append('module', 'shiyongzhe')
     return uploadHelper(formData, '/tb-shiyongzhe/import-excel')
+  },
+  ULAreaSubsidies(formData){
+    formData.append('module', 'mianji-butie')
+    return uploadHelper(formData, '/tb-mianji-butie/import-excel')
   },
 }
 

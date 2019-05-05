@@ -20,9 +20,10 @@ class Sider extends Component {
   initState = (pathname)=>{
     this.props.data.forEach(item=>{
       item.list.forEach(newItem=>{
-        if(newItem.path.split('/')[1]===pathname.split('/')[1])
+        if(newItem.path.split('/')[1]===pathname.split('/')[1]){
           this.setState({openKeys:[item.text],
             selectedKeys: [`${item.text}-${newItem.name}`]})
+        }
       })
     })
   }
@@ -31,6 +32,16 @@ class Sider extends Component {
     this.initState(pathname)
   }
   componentWillReceiveProps(nextProps) {
+    let pathname = this.props.location.pathname
+    if(nextProps.data.length!==this.props.data.length)
+      nextProps.data.forEach(item=>{
+        item.list.forEach(newItem=>{
+          if(newItem.path.split('/')[1]===pathname.split('/')[1]){
+            this.setState({openKeys:[item.text],
+              selectedKeys: [`${item.text}-${newItem.name}`]})
+          }
+        })
+      })
     if (nextProps.location.pathname !== this.props.location.pathname) {
       let pathname = nextProps.location.pathname
       this.initState(pathname)

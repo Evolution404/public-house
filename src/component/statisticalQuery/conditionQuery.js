@@ -30,10 +30,6 @@ class DisplayTable extends Component{
     let tableColumns = [
       [
         {
-          title: '序号',
-          dataIndex: 'id',
-        },
-        {
           title: '部门',
           dataIndex: 'dept',
         },
@@ -91,10 +87,6 @@ class DisplayTable extends Component{
       ],
       [
         {
-          title: '序号',
-          dataIndex: 'id',
-        },
-        {
           title: '部门',
           dataIndex: 'dept',
         },
@@ -135,10 +127,6 @@ class DisplayTable extends Component{
         },
       ],
       [
-        {
-          title: '序号',
-          dataIndex: 'id',
-        },
         {
           title: '部门',
           dataIndex: 'dept',
@@ -192,10 +180,6 @@ class DisplayTable extends Component{
         },
       ],
       [
-        {
-          title: '序号',
-          dataIndex: 'id',
-        },
         {
           title: '部门',
           dataIndex: 'dept',
@@ -275,10 +259,10 @@ class ConditionQuery extends Component{
       tableList: [], // 表格处的数据
       tableLoading: false,
       selected: [], // 被选中的数据, 数值代表的是在tableList中的位置
+      current: 0,
     }
   }
   search = (values)=>{
-    console.log(values)
     this.setState({type: values.usingNature[0], isSearched: true, tableLoading: true})
     this.setState(values)
     API.listFilterPH(values)
@@ -335,8 +319,31 @@ class ConditionQuery extends Component{
       message.error('上报失败')
     })
   }
+  tableChange = (p)=>{
+    let filter = {
+      dept: this.state.dept,
+      usingNature: this.state.usingNature,
+      auditStatus: this.state.auditStatus,
+      personnel: this.state.personnel,
+      buildingName: this.state.buildingName,
+      roomNum: this.state.roomNum,
+      houseStatus: this.state.houseStatus,
+    }
+    this.setState({tableLoading: true, page:p, current: p.current})
+    API.listFilterPH(filter, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
+  }
   render(){
-    return <MainContainer name="信息管理">
+    return <MainContainer name="条件查询">
       基本信息
       <Search onSearch={this.search}/>
       <Split/>
@@ -347,6 +354,8 @@ class ConditionQuery extends Component{
       {
         this.state.isSearched?(
           <DisplayTable loading={this.state.tableLoading}
+            current={this.state.current}
+            onChange={this.tableChange}
             type={this.state.type}
             data={this.state.tableList}/>
         ):(

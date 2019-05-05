@@ -3,6 +3,7 @@ import {Upload, Button, Icon, message, Row, Col, Form} from 'antd';
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
+import moban from '../mobaninfo'
 
 class Import extends Component{
   state = {
@@ -101,7 +102,7 @@ class PHImport extends Component{
   render(){
     let uploadInfo = {
       uploadHelper: API.ULPH,
-      templateLink: '',
+      templateLink: moban('jiben'),
     }
     return <MainContainer name="公用房管理">
       基本信息/导入公用房信息

@@ -101,7 +101,6 @@ class MainForm extends Component{
     let self = this
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log(values)
         this.props.change(values, self.props.type, self.props.id)
       }
     })
@@ -226,7 +225,7 @@ class PHChange extends Component{
   }
   render(){
     let formInfo = this.state.formInfo
-    return <MainContainer name="详细信息">
+    return <MainContainer name="公用房变更">
       <Spin spinning={this.state.loading}>
         {
           !this.state.isJump&&(

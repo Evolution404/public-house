@@ -7,6 +7,7 @@ import {DeptSelect} from '../common/select'
 import Split from '../common/split'
 import Table from '../common/table'
 import API from '../../api'
+import moban from '../mobaninfo'
 const Item = Form.Item
 const confirm = Modal.confirm;
 const Option = Select.Option
@@ -64,10 +65,6 @@ class DisplayTable extends Component{
   render(){
     let columns = [
       {
-        title: '序号',
-        dataIndex: 'id',
-      },
-      {
         title: '工号',
         dataIndex: 'workNum',
       },
@@ -97,13 +94,13 @@ class DisplayTable extends Component{
       render: (text, record, index)=>(
         <div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton onClick={this.props.delete.bind(this,index)} text='X删除'/>
+            <SButton onClick={this.props.delete.bind(this,record)} text='X删除'/>
           </div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton onClick={this.props.detail.bind(this,index)} text='详细'/>
+            <SButton onClick={this.props.detail.bind(this,record)} text='详细'/>
           </div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton onClick={this.props.change.bind(this,index)} text='修改'/>
+            <SButton onClick={this.props.change.bind(this,record)} text='修改'/>
           </div>
         </div>
       )
@@ -165,35 +162,35 @@ class AddModal extends Component {
           <Item style={{marginBottom: '0px'}}  label='职务级别'>
             {getFieldDecorator('dutyGrade', )(
               <Select>
-                <Option value='校级'>校级</Option>
-                <Option value='院士'>院士</Option>
-                <Option value='高端人才'>高端人才</Option>
-                <Option value='优秀人才'>优秀人才</Option>
-                <Option value='外聘高端'>外聘高端</Option>
-                <Option value='正高级职称'>正高级职称</Option>
+                <Option value='副校级(正局级)'>副校级(正局级)</Option>
+                <Option value='副校级(副局级)'>副校级(副局级)</Option>
                 <Option value='正处级'>正处级</Option>
-                <Option value='副处级职称'>副处级职称</Option>
                 <Option value='副处级'>副处级</Option>
-                <Option value='其他'>其他</Option>
+                <Option value='处级以下'>处级以下</Option>
               </Select>
             )}
           </Item>
           <Item style={{marginBottom: '0px'}}  label='职称级别'>
             {getFieldDecorator('proTitleLevel', )(
               <Select>
-                <Option value='校级'>校级</Option>
                 <Option value='院士'>院士</Option>
+                <Option value='高端人才'>高端人才</Option>
+                <Option value='优秀人才'>优秀人才</Option>
+                <Option value='正高级职称'>正高级职称</Option>
+                <Option value='副高级职称'>副高级职称</Option>
+                <Option value='中级职称'>中级职称</Option>
+                <Option value='其他'>其他</Option>
               </Select>
             )}
           </Item>
           <Item style={{marginBottom: '0px'}}  label='所属机关部门'>
             {getFieldDecorator('dept',)(
-              <DeptSelect></DeptSelect>
+              <DeptSelect type="1"></DeptSelect>
             )}
           </Item>
           <Item style={{marginBottom: '0px'}}  label='所属学院'>
             {getFieldDecorator('collegeDept',)(
-              <DeptSelect></DeptSelect>
+              <DeptSelect type="2"></DeptSelect>
             )}
           </Item>
         </Form>
@@ -307,35 +304,35 @@ class ChangeModal extends Component {
           <Item style={{marginBottom: '0px'}}  label='职务级别'>
             {getFieldDecorator('dutyGrade', {initialValue:data.dutyGrade})(
               <Select>
-                <Option value='校级'>校级</Option>
-                <Option value='院士'>院士</Option>
-                <Option value='高端人才'>高端人才</Option>
-                <Option value='优秀人才'>优秀人才</Option>
-                <Option value='外聘高端'>外聘高端</Option>
-                <Option value='正高级职称'>正高级职称</Option>
+                <Option value='副校级(正局级)'>副校级(正局级)</Option>
+                <Option value='副校级(副局级)'>副校级(副局级)</Option>
                 <Option value='正处级'>正处级</Option>
-                <Option value='副处级职称'>副处级职称</Option>
                 <Option value='副处级'>副处级</Option>
-                <Option value='其他'>其他</Option>
+                <Option value='处级以下'>处级以下</Option>
               </Select>
             )}
           </Item>
           <Item style={{marginBottom: '0px'}}  label='职称级别'>
             {getFieldDecorator('proTitleLevel', {initialValue: data.proTitleLevel})(
               <Select>
-                <Option value='校级'>校级</Option>
                 <Option value='院士'>院士</Option>
+                <Option value='高端人才'>高端人才</Option>
+                <Option value='优秀人才'>优秀人才</Option>
+                <Option value='正高级职称'>正高级职称</Option>
+                <Option value='副高级职称'>副高级职称</Option>
+                <Option value='中级职称'>中级职称</Option>
+                <Option value='其他'>其他</Option>
               </Select>
             )}
           </Item>
           <Item style={{marginBottom: '0px'}}  label='所属机关部门'>
             {getFieldDecorator('dept', {initialValue: data.dept})(
-              <DeptSelect></DeptSelect>
+              <DeptSelect type="1"></DeptSelect>
             )}
           </Item>
           <Item style={{marginBottom: '0px'}}  label='所属学院'>
             {getFieldDecorator('collegeDept', {initialValue: data.collegeDept})(
-              <DeptSelect></DeptSelect>
+              <DeptSelect type="2"></DeptSelect>
             )}
           </Item>
         </Form>
@@ -438,7 +435,7 @@ class ImportModal extends Component {
   render() {
     let uploadInfo = {
       uploadHelper: API.ULPersonnel,
-      templateLink: '',
+      templateLink: moban('shiyongzhe'),
     }
     return (
       <Modal
@@ -479,6 +476,7 @@ class TheUserManagement extends Component{
     importmodal: {
       visible: false,
     },
+    current: 0,
   }
   closeImportModal = ()=>{
     this.setState({importmodal: {visible: false}})
@@ -493,6 +491,7 @@ class TheUserManagement extends Component{
     this.setState({
       name,
       isSearched: true,
+      current: 1,
     })
     this.setState({tableLoading: true})
     API.searchPersonnel(name)
@@ -509,7 +508,7 @@ class TheUserManagement extends Component{
   }
   refresh = ()=>{
     this.setState({tableLoading: true})
-    API.searchPersonnel(this.state.name)
+    API.searchPersonnel(this.state.name, this.state.page)
     .then(rs=>{
       this.setState({
         tableList: rs,
@@ -526,13 +525,31 @@ class TheUserManagement extends Component{
       selected: newSelected
     })
   }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page: p, current:p.current})
+    API.searchPersonnel(this.state.name, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
+  }
   // 删除条目处理函数
   delete = (index)=>{
+    if(index!==-1)
+      index=[index.id]
+    else{
+      index = this.state.selected.map(i=>i.id)
+    }
+
     // 转换index为一个list
     // index大于等于0, 说明是删除单条记录 index不变
     // index为-1 说明是删除多条记录, 从state中取到被选中的数据
-    index = index===-1?this.state.selected:[index]
-    index = index.map(i=>this.state.tableList[i].id)
     let self = this
     confirm({
       title: '删除人员信息',
@@ -553,9 +570,8 @@ class TheUserManagement extends Component{
       onCancel() {},
     });
   }
-  detail = index=>{
-    index = this.state.tableList[index].id
-    API.detailPersonnel(index)
+  detail = record=>{
+    API.detailPersonnel(record.id)
     .then(rs=>{
       this.setState({detailmodal: {visible: true, data:rs}})
     })
@@ -564,10 +580,9 @@ class TheUserManagement extends Component{
       message.error('获取详细信息失败')
     })
   }
-  change = index=>{
-    let id = this.state.tableList[index].id
-    this.setState({changemodal: {visible: true, id,
-                  data:this.state.tableList[index]}})
+  change = record=>{
+    this.setState({changemodal: {visible: true, id:record.id,
+                  data:record}})
   }
   closeAddModal = ()=>{
     this.setState({addmodal: {visible: false}})
@@ -592,6 +607,8 @@ class TheUserManagement extends Component{
         <Col span={20}>
           {this.state.isSearched?(
             <DisplayTable
+              current={this.state.current}
+              onChange={this.tableChange}
               loading={this.state.tableLoading}
               data={this.state.tableList}
               onSelectedChange={this.selectedChange} {...tableHelper}/>

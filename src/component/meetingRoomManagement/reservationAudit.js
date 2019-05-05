@@ -5,7 +5,7 @@ import MainContainer from '../common/mainContainer'
 import {ReservationAuditSearch} from '../common/search'
 import Split from '../common/split'
 import API from '../../api'
-import Table from '../common/table'
+import Table, {TableUtil} from '../common/table'
 
 const Item = Form.Item
 
@@ -72,7 +72,7 @@ class ReservationAudit extends Component{
     filter: {},
   }
   search = (values)=>{
-    this.setState({tableLoading: true, isSearched: true, filter: values})
+    this.setState({tableLoading: true, isSearched: true, filter: values, current: 1})
     API.searchReservationAudit(values)
     .then(rs=>{
       this.setState({
@@ -85,6 +85,20 @@ class ReservationAudit extends Component{
     .finally(()=>{
       this.setState({tableLoading: false})
     })
+  }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page:p, current: p.current})
+    API.searchReservationAudit(this.state.filter, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
   }
   refresh = ()=>{
     return API.searchReservationAudit(this.state.filter)
@@ -154,10 +168,6 @@ class ReservationAudit extends Component{
   render(){
     let columns = [
       {
-        title: '序号',
-        dataIndex: 'id',
-      },
-      {
         title: '房屋部门',
         dataIndex: 'dept',
       },
@@ -188,6 +198,7 @@ class ReservationAudit extends Component{
       {
         title: '预约状态',
         dataIndex: 'reservationStatus',
+        render: text=>TableUtil.mapColor(text)
       },
       {
         title: '拒绝原因',
@@ -214,7 +225,10 @@ class ReservationAudit extends Component{
       <Split />
       {
         this.state.isSearched?(
-          <Table columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
+          <Table
+            current={this.state.current}
+            onChange={this.tableChange}
+            columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
         ):(
           <Empty description="请先搜索"></Empty>
         )

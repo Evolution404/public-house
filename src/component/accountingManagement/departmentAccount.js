@@ -18,9 +18,13 @@ class Graph extends Component{
           <div style={{marginTop: 50}}>
             {
               !this.props.isPrinting&&(
-                <Histogram id="graph"
-                  title="定额面积、实际面积、人均面积对比情况"
-                  data={graphData}></Histogram>
+                <Row>
+                  <Col offset={2} span={6}>
+                    <Histogram id="graph"
+                      title="定额面积、实际面积、人均面积对比情况"
+                      data={graphData}></Histogram>
+                  </Col>
+                </Row>
               )
             }
             {this.props.isPrinting&&(
@@ -49,7 +53,7 @@ class Graph extends Component{
 class MyTag extends Component{
   render(){
     return (
-      <Tag style={{marginLeft: 20}} color="blue">{this.props.children}</Tag>      
+      <Tag style={{width: 50,textAlign: 'center', marginLeft: 20}} color="blue">{this.props.children}</Tag>      
     )
   }
 }
@@ -58,16 +62,16 @@ class TotalData extends Component{
   render(){
     return (
       <div>
-      <Row style={{margin: 25}}>
-        <Col offset={2} span={6}>总面积:<MyTag>{this.props.data.zongmianji}</MyTag></Col>
-        <Col offset={2} span={6}>人数:<MyTag>{this.props.data.zongrenshu}</MyTag></Col>
-        <Col span={8}>人均面积:<MyTag>{this.props.data.renjunmianji}</MyTag></Col>
+      <Row style={{marginTop: 25}}>
+        <Col span={8}><Col style={{textAlign: 'right'}} offset={6} span={6}>总面积:</Col><MyTag>{this.props.data.zongmianji}</MyTag></Col>
+        <Col span={8}><Col style={{textAlign: 'right'}} offset={6} span={6}>人数:</Col><MyTag>{this.props.data.zongrenshu}</MyTag></Col>
+        <Col span={8}><Col style={{textAlign: 'right'}} offset={6} span={6}>人均面积:</Col><MyTag>{this.props.data.renjunmianji}</MyTag></Col>
       </Row>
       {
         this.props.type==='1'&&(
-          <Row>
-            <Col offset={2} span={6}>定额面积合计:<MyTag>{this.props.data.zongdingemianji}</MyTag></Col>
-            <Col offset={2} span={6}>实际面积合计:<MyTag>{this.props.data.zongmianji}</MyTag></Col>
+          <Row style={{margin: '25px 0'}}>
+            <Col span={8}><Col style={{textAlign: 'right'}} offset={6} span={6}>定额面积合计:</Col><MyTag>{this.props.data.zongdingemianji}</MyTag></Col>
+            <Col span={8}><Col style={{textAlign: 'right'}} offset={6} span={6}>实际面积合计:</Col><MyTag>{this.props.data.zongmianji}</MyTag></Col>
           </Row>
         )
       }
@@ -137,11 +141,6 @@ class AcademyHouse extends Component{
 class PartyHouse extends Component{
   render(){
     let columns = [
-      {
-        title: '序号',
-        dataIndex: 'id',
-        sorter: (a, b) => a.id - b.id,
-      },
       {
         title: '使用面积',
         dataIndex: 'shiyongmianji',
@@ -252,7 +251,7 @@ class DepartmentAccount extends Component{
   }
   render(){
     const { getFieldDecorator } = this.props.form
-    return <MainContainer name="核算管理">
+    return <MainContainer name="部门核算">
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
           <Col span={4}>

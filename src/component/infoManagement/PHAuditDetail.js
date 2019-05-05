@@ -4,6 +4,7 @@ import Split from '../common/split'
 import API from '../../api'
 import {Input, Button, Row, Col, message} from 'antd'
 import DetailHelper from './detailHelper'
+import {parseType} from '../common/usingNature'
 const { TextArea } = Input
 
 
@@ -15,7 +16,7 @@ class PHAuditDetail extends Component{
   }
   componentDidMount(){
     let id = this.props.match.params.id
-    this.setState({id})
+    this.setState({id, type:parseType(id.split('-')[0])})
     API.auditDetailPH(id)
     .then(rs=>{
       this.setState({...rs,hasLoaded: true, id})

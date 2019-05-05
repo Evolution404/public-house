@@ -6,6 +6,7 @@ import Split from '../common/split'
 import Table, {TableUtil}from '../common/table'
 import { YearSelect } from '../common/select'
 import API from '../../api'
+import moban from '../mobaninfo'
 const Item = Form.Item
 const confirm = Modal.confirm;
 const Option = Select.Option
@@ -15,7 +16,7 @@ class DisplayLabel extends Component{
     return (
       <div style={{padding: '5px 0', fontWeight: '700'}}>
         <Row>
-          <Col span={10}>{this.props.label}</Col>
+          <Col span={12}>{this.props.label}</Col>
           <Col span={10}>{this.props.value}</Col>
         </Row>
       </div>
@@ -90,10 +91,6 @@ class DisplayTable extends Component{
     if(type==='bc'){
       columns = [
         {
-          title: '序号',
-          dataIndex: 'id',
-        },
-        {
           title: '年份',
           dataIndex: 'year',
         },
@@ -128,7 +125,7 @@ class DisplayTable extends Component{
       ]
     }else if(type==='xy'){
       columns = TableUtil.mapColumns([
-        '序号', '年份', '部门', '本科生', '硕士', '博士', '博士后'
+        '年份', '部门', '本科生', '硕士', '博士', '博士后'
       ])
     }
     columns.push({
@@ -136,13 +133,13 @@ class DisplayTable extends Component{
       render: (text, record, index)=>(
         <div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton onClick={this.props.delete.bind(this,index)} text='X删除'/>
+            <SButton onClick={this.props.delete.bind(this,record)} text='X删除'/>
           </div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton onClick={this.props.detail.bind(this,index)} text='详细'/>
+            <SButton onClick={this.props.detail.bind(this,record)} text='详细'/>
           </div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton onClick={this.props.update.bind(this,index)} text='更新'/>
+            <SButton onClick={this.props.update.bind(this,record)} text='更新'/>
           </div>
         </div>
       )
@@ -174,7 +171,7 @@ class DetailModal extends Component {
       content = (<div>
         <Row><Col span={20} style={{textAlign: 'center'}}><h4>部处部门</h4></Col></Row>
         <Row><Col span={12}>
-          <DisplayLabel label="部门名称" value={data.companyName}/>
+          <DisplayLabel label="部门名称" value={data.dept}/>
         </Col></Row>
         <Row>
           <Col span={12}>
@@ -926,7 +923,7 @@ class ImportModal extends Component {
   render() {
     let uploadInfo = {
       uploadHelper: this.state.type==='xy'?API.ULXYDept:API.ULBCDept,
-      templateLink: '',
+      templateLink: this.state.type==='xy'?moban('xueyuanbumen'):moban('buchubumen'),
     }
     return (
       <Modal
@@ -979,6 +976,7 @@ class DeptManagement extends Component{
       importmodal: {
         visible: false,
       },
+      current: 0,
     }
   }
   search = ({dept, type})=>{
@@ -988,7 +986,7 @@ class DeptManagement extends Component{
       dept,
       type,
     })
-    this.setState({tableLoading: true})
+    this.setState({tableLoading: true, current: 1})
     API.searchDept({dept, type})
     .then(rs=>{
       this.setState({
@@ -1008,11 +1006,11 @@ class DeptManagement extends Component{
   }
   // 删除条目处理函数
   delete = (index)=>{
-    // 转换index为一个list
-    // index大于等于0, 说明是删除单条记录 index不变
-    // index为-1 说明是删除多条记录, 从state中取到被选中的数据
-    index = index===-1?this.state.selected:[index]
-    index = index.map(i=>this.state.tableList[i].id)
+    if(index!==-1)
+      index=[index.id]
+    else{
+      index = this.state.selected.map(i=>i.id)
+    }
     let self = this
     confirm({
       title: '删除部门信息',
@@ -1047,13 +1045,13 @@ class DeptManagement extends Component{
   closeImportModal = ()=>{
     this.setState({importmodal: {visible: false}})
   }
-  detail = index=>{
-    this.setState({detailmodal: {visible: true, data:this.state.tableList[index]}})
+  detail = record=>{
+    this.setState({detailmodal: {visible: true, data:record}})
   }
-  update = index=>{
-    let id = this.state.tableList[index].id
+  update = record=>{
+    let id = record.id
     this.setState({updatemodal: {visible: true, id,
-                  data: this.state.tableList[index]}})
+                  data: record}})
   }
   add = ()=>{
     this.setState({addmodal: {visible: true}})
@@ -1061,9 +1059,23 @@ class DeptManagement extends Component{
   openImport = ()=>{
     this.setState({importmodal: {visible: true}})
   }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page: p, current: p.current})
+    API.searchDept({dept:this.state.dept, type: this.state.type}, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
+  }
   refresh = ()=>{
     this.setState({tableLoading: true})
-    API.searchDept({dept:this.state.dept, type: this.state.type})
+    API.searchDept({dept:this.state.dept, type: this.state.type}, this.state.page)
     .then(rs=>{
       this.setState({tableList: rs})
     })
@@ -1088,6 +1100,8 @@ class DeptManagement extends Component{
           {
             this.state.type.length>0?(
               <DisplayTable
+                current={this.state.current}
+                onChange={this.tableChange}
                 loading={this.state.tableLoading}
                 type={this.state.type}
                 data={this.state.tableList}

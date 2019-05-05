@@ -4,6 +4,7 @@ import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import {UsingNatureBrief } from '../common/usingNature'
+import moban from '../mobaninfo'
 
 const Item = Form.Item
 
@@ -11,6 +12,7 @@ class Import extends Component{
   state = {
     fileList: [],
     uploading: false,
+    leixing: '',
   }
 
   handleUpload = () => {
@@ -43,7 +45,9 @@ class Import extends Component{
       })
     })
   }
-
+  usingNatureChange = (v)=>{
+    this.setState({leixing: v})
+  }
   render() {
     const { uploading, fileList } = this.state;
     const props = {
@@ -66,6 +70,23 @@ class Import extends Component{
       fileList,
     };
     const {getFieldDecorator} = this.props.form
+    let a, leixing = this.state.leixing
+    switch(leixing){
+      case "1":
+        a= <a download href={moban('keyan')}>导入模板下载</a>
+        break;
+      case "2":
+        a= <a download href={moban('houqinbaozhanggonggong')}>导入模板下载</a>
+        break;
+      case "3":
+        a= <a download href={moban('chanyeshangye')}>导入模板下载</a>
+        break;
+      case "4":
+        a= <a download href={moban('xueyuandangzhengjiguan')}>导入模板下载</a>
+        break;
+      default:
+        a= <a href="/">下载模板请先选择类型</a>
+    }
     return (
       <div style={{margin: '20px 0'}}>
         <h3>{this.props.text}</h3>
@@ -77,7 +98,7 @@ class Import extends Component{
                   getFieldDecorator('usingNature',{
                     rules: [{required: true, message:'请选择使用性质'}]
                   })(
-                    <UsingNatureBrief></UsingNatureBrief>
+                    <UsingNatureBrief onChange={this.usingNatureChange}></UsingNatureBrief>
                   )
                 }
               </Item>
@@ -100,7 +121,7 @@ class Import extends Component{
               </Button>
             </Col>
             <Col style={{marginTop: 5}}>
-              <a download href={this.props.templateLink}>导入模板下载</a>
+              {a}
             </Col>
           </Row>
         </Form>

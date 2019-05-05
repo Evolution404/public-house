@@ -31,7 +31,6 @@ class Histogram extends Component{
           fontSize: 15,
         },
       },
-      color: ['#003366', '#006699', '#4cabce', '#e5323e'],
       tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -61,6 +60,10 @@ class Histogram extends Component{
               type: 'category',
               axisTick: {show: false},
               data: xAxisData,
+              axisLabel: {  
+                 interval:0,  
+                 rotate:Object.keys(this.props.data).length < 5?0:30,
+              },
           }
       ],
       yAxis: [
@@ -68,6 +71,10 @@ class Histogram extends Component{
               type: 'value'
           }
       ],
+      grid: {  
+        left: '10%',  
+        bottom:'25%',
+      },  
       series: data,
     }
     return <ECharts id={this.props.id} option={option}></ECharts>

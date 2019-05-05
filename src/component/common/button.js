@@ -37,6 +37,8 @@ function LButton({onClick, text, disable}) {
   )
 }
 function SButton({onClick, text, disable}) {
+  if(disable)
+    return <span></span>
   return (
     <Button
       onClick={onClick}

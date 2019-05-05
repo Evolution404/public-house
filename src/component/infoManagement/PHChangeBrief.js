@@ -1,16 +1,28 @@
 import React, {Component} from 'react'
-import {message, Row, Col, Form, Select, Input, Button, Checkbox} from 'antd'
+import {message, Row, Col, Form, Input, Button, Checkbox} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Upload from '../common/upload'
 import API from '../../api'
+import {BuildingSelect, FloorSelect} from '../common/select'
 const {Item} = Form
-const Option = Select.Option
 const CheckboxGroup = Checkbox.Group
 
 class MainForm extends Component{
+  state = {
+    areaConfig: [],
+  }
   reset = ()=>{
     this.props.form.resetFields()
+  }
+  areaConfigChange = (e)=>{
+    if(e.length < 2){
+      this.setState({areaConfig: e})
+      return e
+    }
+    let newValue = e.filter(key => !this.state.areaConfig.includes(key))
+    this.setState({areaConfig: newValue})
+    return newValue
   }
   handleSubmit = (e) => {
     e.preventDefault();
@@ -43,18 +55,14 @@ class MainForm extends Component{
           <Col span={8}>
             <Item labelCol={{span:9}} wrapperCol={{span:13}} label="楼宇">
               {getFieldDecorator('building', {initialValue:this.props.building})(
-                <Select >
-                  <Option value="部门1">部门1</Option>
-                </Select>
+                <BuildingSelect></BuildingSelect>
               )}
             </Item>
           </Col>
           <Col span={8}>
             <Item labelCol={{span:6}} wrapperCol={{span:13, offset:1}} label="楼层">
               {getFieldDecorator('floor', {initialValue:this.props.floor})(
-                <Select >
-                  <Option value="部门1">部门1</Option>
-                </Select>
+                <FloorSelect></FloorSelect>
               )}
             </Item>
           </Col>
@@ -76,8 +84,10 @@ class MainForm extends Component{
           </Col>
           <Col span={10}>
             <Item labelCol={{span:3}} wrapperCol={{span:20}}>
-              {getFieldDecorator('areaConfig',
-                 {initialValue: this.props.areaConfig})(
+              {getFieldDecorator('areaConfig', {
+                getValueFromEvent: this.areaConfigChange,
+                initialValue: this.props.areaConfig,
+              })(
                 <CheckboxGroup options={checkboxOption}/>
               )}
             </Item>

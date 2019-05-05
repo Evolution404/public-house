@@ -151,7 +151,10 @@ class Exit extends Component{
       okText: '确定',
       cancelText: '取消',
       onOk() {
-        self.props.clear()
+        API.logout()
+        .finally(()=>{
+          self.props.clear()
+        })
       },
       onCancel() {
       },

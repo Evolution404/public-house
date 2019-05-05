@@ -128,7 +128,7 @@ const WrappedMainForm = Form.create({ name: 'main_form' })(MainForm)
 
 class PHAdd extends Component{
   render(){
-    return <MainContainer name="基本信息管理">
+    return <MainContainer name="公用房新增">
       基本信息/新增公用房
       <Title/>
       <Split/>

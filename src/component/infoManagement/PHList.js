@@ -51,10 +51,6 @@ class DisplayTable extends Component{
     let tableColumns = [
       [
         {
-          title: '序号',
-          dataIndex: 'id',
-        },
-        {
           title: '部门',
           dataIndex: 'dept',
         },
@@ -71,7 +67,7 @@ class DisplayTable extends Component{
           dataIndex: 'roomNum',
         },
         {
-          title: '使用面积',
+          title: '使用面积(㎡)',
           dataIndex: 'useArea',
         },
         {
@@ -83,7 +79,7 @@ class DisplayTable extends Component{
           dataIndex: 'scientificTeam',
         },
         {
-          title: '年收入',
+          title: '年收入(元)',
           dataIndex: 'annualIncome',
         },
         {
@@ -98,7 +94,7 @@ class DisplayTable extends Component{
           )
         },
         {
-          title: '租金单价',
+          title: '租金单价(元/㎡)',
           dataIndex: 'rentPrice',
         },
         {
@@ -111,10 +107,6 @@ class DisplayTable extends Component{
         },
       ],
       [
-        {
-          title: '序号',
-          dataIndex: 'id',
-        },
         {
           title: '部门',
           dataIndex: 'dept',
@@ -132,7 +124,7 @@ class DisplayTable extends Component{
           dataIndex: 'roomNum',
         },
         {
-          title: '使用面积',
+          title: '使用面积(㎡)',
           dataIndex: 'useArea',
         },
         {
@@ -157,10 +149,6 @@ class DisplayTable extends Component{
       ],
       [
         {
-          title: '序号',
-          dataIndex: 'id',
-        },
-        {
           title: '部门',
           dataIndex: 'dept',
         },
@@ -177,7 +165,7 @@ class DisplayTable extends Component{
           dataIndex: 'roomNum',
         },
         {
-          title: '使用面积',
+          title: '使用面积(㎡)',
           dataIndex: 'useArea',
         },
         {
@@ -185,7 +173,7 @@ class DisplayTable extends Component{
           dataIndex: 'spectificPurpose',
         },
         {
-          title: '年收入',
+          title: '年收入(元)',
           dataIndex: 'annualIncome',
         },
         {
@@ -200,7 +188,7 @@ class DisplayTable extends Component{
           )
         },
         {
-          title: '租金单价',
+          title: '租金单价(元/㎡)',
           dataIndex: 'rentPrice',
         },
         {
@@ -213,10 +201,6 @@ class DisplayTable extends Component{
         },
       ],
       [
-        {
-          title: '序号',
-          dataIndex: 'id',
-        },
         {
           title: '部门',
           dataIndex: 'dept',
@@ -277,7 +261,9 @@ class DisplayTable extends Component{
         )
         case '已批准':
         return (
-          <SButton disable={true} text='变更'/>
+          <Link to={path}>
+            <SButton text='变更'/>
+          </Link>
         )
         default:
         return (
@@ -293,7 +279,7 @@ class DisplayTable extends Component{
         <Router>
           <div>
             <div style={{display: 'inline-block', padding: '0 5px'}}>
-              <SButton disable={record.auditStatus==='已审核'} onClick={this.props.delete.bind(this,index)} text='X删除'/>
+              <SButton disable={!(record.auditStatus==='已驳回'||record.auditStatus==='未上报')} onClick={this.props.delete.bind(this,record)} text='X删除'/>
             </div>
             <div style={{display: 'inline-block', padding: '0 5px'}}>
               <Link to={Map.PHDetailInfo.path.replace(':id', `${this.props.type}-${record.id}`)}>
@@ -301,7 +287,7 @@ class DisplayTable extends Component{
               </Link>
             </div>
             <div style={{display: 'inline-block', padding: '0 5px'}}>
-                <SButton onClick={this.props.report.bind(this, index)} disable={record.auditStatus!=='未上报'} text='上报'/>
+                <SButton onClick={this.props.report.bind(this, record)} disable={record.auditStatus!=='未上报'} text='上报'/>
             </div>
             <div style={{display: 'inline-block', padding: '0 5px'}}>
               {
@@ -321,7 +307,6 @@ class DisplayTable extends Component{
     }else{
       tableColumns = []
     }
-    console.log(tableColumns)
     return <Table columns={tableColumns} {...this.props}/>
   }
 }
@@ -342,11 +327,11 @@ class PHList extends Component{
       tableList: [], // 表格处的数据
       tableLoading: false,
       selected: [], // 被选中的数据, 数值代表的是在tableList中的位置
+      current: 0,
     }
   }
   search = (values)=>{
-    console.log(values)
-    this.setState({type: values.usingNature[0], isSearched: true, tableLoading: true})
+    this.setState({type: values.usingNature[0], isSearched: true, tableLoading: true, current: 1})
     this.setState(values)
     API.listFilterPH(values)
     .then(rs=>{
@@ -361,11 +346,11 @@ class PHList extends Component{
   }
   // 删除条目处理函数
   delete = (index)=>{
-    // 转换index为一个list
-    // index大于等于0, 说明是删除单条记录 index不变
-    // index为-1 说明是删除多条记录, 从state中取到被选中的数据
-    index = index===-1?this.state.selected:[index]
-    index = index.map(i=>this.state.tableList[i].id)
+    if(index!==-1)
+      index=[index.id]
+    else{
+      index = this.state.selected.map(i=>i.id)
+    }
     let self = this
     confirm({
       title: '删除',
@@ -386,13 +371,28 @@ class PHList extends Component{
       onCancel() {},
     });
   }
-  // 上传条目处理函数
-  upload = (index)=>{
-
-  }
-  // 修改条目处理函数
-  change = (index)=>{
-
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page:p, current: p.current})
+    let filter = {
+      dept: this.state.dept,
+      usingNature: this.state.usingNature,
+      auditStatus: this.state.auditStatus,
+      personnel: this.state.personnel,
+      buildingName: this.state.buildingName,
+      roomNum: this.state.roomNum,
+      houseStatus: this.state.houseStatus,
+    }
+    API.listFilterPH(filter, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
   }
   selectedChange = (newSelected)=>{
     this.setState({
@@ -411,7 +411,7 @@ class PHList extends Component{
       houseStatus: this.state.houseStatus,
     }
     this.setState({tableLoading: true})
-    return API.listFilterPH(filter)
+    return API.listFilterPH(filter, this.state.page)
     .then(rs=>{
       this.setState({
         tableList: rs
@@ -425,8 +425,8 @@ class PHList extends Component{
       this.setState({tableLoading: false})
     })
   }
-  report = (index)=>{
-    let id = this.state.tableList[index].id
+  report = (record)=>{
+    let id = record.id
     let data = {
       id,
       type: this.state.type,
@@ -451,7 +451,7 @@ class PHList extends Component{
       delete: this.delete,
       refresh: this.refresh,
     }
-    return <MainContainer name="信息管理">
+    return <MainContainer name="公用房列表">
       基本信息
       <Search onSearch={this.search}/>
       <Split/>
@@ -459,6 +459,8 @@ class PHList extends Component{
       {
         this.state.isSearched?(
           <DisplayTable loading={this.state.tableLoading}
+            current={this.state.current}
+            onChange={this.tableChange}
             type={this.state.type}
             data={this.state.tableList}
             onSelectedChange={this.selectedChange} {...tableHelper}/>

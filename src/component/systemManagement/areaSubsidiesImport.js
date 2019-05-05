@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
-import {Upload, Button, Icon, message, Row, Col} from 'antd';
-import API from '../../api'
+import {Upload, Button, Icon, message, Row, Col} from 'antd'
 import MainContainer from '../common/mainContainer'
-import Split from '../common/split'
+import API from '../../api'
 import moban from '../mobaninfo'
 
 class Import extends Component{
@@ -92,39 +91,17 @@ class Import extends Component{
   }
 }
 
-class DataImport extends Component{
+class AreaSubsidiesImport extends Component{
   render(){
-    let infoList = [
-      {
-        text: '导入教学单位工作量',
-        uploadHelper: API.ULTeachingUnitWorkLoad,
-        templateLink: moban('jiaoxuedanweigongzuoliang'),
-      },
-      {
-        text: '导入科研单位工作量',
-        uploadHelper: API.ULScientificUnitWorkLoad,
-        templateLink: moban('keyantuanduigongzuoliang'),
-      },
-      {
-        text: '导入规范分',
-        uploadHelper: API.ULSpecificationPoints,
-        templateLink: moban('guifanguanlifen'),
-      },
-      {
-        text: '导入教室承担课程信息',
-        uploadHelper: API.ULClassroom,
-        templateLink: moban('jiaoshishiyanshikechengxinxi'),
-      },
-    ]
-    return <MainContainer name="数据导入">
-      基本信息/导入公用房信息
-      <h2 style={{textAlign:'center'}}>导入公用房信息</h2>
-      <Split/>
-      {infoList.map((item, index)=>(
-        <Import {...item} key={index}></Import>
-      ))}
-    </MainContainer>
+    return (
+      <MainContainer name="面积补贴">
+        <Import text="导入面积补贴"
+          uploadHelper={API.ULAreaSubsidies}
+          templateLink={moban('mianjibutie')}
+        ></Import>
+      </MainContainer>
+    )
   }
 }
 
-export default DataImport
+export default AreaSubsidiesImport

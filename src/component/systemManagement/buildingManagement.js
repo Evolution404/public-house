@@ -5,6 +5,7 @@ import {SButton} from '../common/button'
 import Split from '../common/split'
 import Table, {TableUtil}from '../common/table'
 import API from '../../api'
+import moban from '../mobaninfo'
 const Option = Select.Option
 const Item = Form.Item
 const confirm = Modal.confirm;
@@ -61,20 +62,20 @@ class ButtonGroup extends Component{
 class DisplayTable extends Component{
   render(){
     const columns = TableUtil.mapColumns([
-      '序号', '楼宇名称', '建筑面积', '建筑年代', '使用面积', '备注'
+      '楼宇名称', '楼层数', '建筑面积', '建筑年代', '备注'
     ])
     columns.push({
       title: '操作',
       render: (text, record, index)=>(
         <div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton onClick={this.props.delete.bind(this,index)} text='X删除'/>
+            <SButton onClick={this.props.delete.bind(this,record)} text='X删除'/>
           </div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton onClick={this.props.update.bind(this,index)} text='修改'/>
+            <SButton onClick={this.props.update.bind(this,record)} text='修改'/>
           </div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton onClick={this.props.uploadPic.bind(this,index)} text='上传平面图'/>
+            <SButton onClick={this.props.uploadPic.bind(this,record)} text='上传平面图'/>
           </div>
         </div>
       )
@@ -111,25 +112,8 @@ class AddModal extends Component {
       console.log('Received values of form: ', values)
     })
   }
-  onFloorsChange = (e)=>{
-    this.setState({buildingFloors: e})
-  }
   render() {
     const { getFieldDecorator } = this.props.form
-    let picUploader = []
-    for(let i=0;i < this.state.buildingFloors; i++){
-      picUploader.push((
-        <Item key={i} style={{marginBottom: '0px'}}  label={'楼层'+(i+1)+'图片'}>
-          {getFieldDecorator('pic'+(i+1), )(
-            <Upload>
-              <Button>
-                <Icon type="upload" />上传
-              </Button>
-            </Upload>
-          )}
-        </Item>
-      ))
-    }
     return (
       <Modal
         title="添加楼宇"
@@ -164,10 +148,9 @@ class AddModal extends Component {
           </Item>
           <Item style={{marginBottom: '0px'}}  label='楼宇层数'>
             {getFieldDecorator('buildingFloors', {initialValue: 0})(
-              <InputNumber max={100} onChange={this.onFloorsChange} min={0}/>
+              <InputNumber max={100} min={0}/>
             )}
           </Item>
-          {picUploader}
         </Form>
       </Modal>
     )
@@ -240,7 +223,7 @@ class UpdateModal extends Component {
           </Item>
           <Item style={{marginBottom: '0px'}}  label='楼宇层数'>
             {getFieldDecorator('buildingFloors', {initialValue: data.buildingFloors})(
-              <InputNumber max={100} onChange={this.onFloorsChange} min={0}/>
+              <InputNumber max={100} min={0}/>
             )}
           </Item>
         </Form>
@@ -342,7 +325,7 @@ class ImportModal extends Component {
   render() {
     let uploadInfo = {
       uploadHelper: API.ULBuildings,
-      templateLink: '',
+      templateLink: moban('louyu'),
     }
     return (
       <Modal
@@ -498,6 +481,7 @@ class BuildingManagement extends Component{
       visible: false,
       data: {},
     },
+    current: 0,
   }
   add = ()=>{
     this.setState({addmodal: {visible: true}})
@@ -506,6 +490,7 @@ class BuildingManagement extends Component{
     this.setState({
       name,
       isSearched: true,
+      current: 1,
     })
     this.setState({tableLoading: true})
     API.searchBuilding(name)
@@ -525,7 +510,7 @@ class BuildingManagement extends Component{
     })
   }
   refresh = ()=>{
-    API.searchBuilding(this.state.name)
+    API.searchBuilding(this.state.name, this.state.page)
     .then(rs=>{
       this.setState({
         tableList: rs,
@@ -545,11 +530,11 @@ class BuildingManagement extends Component{
   }
   // 删除条目处理函数
   delete = (index)=>{
-    // 转换index为一个list
-    // index大于等于0, 说明是删除单条记录 index不变
-    // index为-1 说明是删除多条记录, 从state中取到被选中的数据
-    index = index===-1?this.state.selected:[index]
-    index = index.map(i=>this.state.tableList[i].id)
+    if(index!==-1)
+      index=[index.id]
+    else{
+      index = this.state.selected.map(i=>i.id)
+    }
     let self = this
     confirm({
       title: '删除楼宇信息',
@@ -572,11 +557,11 @@ class BuildingManagement extends Component{
       onCancel() {},
     });
   }
-  update = index=>{
-    this.setState({updatemodal: {visible: true, data: this.state.tableList[index]}})
+  update = record=>{
+    this.setState({updatemodal: {visible: true, data: record}})
   }
-  uploadPic = index=>{
-    this.setState({uploadmodal: {visible: true, data: this.state.tableList[index]}})
+  uploadPic = record=>{
+    this.setState({uploadmodal: {visible: true, data: record}})
   }
   closeUploadModal = ()=>{
     this.setState({uploadmodal: {visible: false, data:{}}})
@@ -593,6 +578,20 @@ class BuildingManagement extends Component{
   openImport = ()=>{
     this.setState({importmodal: {visible: true}})
   }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page: p, current: p.current})
+    API.searchBuilding(this.state.name, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
+  }
   render(){
     let tableHelper = {
       delete: this.delete,
@@ -608,6 +607,8 @@ class BuildingManagement extends Component{
         <Col span={20}>
           {this.state.isSearched?(
             <DisplayTable
+              current={this.state.current}
+              onChange={this.tableChange}
               data={this.state.tableList}
               loading={this.state.tableLoading}
               onSelectedChange={this.selectedChange} {...tableHelper}/>

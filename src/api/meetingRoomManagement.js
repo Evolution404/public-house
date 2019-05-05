@@ -1,11 +1,12 @@
 import axios from './apiConfig'
 import {MapB2F, MapF2B} from './nameMapConfig'
+import {pageSize} from '../component/common/table'
 
 
 const meetingRoomReservation = {
   // 会议室预约
   // 搜索会议室预约信息
-  searchMeetingRoomReservation(info){
+  searchMeetingRoomReservation(info, p){
     // info = {
     //    peopleNum: xx, 人数要求
     //    startStopTime: xx, 使用起止时间
@@ -29,7 +30,11 @@ const meetingRoomReservation = {
     newInfo.jieshushijian = info.startStopTime[1]
     return new Promise((resolve, reject)=>{
       axios.get('/tb-xueyuan-dangzhengjiguan-yongfang/get/screen', {
-        params: newInfo,
+        params: {
+          ...newInfo,
+          page: p?p.current-1:0,
+          size: pageSize,
+        }
       })
       .then(rs=>{
         // 处理成tableList
@@ -40,7 +45,10 @@ const meetingRoomReservation = {
         //    usingNature: xx, 使用性质
         //    state: xx, 状态
         // }
-        let data = rs.data.map(item=>MapB2F(item))
+        let data = {
+          tableList:rs.data.map(item=>MapB2F(item)),
+          total: rs.headers['x-total-count'],
+        }
         resolve(data)
       })
       .catch(err=>{
@@ -85,7 +93,7 @@ const myReservation = {
   // 我的预约
 
   // 搜索我的预约
-  searchMyReservation(info){
+  searchMyReservation(info, p){
     // info = {
     //    houseDept: xx, 房屋部门名称
     //    buildingName: xx, 楼宇名称
@@ -96,7 +104,11 @@ const myReservation = {
     data.time = data.leixing
     return new Promise((resolve, reject)=>{
       axios.get('/tb-huiyishi-yuyue/get/myreservation', {
-        params: data,
+        params: {
+          ...data,
+          page: p?p.current-1:0,
+          size: pageSize,
+        }
       })
       .then(rs=>{
         // 需要的tableList结构
@@ -111,7 +123,10 @@ const myReservation = {
         //    reservationStatus: xx, 预约状态
         //    type: xx, 区分最近一周 一月 三月 半年
         // }
-        let data = rs.data.map(item=>MapB2F(item))
+        let data = {
+          tableList:rs.data.map(item=>MapB2F(item)),
+          total: rs.headers['x-total-count'],
+        }
         resolve(data)
       })
       .catch(err=>{
@@ -162,7 +177,7 @@ const reservationAudit = {
   // 预约审批
 
   // 搜索预约审批信息
-  searchReservationAudit(info){
+  searchReservationAudit(info, p){
     // info = {
     //    deptName: xx, 部门名称
     //    usingNature: xx, 使用性质
@@ -175,7 +190,11 @@ const reservationAudit = {
     let newInfo = MapF2B(info)
     return new Promise((resolve, reject)=>{
       axios.get('/tb-huiyishi-yuyue/get/all', {
-        params: newInfo,
+        params: {
+          ...newInfo,
+          page: p?p.current-1:0,
+          size: pageSize,
+        }
       })
       .then(rs=>{
         // 处理成tableList
@@ -191,7 +210,10 @@ const reservationAudit = {
         //    phone: xx, 联系电话
         //    reservationPurpose: xx, 预约用途
         // }
-        let data = rs.data.map(item=>MapB2F(item))
+        let data = {
+          tableList:rs.data.map(item=>MapB2F(item)),
+          total: rs.headers['x-total-count'],
+        }
         resolve(data)
       })
       .catch(err=>{
@@ -243,7 +265,7 @@ const useStatistical = {
   // 使用统计
 
   // 搜索使用统计
-  searchUseStatistical(info){
+  searchUseStatistical(info, p){
     // info = {
     //    deptName: xx, 部门名称
     //    building: xx, 楼宇
@@ -255,7 +277,11 @@ const useStatistical = {
     data.jieshushijian = info.startStopTime[1]
     return new Promise((resolve, reject)=>{
       axios.get('/tb-huiyishi-yuyue/get/allhuiyishi', {
-        params: data,
+        params: {
+          ...data,
+          page: p?p.current-1:0,
+          size: pageSize,
+        }
       })
       .then(rs=>{
         // 需要的tableList结构
@@ -278,7 +304,10 @@ const useStatistical = {
           return rs
         }
         let data = {}
-        data.tableList = rs.data.resultlist.map(i=>MapB2F(i))
+        data.tableList = {
+          tableList:rs.data.resultlist.map(i=>MapB2F(i)),
+          total: rs.headers['x-total-count'],
+        }
         data.graphData = parseGraphData(rs.data)
         resolve(data)
       })

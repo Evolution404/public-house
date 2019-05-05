@@ -5,23 +5,47 @@ import {Table} from 'antd'
 // 如果不传入onSelectedChange那么就不会有复选框出现
 //   当选择发生变化时会给onSelectedChange函数传入list,包括所有被选中项在data中的位置
 
+const pageSize = 10
+
 class MyTable extends Component{
+  state = {
+    selected: [],
+  }
   render(){
+    let propOnChange = this.props.onChange||((p)=>{console.log(p)})
+    let onChange = (p)=>{
+      this.setState({selected:[]})
+      if(this.props.onSelectedChange)
+        this.props.onSelectedChange([])
+      propOnChange(p)
+    }
     // 为data添加key键,这个键就是其在数组中的位置, 这样在调用的时候data不需要有key键
-    let data = this.props.data.map((d, key)=>({...d, key}))
+    let data = []
+    let total=0
+    if(Array.isArray(this.props.data)){
+      data = this.props.data.map((d, key)=>({...d, key:d.id||key}))
+    }
+    else {
+      data = this.props.data.tableList.map((d, key)=>({...d, key:d.id||key}))
+      total = parseInt(this.props.data.total)
+    }
     // 设置对齐方式为居中
     let columns = this.props.columns.map((d, key)=>({...d, align: 'center'}))
     let pagination = {
-      total: this.props.data.length,
+      total,
       showTotal: (total, range) => `共${total}条  显示${range[0]} ~ ${range[1]}条`,
-      pageSize: 10,
+      pageSize,
       defaultCurrent: 1,
     }
+    if(this.props.current)
+      pagination.current = this.props.current
     let rowSelection
     if(this.props.onSelectedChange){
       rowSelection = {
+        selectedRowKeys: this.state.selected,
         onChange: (selectedRowKeys, selectedRows) => {
-          this.props.onSelectedChange(selectedRowKeys)
+          this.setState({selected: selectedRowKeys})
+          this.props.onSelectedChange(selectedRows)
         }
       }
     }else{
@@ -36,6 +60,7 @@ class MyTable extends Component{
         columns={columns}
         pagination={!this.props.noPaginnation&&pagination}
         locale={locale}
+        onChange={onChange}
         bordered={true}
         rowSelection={rowSelection}/>
     )
@@ -48,7 +73,7 @@ const TableUtil = {
     switch(text){
       case '未上报':
         return <span style={{color:'#333'}}>未上报</span>
-      case '已审核':
+      case '已审批':
         return <span style={{color:'#008000'}}>已审核</span>
       case '已驳回':
         return <span style={{color:'#ff0000'}}>已驳回</span>
@@ -99,6 +124,8 @@ const TableUtil = {
         return 'apartment'
       case '楼层':
         return 'floor'
+      case '楼层数':
+        return 'buildingFloors'
       case '房间':
         return 'room'
       case '部门名称':
@@ -172,5 +199,5 @@ const TableUtil = {
   }
 }
 
-export {TableUtil}
+export {TableUtil, pageSize}
 export default MyTable

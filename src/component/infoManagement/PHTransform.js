@@ -53,7 +53,8 @@ class BasicInfo extends Component{
     }
   }
   loucengChange = louceng=>{
-    if(louceng&&louceng!==this.state.louceng){
+    louceng = louceng.target.value
+    if(this.state.louyu&&louceng&&louceng!==this.state.louceng){
       this.setState({louceng})
       this.getTreeData(this.state.louyu, louceng)
     }
@@ -106,7 +107,7 @@ class BasicInfo extends Component{
                   initialValue: initialValue.louceng,
                   rules: [{required: true, message: '请选择楼层'}]
                 })(
-                  <FloorSelect building={this.state.louyu}></FloorSelect>
+                  <FloorSelect></FloorSelect>
                 )
               }
             </Item>
@@ -278,6 +279,7 @@ class RoomInfo extends Component{
   state = {
     loading: false,
     subValues: {},
+    areaConfig: [],
   }
   prev = (subValues)=>{
     this.props.form.validateFields((err, values)=>{
@@ -294,6 +296,15 @@ class RoomInfo extends Component{
       this.props.setData(this.props.current+1, this.props.current, values)
       this.props.form.resetFields()
     })
+  }
+  areaConfigChange = (e)=>{
+    if(e.length < 2){
+      this.setState({areaConfig: e})
+      return e
+    }
+    let newValue = e.filter(key => !this.state.areaConfig.includes(key))
+    this.setState({areaConfig: newValue})
+    return newValue
   }
   render(){
     const {getFieldDecorator} = this.props.form
@@ -357,6 +368,7 @@ class RoomInfo extends Component{
             <Col span={10}>
               <Item labelCol={{span:3}} wrapperCol={{span:20}}>
                 {getFieldDecorator('areaConfig', {
+                  getValueFromEvent: this.areaConfigChange,
                   initialValue: initialValue.areaConfig||[],
                 })(
                   <CheckboxGroup options={checkboxOption}/>
@@ -417,7 +429,6 @@ class PHTransform extends Component{
           title: '确认要提交改造信息吗?',
           content: '点击确认后改造信息将提交给管理员审核',
           onOk() {
-            console.log(self.state.stepData)
             API.transformSubmit(self.state.stepData)
             .then(rs=>{
               message.success('提交改造信息成功')

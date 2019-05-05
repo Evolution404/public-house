@@ -96,10 +96,6 @@ class DisplayTable extends Component{
   render(){
     const columns = [
       {
-        title: '序号',
-        dataIndex: 'id',
-      },
-      {
         title: '楼宇',
         dataIndex: 'building',
       },
@@ -112,7 +108,7 @@ class DisplayTable extends Component{
         dataIndex: 'roomNum',
       },
       {
-        title: '使用面积',
+        title: '使用面积(㎡)',
         dataIndex: 'useArea',
       },
       {
@@ -125,17 +121,17 @@ class DisplayTable extends Component{
       render: (text, record, index)=>(
         <div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton onClick={this.props.delete.bind(this,index)} text='X删除'/>
+            <SButton onClick={this.props.delete.bind(this,record)} text='X删除'/>
           </div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
             <Router>
               <Link to={Map.PHChangeBrief.path.replace(':id', record.id)}>
-                <SButton onClick={this.props.change.bind(this,index)} text='修改查看'/> 
+                <SButton onClick={this.props.change.bind(this,record)} text='修改查看'/> 
               </Link>
             </Router>
           </div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton onClick={this.props.upload.bind(this,index)} text='上传图纸'/>
+            <SButton onClick={this.props.upload.bind(this,record)} text='上传图纸'/>
           </div>
         </div>
       )
@@ -273,10 +269,11 @@ class PHManagement extends Component{
     uploadModal: {
       visible: false,
       index: 0,
-    }
+    },
+    current: 0,
   }
   search = (values)=>{
-    this.setState({tableLoading: true, filter: values})
+    this.setState({tableLoading: true, filter: values, current: 1})
     API.filterPH(values)
     .then(rs=>{
       this.setState({tableList: rs})
@@ -288,13 +285,27 @@ class PHManagement extends Component{
       this.setState({tableLoading: false})
     })
   }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page:p, current: p.current})
+    API.filterPH(this.state.filter, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
+  }
   // 删除条目处理函数
   delete = (index)=>{
-    // 转换index为一个list
-    // index大于等于0, 说明是删除单条记录 index不变
-    // index为-1 说明是删除多条记录, 从state中取到被选中的数据
-    index = index===-1?this.state.selected:[index]
-    index = index.map(i=>this.state.tableList[i].id)
+    if(index!==-1)
+      index=[index.id]
+    else{
+      index = this.state.selected.map(i=>i.id)
+    }
     let self = this
     confirm({
       title: '删除',
@@ -302,7 +313,7 @@ class PHManagement extends Component{
       okText:"确认",
       cancelText:"取消",
       onOk() {
-        return API.deletePH(index)
+        return API.deletePHBasic(index)
         .then(()=>{
           message.success('删除成功')
           self.refresh()
@@ -318,8 +329,8 @@ class PHManagement extends Component{
     });
   }
   // 上传条目处理函数
-  upload = (index)=>{
-    index = this.state.tableList[index].id
+  upload = (record)=>{
+    let index = record.id
     this.setState({uploadModal: {visible: true, index}})
   }
   closeUploadModal = ()=>{
@@ -337,7 +348,7 @@ class PHManagement extends Component{
   // 根据当前填写的搜索信息获取后台数据
   refresh = ()=>{
     this.setState({selected:[], tableLoading: true})
-    return API.filterPH(this.state.filter)
+    return API.filterPH(this.state.filter, this.state.page)
     .then(rs=>{
       this.setState({
         tableList: rs
@@ -366,6 +377,8 @@ class PHManagement extends Component{
       <Split/>
       <ButtonGroup {...groupHelper}/>
       <DisplayTable loading={this.state.tableLoading}
+        current={this.state.current}
+        onChange={this.tableChange}
         data={this.state.tableList}
         onSelectedChange={this.selectedChange} {...tableHelper}/>
       <WrappedUploadModal {...this.state.uploadModal} close={this.closeUploadModal} />

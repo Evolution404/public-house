@@ -1,6 +1,7 @@
-import axios from './apiConfig'
+import axios, {host} from './apiConfig'
 import {MapB2F, MapF2B} from './nameMapConfig'
 import Map from '../routerMap'
+import {pageSize} from '../component/common/table'
 
 const deptManagement = {
   // 部门管理
@@ -21,7 +22,7 @@ const deptManagement = {
       })
     })
   },
-  searchDept(values){
+  searchDept(values, p){
 
     // 搜索部门, type可能是bc(部处)也可能是xy(学院)
     let type = values.type
@@ -29,9 +30,18 @@ const deptManagement = {
     // 部处
     if(type==='bc'){
       return new Promise((resolve, reject)=>{
-        axios.get('/tb-buchu-bumen/get/all', {params:{bumen}})
+        axios.get('/tb-buchu-bumen/get/all', {
+          params:{
+            bumen,
+            page: p?p.current-1:0,
+            size: pageSize,
+          }
+        })
         .then(rs=>{
-          let data = rs.data.map(item=>MapB2F(item))
+          let data = {
+            tableList:rs.data.map(item=>MapB2F(item)),
+            total: rs.headers['x-total-count'],
+          }
           resolve(data)
         })
         .catch(err=>{
@@ -42,9 +52,18 @@ const deptManagement = {
       // 学院
     }else if(type==='xy'){
       return new Promise((resolve, reject)=>{
-        axios.get('/tb-xueyuan-bumen/get/all', {params:{bumen}})
+        axios.get('/tb-xueyuan-bumen/get/all', {
+          params:{
+            bumen,
+            page: p?p.current-1:0,
+            size: pageSize,
+          }
+        })
         .then(rs=>{
-          let data = rs.data.map(item=>MapB2F(item))
+          let data = {
+            tableList:rs.data.map(item=>MapB2F(item)),
+            total: rs.headers['x-total-count'],
+          }
           // 处理成tableList
           // {
           //    id: 1, 序号
@@ -253,12 +272,16 @@ const buildingManagement = {
       })
     })
   },
-  searchBuilding(name){
+  searchBuilding(name, p){
     return new Promise((resolve, reject)=>{
-      axios.get('/tb-louyu/get/all',
-                {params: {louyumingcheng: name}})
+      axios.get('/tb-louyu/get/all',{
+        params: {
+          louyumingcheng: name,
+          page: p?p.current-1:0,
+          size: pageSize,
+        }
+      })
       .then(rs=>{
-        let mapData = rs.data.map(item=>MapB2F(item))
         // {
         //    id: xx,
         //    name: xx,
@@ -266,7 +289,11 @@ const buildingManagement = {
         //    buildingTime: xx,  建筑年代
         //    useArea: xx,  使用面积
         // }
-        resolve(mapData)
+        let data = {
+          tableList:rs.data.map(item=>MapB2F(item)),
+          total: rs.headers['x-total-count'],
+        }
+        resolve(data)
       })
       .catch(err=>{
         reject(err)
@@ -318,11 +345,13 @@ const buildingManagement = {
 
 const theUserManagement = {
   // 使用者管理
-  searchPersonnel(name){
+  searchPersonnel(name, p){
     return new Promise((resolve, reject)=>{
       axios.get('/tb-shiyongzhe/get/all', {
         params: {
           xingming: name,
+          page: p?p.current-1:0,
+          size: pageSize,
         }
       })
       .then(rs=>{
@@ -333,7 +362,10 @@ const theUserManagement = {
         //    monad: xx,  单位
         //    guideNum: xx,  指导研究生数量
         // }
-        let data = rs.data.map(item=>MapB2F(item))
+        let data = {
+          tableList:rs.data.map(item=>MapB2F(item)),
+          total: rs.headers['x-total-count'],
+        }
         resolve(data)
       })
       .catch(err=>{
@@ -473,6 +505,7 @@ const userManagement = {
         '楼宇管理': Map.BuildingManagement,
         '使用者管理': Map.TheUserManagement,
         '用户管理': Map.UserManagement,
+        '面积补贴导入': Map.AreaSubsidiesImport,
       },
     }
     return new Promise((resolve, reject)=>{
@@ -481,6 +514,10 @@ const userManagement = {
       .then(rs=>{
         // 成功时调用
         let returnData = {}
+        let mobaninfo = {}
+        for(let key in rs.data.mobaninfo)
+          mobaninfo[key]=host+rs.data.mobaninfo[key]
+        returnData.mobaninfo = mobaninfo
         returnData.navData = rs.data['caidanxinxi'].map(item=>{
           let rs = {} 
           rs.text = item['fucaidanmingcheng']
@@ -503,6 +540,18 @@ const userManagement = {
       .catch(err=>{
         reject(err)
         console.log(err)
+      })
+    })
+  },
+  logout(){
+    return new Promise((resolve, reject)=>{
+      axios.get('tb-denglu-renyuan/logout')
+      .then(rs=>{
+        resolve()
+      })
+      .catch(err=>{
+        console.log(err)
+        reject(err)
       })
     })
   },
@@ -562,11 +611,13 @@ const userManagement = {
       })
     })
   },
-  searchUser(name){
+  searchUser(name, p){
     return new Promise((resolve, reject)=>{
       axios.get('/tb-denglu-renyuan/get/all',{
         params:{
-          yonghumingcheng: name
+          yonghumingcheng: name,
+          page: p?p.current-1:0,
+          size: pageSize,
         }
       })
       .then(rs=>{
@@ -578,7 +629,10 @@ const userManagement = {
         //    dept: xx,  所属部门
         //    role: xx, 角色
         // }]
-        let data = rs.data.map(item=>MapB2F(item))
+        let data = {
+          tableList:rs.data.map(item=>MapB2F(item)),
+          total: rs.headers['x-total-count'],
+        }
         resolve(data)
       })
       .catch(err=>{

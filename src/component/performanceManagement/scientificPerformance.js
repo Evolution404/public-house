@@ -16,6 +16,8 @@ class ScientificPerformance extends Component{
     loading: false,
     hasSearched: false,
     tableList: [],
+    tableLoading: false,
+    current: 0,
     printData: {},
     isPrinting: false,
     graphData: {},
@@ -44,7 +46,7 @@ class ScientificPerformance extends Component{
   search = ()=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        this.setState({hasSearched: true, loading: true})
+        this.setState({hasSearched: true, loading: true, filter: values, current: 1})
         API.searchScientificPerformance(values)
         .then(rs=>{
           this.setState(rs)
@@ -56,6 +58,20 @@ class ScientificPerformance extends Component{
         console.log('Received values of form: ', values);
       }
     })
+  }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page:p, current: p.current})
+    API.searchScientificPerformance(this.state.filter, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs.tableList,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
   }
   render(){
     let columns = [
@@ -75,7 +91,7 @@ class ScientificPerformance extends Component{
         sorter: (a, b) => a.guifanguanlifen - b.guifanguanlifen,
       },
       {
-        title: '公用房面积',
+        title: '公用房面积(㎡)',
         dataIndex: 'gongyongfangmianji',
         sorter: (a, b) => a.gongyongfangmianji - b.gongyongfangmianji,
       },
@@ -85,13 +101,13 @@ class ScientificPerformance extends Component{
         sorter: (a, b) => a.shiyongxiaoyi - b.shiyongxiaoyi,
       },
       {
-        title: '米均效益',
+        title: '米均效益(元/㎡)',
         dataIndex: 'mijunxiaoyi',
         sorter: (a, b) => a.mijunxiaoyi - b.mijunxiaoyi,
       },
     ]
     const { getFieldDecorator } = this.props.form
-    return <MainContainer name="效益管理">
+    return <MainContainer name="科研单位绩效">
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
           <Col span={4}>
@@ -134,7 +150,11 @@ class ScientificPerformance extends Component{
             <div id="printArea">
               <div style={{fontSize: '18px',
                 textAlign: 'center', padding:'20px 0'}}>科研公用房使用效益</div>
-              <Table columns={columns} data={this.state.tableList}></Table>
+              <Table
+                loading={this.state.tableLoading}
+                current={this.state.current}
+                onChange={this.tableChange}
+                columns={columns} data={this.state.tableList}></Table>
               <Row style={{marginTop: 30}}>
                 <Col offset={1} span={12}>
                   {

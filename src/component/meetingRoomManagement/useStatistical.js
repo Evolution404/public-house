@@ -39,7 +39,7 @@ class UseStatistical extends Component{
             values.startStopTime.map(i=>Math.round((i.valueOf())/1000))
           values.startStopTime = startStopTime
         }
-        this.setState({dept: values.dept, startStopTime: values.startStopTime})
+        this.setState({dept: values.dept, startStopTime: values.startStopTime, filter: values, current: 1})
         API.searchUseStatistical(values)
         .then((rs)=>{
           const {tableList, graphData} = rs
@@ -53,6 +53,20 @@ class UseStatistical extends Component{
         })
       }
     })
+  }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page:p, current: p.current})
+    API.searchUseStatistical(this.state.filter, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs.tableList,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
   }
   export = ()=>{
     if(!document.querySelector('#graph canvas')){
@@ -98,10 +112,6 @@ class UseStatistical extends Component{
   render(){
     let columns = [
       {
-        title: '序号',
-        dataIndex: 'meetingRoomId',
-      },
-      {
         title: '部门',
         dataIndex: 'dept',
       },
@@ -118,7 +128,7 @@ class UseStatistical extends Component{
         dataIndex: 'totalUseTime',
       },
       {
-        title: '日均使用时间',
+        title: '日均使用时间(小时)',
         dataIndex: 'avgDailyUseTime',
       },
       {
@@ -135,7 +145,7 @@ class UseStatistical extends Component{
       }
     ]
     const { getFieldDecorator } = this.props.form
-    return <MainContainer name="预约管理">
+    return <MainContainer name="使用统计">
       <Form labelCol={{span:12}} wrapperCol={{span: 12}}>
         <Row>
           <Col span={6}>
@@ -193,7 +203,10 @@ class UseStatistical extends Component{
         {
           this.state.isSearched?(
             <div>
-              <Table columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
+              <Table
+                current={this.state.current}
+                onChange={this.tableChange}
+                columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
               {
                 !this.state.isPrinting&&!this.state.tableLoading&&(
                   <Histogram id="graph"

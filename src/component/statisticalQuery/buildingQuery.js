@@ -92,9 +92,7 @@ class BuildingQuery extends Component{
         let imgData = []
         data.buildingImgs.forEach(floor=>{
           let text = '楼层'+floor.louceng
-          floor.tupianlujing.forEach(imgPath=>{
-            imgData.push({text,src:host+imgPath})
-          })
+          imgData.push({text,src:host+floor.tupianlujing})
         })
         if(imgData.length===0)
           message.error("未获取到图片信息")
@@ -102,12 +100,13 @@ class BuildingQuery extends Component{
       }
     })
     .catch(err=>{
+      console.log(err)
       message.error('查询失败')
     })
     .finally(()=>this.setState({loading: false}))
   }
   render(){
-    return <MainContainer name="统计查询">
+    return <MainContainer name="楼宇查询">
       <Spin spinning={this.state.loading}>
         <WrappedSearch onSearch={this.search}/>
         <Split/>

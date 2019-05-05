@@ -51,10 +51,6 @@ class DisplayTable extends Component{
     let tableColumns = [
       [
         {
-          title: '序号',
-          dataIndex: 'id',
-        },
-        {
           title: '部门',
           dataIndex: 'dept',
         },
@@ -112,10 +108,6 @@ class DisplayTable extends Component{
       ],
       [
         {
-          title: '序号',
-          dataIndex: 'id',
-        },
-        {
           title: '部门',
           dataIndex: 'dept',
         },
@@ -156,10 +148,6 @@ class DisplayTable extends Component{
         },
       ],
       [
-        {
-          title: '序号',
-          dataIndex: 'id',
-        },
         {
           title: '部门',
           dataIndex: 'dept',
@@ -213,10 +201,6 @@ class DisplayTable extends Component{
         },
       ],
       [
-        {
-          title: '序号',
-          dataIndex: 'id',
-        },
         {
           title: '部门',
           dataIndex: 'dept',
@@ -288,6 +272,8 @@ class MyPH extends Component{
     isSearched: false,
     tableLoading: false,
     infoLoading: true,
+    current: 0,
+    filter: {},
   }
   initPersonnelInfo = id=>{
     API.getPersonnelInfo(id)
@@ -317,7 +303,8 @@ class MyPH extends Component{
     this.initPersonnelInfo(id)
   }
   search = (values)=>{
-    this.setState({type: values.usingNature[0], isSearched: true, tableLoading: true})
+    this.setState({type: values.usingNature[0], isSearched: true, tableLoading: true, current: 1,
+                  filter: values})
     API.myPHSearch(values)
     .then(rs=>{
       this.setState({tableList:rs})
@@ -331,8 +318,22 @@ class MyPH extends Component{
       this.setState({tableLoading: false})
     })
   }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page:p, current: p.current})
+    API.myPHSearch(this.state.filter, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
+  }
   render(){
-    return <MainContainer name="信息管理">
+    return <MainContainer name="我的公用房">
       <Spin spinning={this.state.infoLoading}>
         <PersonalInfo data={this.state.personnelInfo}></PersonalInfo>
       </Spin>
@@ -341,6 +342,8 @@ class MyPH extends Component{
       {
         this.state.isSearched?(
           <DisplayTable loading={this.state.tableLoading}
+            current={this.state.current}
+            onChange={this.tableChange}
             type={this.state.type}
             data={this.state.tableList}
             onSelectedChange={this.selectedChange}/>

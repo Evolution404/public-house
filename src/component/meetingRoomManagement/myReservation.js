@@ -3,7 +3,7 @@ import {Form, Row, Col, Select, Input, Button, message, Empty} from 'antd'
 import moment from 'moment'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
-import Table from '../common/table'
+import Table, {TableUtil} from '../common/table'
 import {SButton} from '../common/button'
 import {DeptSelect, BuildingSelect} from '../common/select'
 import API from '../../api'
@@ -38,7 +38,7 @@ class MyReservation extends Component{
           ...values,
           type,
         }
-        this.setState({tableLoading: true, isSearched: true, filter: values})
+        this.setState({tableLoading: true, isSearched: true, filter: values, current: 1})
         API.searchMyReservation(values)
         .then((rs)=>{
           this.setState({tableList: rs})
@@ -51,6 +51,20 @@ class MyReservation extends Component{
         })
       }
     })
+  }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page:p, current: p.current})
+    API.searchMyReservation(this.state.filter, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
   }
   refresh = ()=>{
     this.setState({tableLoading: true})
@@ -77,10 +91,6 @@ class MyReservation extends Component{
   }
   render(){
     let columns = [
-      {
-        title: '序号',
-        dataIndex: 'id',
-      },
       {
         title: '房屋部门',
         dataIndex: 'dept',
@@ -122,6 +132,7 @@ class MyReservation extends Component{
       {
         title: '预约状态',
         dataIndex: 'reservationStatus',
+        render: text=>TableUtil.mapColor(text)
       },
       {
         title: '操作',
@@ -201,7 +212,10 @@ class MyReservation extends Component{
       <Split/>
       {
         this.state.isSearched?(
-          <Table columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
+          <Table
+            current={this.state.current}
+            onChange={this.tableChange}
+            columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
         ):(
           <Empty description="请先搜索"></Empty>
         )

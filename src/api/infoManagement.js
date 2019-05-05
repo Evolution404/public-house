@@ -2,6 +2,7 @@ import axios from './apiConfig'
 import {uploadHelper} from './fileUpload'
 import {MapB2F, MapF2B} from './nameMapConfig'
 import {parseId} from '../component/common/usingNature'
+import {pageSize} from '../component/common/table'
 
 const PHAdd = {
   // 公用房新增
@@ -18,14 +19,14 @@ const PHAdd = {
         jutiyongtu,
       }
     }
-    if(leixing==='4'&&deviceConfig){
+    if(leixing===4&&deviceConfig){
       data.obj = {
         ...data.obj,
-        touyingyi: deviceConfig.indexOf(0)>-1,
-        yinxiang: deviceConfig.indexOf(1)>-1,
-        maikefeng: deviceConfig.indexOf(2)>-1,
-        baiban: deviceConfig.indexOf(3)>-1,
-        diannao: deviceConfig.indexOf(4)>-1,
+        touyingyi: deviceConfig.indexOf(0)>-1?'是':'否',
+        yinxiang: deviceConfig.indexOf(1)>-1?'是':'否',
+        maikefeng: deviceConfig.indexOf(2)>-1?'是':'否',
+        baiban: deviceConfig.indexOf(3)>-1?'是':'否',
+        diannao: deviceConfig.indexOf(4)>-1?'是':'否',
       }
     }
     delete data.obj.photolist
@@ -83,8 +84,23 @@ const PHAddBrief = {
       }
       axios.post('/tb-gongyongfang-jibenxinxi/create', data)
       .then(rs=>{
-        // 成功调用
-        resolve()
+        if(values.housePic&&values.housePic.length>0){
+          let imgForm = new FormData()
+          imgForm.append('id', rs.data.id)
+          imgForm.append('module', 'gongyongfang-zhaopian')
+          values.housePic.forEach(item=>{
+            imgForm.append('file', item)
+          })
+          uploadHelper(imgForm, '/tb-gongyongfang-jibenxinxi-tupian/upload-img')
+          .then(()=>{
+            resolve()
+          })
+          .catch(err=>{
+            reject(err)
+          })
+        }else{
+          resolve()
+        }
       })
       .catch(err=>{
         reject(err)
@@ -104,7 +120,7 @@ const PHTransform = {
         let data = []
         for(let type in rs.data){
           let id = parseId(type)
-          let item = {title: type, key:id, value:id, disable: true}
+          let item = {title: type, key:id, value:id, disabled: true}
           let children = rs.data[type].map(c=>({title: c,
             value:id+'-'+c, key:(id+'-'+c)}))
           item.children = children
@@ -141,10 +157,12 @@ const PHTransform = {
         zhuangtai: curData.zhuangtai,
       }
       let leixing = parseInt(subValues.usingNature[0])
+      let jutiyongtu = subValues.usingNature[1]
       let xiangxi={
         leixing,
         obj: {
           ...MapF2B(subValues),
+          jutiyongtu,
           louyu: curData.louyu,
           louceng: curData.louceng,
           fangjianhao: curData.fangjianhao,
@@ -152,6 +170,14 @@ const PHTransform = {
       }
       if(leixing===4){
         let deviceConfig = {
+          touyingyi: '否',
+          yinxiang: '否',
+          maikefeng: '否',
+          baiban: '否',
+          diannao: '否',
+        }
+        if(subValues.deviceConfig&&subValues.deviceConfig.length>0)
+        deviceConfig = {
           touyingyi: subValues.deviceConfig.indexOf(0)>-1?'是':'否',
           yinxiang: subValues.deviceConfig.indexOf(1)>-1?'是':'否',
           maikefeng: subValues.deviceConfig.indexOf(2)>-1?'是':'否',
@@ -164,10 +190,12 @@ const PHTransform = {
         }
       }
       obj.push({jiben, xiangxi})
-      if(curData.housePic){
-        let rawFile = curData.housePic['originFileObj']
+      if(curData.housePic&&curData.housePic.length>0){
         let imgForm = new FormData()
-        imgForm.append('file', rawFile)
+        curData.housePic.forEach(img=>{
+          let rawFile = img['originFileObj']
+          imgForm.append('file', rawFile)
+        })
         imgForm.append('louceng', curData.louceng)
         imgForm.append('louyu', curData.louyu)
         imgForm.append('fangjianhao', curData.fangjianhao)
@@ -196,15 +224,21 @@ const PHTransform = {
        })
     })
   },
-  transformAuditSearch(type){
+  transformAuditSearch(type, p){
     return new Promise((resolve, reject)=>{
       axios.get('/tb-gongyongfang/gaizao-shenpi-chaxun', {
         params: {
           leixing: type,
+          page: p?p.current-1:0,
+          size: pageSize,
         }
       })
       .then(rs=>{
-        resolve(rs.data)
+        let data = {
+          tableList:rs.data,
+          total: rs.headers['x-total-count'],
+        }
+        resolve(data)
       })
       .catch(err=>{
         reject(err)
@@ -232,7 +266,7 @@ const PHAudit = {
   // 公用房审核
 
   // 公用房审核的搜索接口
-  auditFilterPH(filter){
+  auditFilterPH(filter, p){
     let leixing = filter.usingNature[0]
     let shiyongxingzhi = filter.usingNature[1]
     filter = MapF2B(filter)
@@ -240,6 +274,8 @@ const PHAudit = {
       ...filter,
       leixing,
       shiyongxingzhi,
+      page: p?p.current-1:0,
+      size: pageSize,
     }
     return new Promise((resolve, reject)=>{
       axios.get('/tb-gongyongfang/get/all',{
@@ -257,7 +293,10 @@ const PHAudit = {
           status: i,
           auditTime: i,
         }]*/
-        let data = rs.data.map(item=>MapB2F(item))
+        let data = {
+          tableList:rs.data.map(item=>MapB2F(item)),
+          total: rs.headers['x-total-count'],
+        }
         resolve(data)
       })
       .catch(err=>{
@@ -606,29 +645,23 @@ const PHList = {
     })
   },
   // 公用房列表的搜索接口
-  listFilterPH(filter){
+  listFilterPH(filter, p){
     filter = {
       ...MapF2B(filter),
       leixing: filter.usingNature&&filter.usingNature[0],
       shiyongxingzhi: filter.usingNature&&filter.usingNature[1],
+      page: p?p.current-1:0,
+      size: pageSize,
     }
     return new Promise((resolve, reject)=>{
       axios.get('/tb-gongyongfang/get/all', {
         params: filter,
       })
       .then(rs=>{
-        // 将后台传来数据转换成如下格式
-        /*[{
-          id: i,
-          dept: i,
-          location: i,
-          usingNature: i,
-          user: i,
-          fillInTime: i,
-          status: i,
-          auditTime: i,
-        }]*/
-        let data = rs.data.map(item=>MapB2F(item))
+        let data = {
+          tableList:rs.data.map(item=>MapB2F(item)),
+          total: rs.headers['x-total-count'],
+        }
         resolve(data)
       })
       .catch(err=>{
@@ -640,7 +673,6 @@ const PHList = {
   // 删除公用房记录
   deletePH(indexList, leixing){
     return new Promise((resolve, reject)=>{
-      // TODO delete拼写错误
       axios.delete('/tb-gongyongfang/delete', {
         params: {ids: `[${indexList.toString()}]`, leixing}
       })
@@ -661,22 +693,38 @@ const basicInfoManagement = {
 
   // 搜索公用房
   // 楼宇名称: buildingName 楼层:floor 房间号: roomNum
-  filterPH(filter){
+  filterPH(filter, p){
     return new Promise((resolve, reject)=>{
       axios.get('/tb-gongyongfang-jibenxinxi/get/all', {
-        params: MapF2B(filter),
+        params: {
+          ...MapF2B(filter),
+          page: p?p.current-1:0,
+          size: pageSize,
+        }
       })
       .then(rs=>{
         // 将后台传来数据转换成如下格式
-        /*[{
-          id: i,
-          location: i,
-          area: i,
-          setUpTime: i,
-          maintenancePeople: i,
-        }]*/
-        let data = rs.data.map(item=>MapB2F(item))
+        let data = {
+          tableList:rs.data.map(item=>MapB2F(item)),
+          total: rs.headers['x-total-count'],
+        }
         resolve(data)
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+  },
+  // 删除公用房记录
+  deletePHBasic(indexList){
+    return new Promise((resolve, reject)=>{
+      axios.delete('/tb-gongyongfang-jibenxinxi/delete', {
+        params: {ids: `[${indexList.toString()}]`}
+      })
+      .then(rs=>{
+        // 不需要传参数, 这里要确保是删除成功
+        resolve()
       })
       .catch(err=>{
         reject(err)
@@ -688,18 +736,23 @@ const basicInfoManagement = {
 
 const myPH = {
   // 我的公用房
-  myPHSearch(filter){
+  myPHSearch(filter, p){
     filter = {
       ...MapF2B(filter),
       leixing: filter.usingNature&&filter.usingNature[0],
       shiyongxingzhi: filter.usingNature&&filter.usingNature[1],
+      page: p?p.current-1:0,
+      size: pageSize,
     }
     return new Promise((resolve, reject)=>{
       axios.get('/tb-gongyongfang/get/my', {
         params: filter,
       })
       .then(rs=>{
-        let data = rs.data.map(item=>MapB2F(item))
+        let data = {
+          tableList:rs.data.map(item=>MapB2F(item)),
+          total: rs.headers['x-total-count'],
+        }
         resolve(data)
       })
       .catch(err=>{
@@ -710,7 +763,6 @@ const myPH = {
   },
   // 传入用户的id
   getPersonnelInfo(id){
-    // TODO 确认我的公用房用户详细信息的接口
     return new Promise((resolve, reject)=>{
       axios.get('/tb-shiyongzhe/get/gonghao',{
         params: {gonghao: id},

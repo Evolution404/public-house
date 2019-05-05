@@ -30,10 +30,6 @@ class AcademyHouseTable extends Component{
   render(){
     const columns = [
       {
-        title: '序号',
-        dataIndex: 'id',
-      },
-      {
         title: '部门',
         dataIndex: 'bumen',
       },
@@ -100,10 +96,6 @@ class AcademyHouseTable extends Component{
 class PartyHouseTable extends Component{
   render(){
     const columns = [
-      {
-        title: '序号',
-        dataIndex: 'id'
-      },
       {
         title: '部门名称',
         dataIndex: 'bumen'
@@ -182,7 +174,6 @@ class OverallAccount extends Component{
       }
       this.setState({tip: '加载核算信息中...'})
       let [geterr, data] = await wrapper(API.getAccountingData(year))
-      console.log(data)
       if(geterr){
         this.setState({loading: false, year: '',
                       DeptContrast1: [], DeptContrast2: {}, DeptContrast3: [], CollegeContrast4: {}})
@@ -213,7 +204,6 @@ class OverallAccount extends Component{
       })
       this.setState({loading: true,tip: '加载核算信息中...'})
       let [geterr, data] = await wrapper(API.getAccountingData(year))
-      console.log(data)
       if(geterr){
         this.setState({loading: false, year: '',
                       DeptContrast1: [], DeptContrast2: {}, DeptContrast3: [], CollegeContrast4: {}})
@@ -264,7 +254,7 @@ class OverallAccount extends Component{
       width: 300,
     }
     const { getFieldDecorator } = this.props.form
-    return <MainContainer name="核算结果">
+    return <MainContainer name="总体核算">
       <Form>
         <Row>
           <Col span={4}>
@@ -276,8 +266,8 @@ class OverallAccount extends Component{
               )}
             </Item>
           </Col>
-          <Col style={{marginTop: 5}} onClick={this.search} offset={1} span={2}><Button type="primary">查询</Button></Col>
-          <Col style={{marginTop: 5}} onClick={this.account} span={2}><Button type="primary">核算</Button></Col>
+          <Col style={{marginTop: 5}} onClick={this.search} offset={1} span={2}><Button type="primary">查询结果</Button></Col>
+          <Col style={{marginTop: 5}} onClick={this.account} span={2}><Button type="primary">总体核算</Button></Col>
         </Row>
       </Form>
       <Spin spinning={this.state.loading} tip={this.state.tip}>

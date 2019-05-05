@@ -23,9 +23,19 @@ function Title(){
 class MainForm extends Component{
   state = {
     building: '',
+    areaConfig: [],
   }
   reset = ()=>{
     this.props.form.resetFields()
+  }
+  areaConfigChange = (e)=>{
+    if(e.length < 2){
+      this.setState({areaConfig: e})
+      return e
+    }
+    let newValue = e.filter(key => !this.state.areaConfig.includes(key))
+    this.setState({areaConfig: newValue})
+    return newValue
   }
   buildingChange = building=>{
     this.setState({building})
@@ -91,7 +101,9 @@ class MainForm extends Component{
           </Col>
           <Col span={10}>
             <Item labelCol={{span:3}} wrapperCol={{span:20}}>
-              {getFieldDecorator('areaConfig', )(
+              {getFieldDecorator('areaConfig', {
+                getValueFromEvent: this.areaConfigChange
+              })(
                 <CheckboxGroup options={checkboxOption}/>
               )}
             </Item>

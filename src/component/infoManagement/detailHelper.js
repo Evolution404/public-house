@@ -38,10 +38,6 @@ class HistoryInfo extends Component{
   render(){
     const columns = [
       {
-        title: '序号',
-        dataIndex: 'id',
-      },
-      {
         title: '房屋',
         dataIndex: 'house',
       },

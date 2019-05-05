@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import API from '../../api'
-import {Select, message} from 'antd'
+import {Select, message, Input} from 'antd'
 const Option = Select.Option
 
 // 传入options,列表类型
@@ -133,7 +133,7 @@ class FloorSelect extends Component{
       this.getFloors()
   }
   getFloors(){
-    this.setState({loading: true})
+    /*this.setState({loading: true})
     API.getBuildingFloors(this.props.building)
     .then(rs=>{
       this.setState({floors: rs})
@@ -143,7 +143,7 @@ class FloorSelect extends Component{
     })
     .finally(()=>{
       this.setState({loading: false})
-    })
+    })*/
   }
   componentWillReceiveProps(nextProps){
     if(nextProps.building!==this.props.building){
@@ -159,7 +159,8 @@ class FloorSelect extends Component{
     this.props.onChange(value)
   }
   render(){
-    let options = []
+    return <Input {...this.props}></Input>
+    /*let options = []
     for(let i=0;i< this.state.floors;i++){
       options.push(
         <Option key={i} value={i+1}>{i+1}</Option>
@@ -176,7 +177,7 @@ class FloorSelect extends Component{
           options
         }
       </Select>
-    )
+    )*/
   }
 }
 class YearSelect extends Component{
@@ -338,6 +339,9 @@ class RoleSelect extends Component{
   }
   componentDidMount(){
     this.getRoles()
+  }
+  componentWillReceiveProps(nextProps){
+    this.setState({value: nextProps.value})
   }
   render(){
     let roles = this.state.roles

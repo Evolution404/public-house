@@ -17,6 +17,8 @@ class BusinessPerformance extends Component{
     hasSearched: false,
     isPrinting: false,
     tableList: [],
+    tableLoading: false,
+    current: 0,
     graphData: {},
     totalArea: 0,
     totalRent: 0,
@@ -25,7 +27,7 @@ class BusinessPerformance extends Component{
   search = ()=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        this.setState({dept: values.dept, loading: true, hasSearched: true})
+        this.setState({dept: values.dept, loading: true, hasSearched: true, filter: values, current: 1})
         API.searchBusinessPerformance(values)
         .then(rs=>{
           this.setState(rs)
@@ -37,6 +39,20 @@ class BusinessPerformance extends Component{
         console.log('Received values of form: ', values);
       }
     })
+  }
+  tableChange = (p)=>{
+    this.setState({tableLoading: true, page:p, current: p.current})
+    API.searchBusinessPerformance(this.state.filter, p)
+    .then(rs=>{
+      this.setState({
+        tableList: rs.tableList,
+      })
+    })
+    .catch(err=>{
+      console.log(err)
+      message.error('加载失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
   }
   render(){
     let columns = [
@@ -61,7 +77,7 @@ class BusinessPerformance extends Component{
         sorter: (a, b) => a.fangjianhao - b.fangjianhao,
       },
       {
-        title: '使用面积',
+        title: '使用面积(㎡)',
         dataIndex: 'shiyongmianji',
         sorter: (a, b) => a.shiyongmianji - b.shiyongmianji,
       },
@@ -71,12 +87,12 @@ class BusinessPerformance extends Component{
         sorter: (a, b) => a.shiyongzhe - b.shiyongzhe,
       },
       {
-        title: '租金单价',
+        title: '租金单价(元)',
         dataIndex: 'zujindanjia',
         sorter: (a, b) => a.zujindanjia - b.zujindanjia,
       },
       {
-        title: '年租金',
+        title: '年租金(元)',
         dataIndex: 'nianzujin',
         sorter: (a, b) => a.nianzujin - b.nianzujin,
       },
@@ -86,13 +102,13 @@ class BusinessPerformance extends Component{
         sorter: (a, b) => a.zujinleixing.localeCompare(b.zujinleixing),
       },
       {
-        title: '米均效益',
+        title: '米均效益(元/㎡)',
         dataIndex: 'mijunxiaoyi',
         sorter: (a, b) => a.mijunxiaoyi - b.mijunxiaoyi,
       },
     ]
     const { getFieldDecorator } = this.props.form
-    return <MainContainer name="效益管理">
+    return <MainContainer name="商业用房绩效">
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
           <Col offset={1} span={5}>
@@ -134,7 +150,11 @@ class BusinessPerformance extends Component{
                 <span>总租金: {this.state.totalRent}元</span>
                 <span>米均效益: {this.state.avgPerformance}元/平米</span>
               </div>
-              <Table columns={columns} data={this.state.tableList}></Table>
+              <Table
+                loading={this.state.tableLoading}
+                current={this.state.current}
+                onChange={this.tableChange}
+                columns={columns} data={this.state.tableList}></Table>
               {
                 (!this.state.loading&&!this.state.isPrinting)&&(
                   <Histogram id="graph"

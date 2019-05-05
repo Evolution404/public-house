@@ -1,4 +1,5 @@
 import axios from './apiConfig'
+import {pageSize} from '../component/common/table'
 
 const departmentAccount = {
 
@@ -127,6 +128,8 @@ const personalAccount = {
     return new Promise((resolve, reject)=>{
       axios.get('/tb-geren-yongfang-tongji/hesuan', {
         params: values,
+        // 两分钟
+        timeout: 2*60*1000,
       })
       .then(()=>{
         resolve()
@@ -136,15 +139,24 @@ const personalAccount = {
       })
     })
   },
-  searchPersonnelAccountingInfo(values){
+  searchPersonnelAccountingInfo(values, p){
     // 不需要工号
     delete values.gonghao
+    values = {
+      ...values,
+      page: p?p.current-1:0,
+      size: pageSize,
+    }
     return new Promise((resolve, reject)=>{
       axios.get('/tb-geren-yongfang-tongji/get/all', {
         params: values,
       })
       .then(rs=>{
-        resolve(rs.data)
+        let data = {
+          tableList:rs.data,
+          total: rs.headers['x-total-count'],
+        }
+        resolve(data)
       })
       .catch(err=>{
         reject(err)
