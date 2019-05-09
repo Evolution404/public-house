@@ -3,10 +3,11 @@ import {Empty,Input, Button,Form, Row, Col, message, Modal, Select, InputNumber,
 import {SButton} from '../common/button'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
-import Table, {TableUtil}from '../common/table'
+import Table, {sorterParse}from '../common/table'
 import { YearSelect } from '../common/select'
 import API from '../../api'
 import moban from '../mobaninfo'
+import {read, write} from '../stateHelper'
 const Item = Form.Item
 const confirm = Modal.confirm;
 const Option = Select.Option
@@ -30,7 +31,6 @@ class Search extends Component{
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
         self.props.onSearch(values)
       }
     })
@@ -43,6 +43,7 @@ class Search extends Component{
           <Col span={7}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门性质">
               {getFieldDecorator('type',{
+                initialValue: this.props.type,
                 rules:[{required:true, message:'请选择部门性质'}]})(
                 <Select placeholder="请选择部门性质">
                   <Option value="xy">学院</Option>
@@ -53,7 +54,9 @@ class Search extends Component{
           </Col>
           <Col span={7}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
-              {getFieldDecorator('dept',)(
+              {getFieldDecorator('dept',{
+                initialValue: this.props.dept,
+              })(
                 <Input/>
               )}
             </Item>
@@ -76,7 +79,9 @@ class ButtonGroup extends Component{
       <Row style={{margin: '20px 0'}}>
         <Col span={13}>
           <Col offset={1} span={4}><Button block onClick={this.props.onAdd} type="primary">+新增</Button></Col>
-          <Col offset={1} span={4}><Button block onClick={this.props.onDelete.bind(this, -1)} type="primary">X删除</Button></Col>
+          <Col offset={1} span={4}><Button block
+          disabled={!this.props.selected||this.props.selected.length===0}
+          onClick={this.props.onDelete.bind(this, -1)} type="primary">X删除</Button></Col>
           <Col offset={1} span={4}><Button block onClick={this.props.onImport} type="primary">从文件导入</Button></Col>
         </Col>
       </Row>
@@ -93,40 +98,67 @@ class DisplayTable extends Component{
         {
           title: '年份',
           dataIndex: 'year',
+          sorter: true,
         },
         {
           title: '部门',
           dataIndex: 'dept',
+          sorter: true,
         },
         {
           title: '副校级(正局级)',
           dataIndex: 'zj',
+          sorter: true,
         },
         {
           title: '副校级(副局级)',
           dataIndex: 'fj',
+          sorter: true,
         },
         {
           title: '正处级',
           dataIndex: 'zc',
+          sorter: true,
         },
         {
           title: '副处级',
           dataIndex: 'fc',
+          sorter: true,
         },
-        /*{
-          title: '处级以下',
-          dataIndex: 'uc',
-        },*/
-        /*{
-          title: '备注',
-          dataIndex: 'note',
-        },*/
       ]
     }else if(type==='xy'){
-      columns = TableUtil.mapColumns([
-        '年份', '部门', '本科生', '硕士', '博士', '博士后'
-      ])
+      columns = [
+        {
+          title: '年份',
+          dataIndex: 'year',
+          sorter: true,
+        },
+        {
+          title: '部门',
+          dataIndex: 'dept',
+          sorter: true,
+        },
+        {
+          title: '本科生',
+          dataIndex: 'undergraduate',
+          sorter: true,
+        },
+        {
+          title: '硕士',
+          dataIndex: 'masterDegree',
+          sorter: true,
+        },
+        {
+          title: '博士',
+          dataIndex: 'doctor',
+          sorter: true,
+        },
+        {
+          title: '博士后',
+          dataIndex: 'postdoctoral',
+          sorter: true,
+        },
+      ]
     }
     columns.push({
       title: '操作',
@@ -452,7 +484,6 @@ class UpdateModal extends Component {
       if (err) {
         return
       }
-      console.log('Received values of form: ', values)
       let newData = {
         type: this.props.type,
         ...this.props.data,
@@ -785,7 +816,6 @@ class AddModal extends Component {
       if (err) {
         return
       }
-      console.log('Received values of form: ', values)
       API.addDept(values)
       .then(()=>{
         message.success('添加成功')
@@ -851,9 +881,8 @@ class Import extends Component{
       this.setState({
         uploading: false,
       });
-      message.error('上传失败');
-      if(err.response){
-        message.error(err.response.data.title)
+      if(!err.response){
+        message.error('上传失败');
       }
     })
   }
@@ -979,6 +1008,12 @@ class DeptManagement extends Component{
       current: 0,
     }
   }
+  componentWillMount(){
+    read(this)
+  }
+  componentWillUnmount(){
+    write(this)
+  }
   search = ({dept, type})=>{
     if(!type) // 保证type有值
       return
@@ -1059,9 +1094,9 @@ class DeptManagement extends Component{
   openImport = ()=>{
     this.setState({importmodal: {visible: true}})
   }
-  tableChange = (p)=>{
+  tableChange = (p,s)=>{
     this.setState({tableLoading: true, page: p, current: p.current})
-    API.searchDept({dept:this.state.dept, type: this.state.type}, p)
+    API.searchDept(sorterParse({dept:this.state.dept, type: this.state.type},s),p)
     .then(rs=>{
       this.setState({
         tableList: rs,
@@ -1091,10 +1126,12 @@ class DeptManagement extends Component{
       update: this.update,
     }
     return <MainContainer name="部门管理">
-      部门管理
-      <WrappedSearch onSearch={this.search}/>
+      <WrappedSearch type={this.state.type} dept={this.state.dept}
+        onSearch={this.search}/>
       <Split/>
-      <ButtonGroup onAdd={this.add} onDelete={this.delete} onImport={this.openImport}/>
+      <ButtonGroup onAdd={this.add}
+        selected={this.state.selected}
+        onDelete={this.delete} onImport={this.openImport}/>
       <Row>
         <Col span={22}>
           {

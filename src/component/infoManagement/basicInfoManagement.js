@@ -10,8 +10,9 @@ import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import {LButton, SButton} from '../common/button'
 import Split from '../common/split'
-import Table from '../common/table'
+import Table,{sorterParse}from '../common/table'
 import {BuildingSelect, FloorSelect} from '../common/select'
+import {read, write} from '../stateHelper'
 const confirm = Modal.confirm
 const Item = Form.Item
 
@@ -20,13 +21,12 @@ class Search extends Component{
   state = {
     building: '',
   }
-  search = ()=>{
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        this.props.onSearch(values)
-      }
-    })
+ search = ()=>{
+   this.props.form.validateFields((err, values) => {
+     if (!err) {
+       this.props.onSearch(values)
+     }
+   })
   }
   buildingChange = building=>{
     if(building!==this.state.building)
@@ -36,11 +36,12 @@ class Search extends Component{
   render(){
     const { getFieldDecorator } = this.props.form
     return (
-      <Form labelCol={{span:10}} wrapperCol={{span:14}}>
+      <Form labelCol={{span:10}} wrapperCol={{span:14}} style={{marginTop: 50}}>
         <Row>
           <Col span={6}>
             <Item label="楼宇名称">
               {getFieldDecorator('buildingName',{
+                initialValue: this.props.initialValue.buildingName,
                 getValueFromEvent: this.buildingChange,
               })(
                 <BuildingSelect></BuildingSelect>
@@ -49,7 +50,9 @@ class Search extends Component{
           </Col>
           <Col span={6}>
             <Item label="楼层">
-              {getFieldDecorator('floor',)(
+              {getFieldDecorator('floor',{
+                initialValue: this.props.initialValue.floor,
+              })(
                 <FloorSelect
                   building={this.state.building}></FloorSelect>
               )}
@@ -57,7 +60,9 @@ class Search extends Component{
           </Col>
           <Col span={6}>
             <Item label="房间号">
-              {getFieldDecorator('roomNum',)(
+              {getFieldDecorator('roomNum',{
+                initialValue: this.props.initialValue.roomNum,
+              })(
                 <Input></Input>
               )}
             </Item>
@@ -81,7 +86,8 @@ class ButtonGroup extends Component{
               <LButton text='+新增公用房'/>
             </Link>
           </div>
-          <div style={{padding: '10px', display: 'inline-block'}}><LButton onClick={this.props.delete.bind(this, -1)} text='X删除'/></div>
+          <div style={{padding: '10px', display: 'inline-block'}}><LButton onClick={this.props.delete.bind(this, -1)}
+          disable={!this.props.selected||this.props.selected.length===0} text='X删除'/></div>
           <div style={{padding: '10px', display: 'inline-block'}}><LButton onClick={this.props.refresh} text='刷新'/></div>
           <div style={{padding: '10px', display: 'inline-block'}}>
             <Link to={Map.PHImport.path}>
@@ -98,18 +104,22 @@ class DisplayTable extends Component{
       {
         title: '楼宇',
         dataIndex: 'building',
+        sorter: true,
       },
       {
         title: '楼层',
         dataIndex: 'floor',
+        sorter: true,
       },
       {
         title: '房间号',
         dataIndex: 'roomNum',
+        sorter: true,
       },
       {
         title: '使用面积(㎡)',
         dataIndex: 'useArea',
+        sorter: true,
       },
       {
         title: '备注',
@@ -118,6 +128,7 @@ class DisplayTable extends Component{
     ]
     columns.push({
       title: '操作',
+      width: 300,
       render: (text, record, index)=>(
         <div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
@@ -230,13 +241,12 @@ class UploadModal extends Component {
   upload = ()=>{
     const form = this.props.form
     form.validateFields((err, values) => {
-      if (err) {
-        return
-      }
-      console.log('Received values of form: ', values)
-    })
-  }
-  render() {
+     if (err) {
+       return
+     }
+   })
+ }
+ render() {
     return (
       <Modal
         title="上传平面图"
@@ -272,6 +282,12 @@ class PHManagement extends Component{
     },
     current: 0,
   }
+  componentWillMount(){
+    read(this)
+  }
+  componentWillUnmount(){
+    write(this)
+  }
   search = (values)=>{
     this.setState({tableLoading: true, filter: values, current: 1})
     API.filterPH(values)
@@ -285,19 +301,19 @@ class PHManagement extends Component{
       this.setState({tableLoading: false})
     })
   }
-  tableChange = (p)=>{
+  tableChange = (p, s)=>{
     this.setState({tableLoading: true, page:p, current: p.current})
-    API.filterPH(this.state.filter, p)
+    API.filterPH(sorterParse(this.state.filter, s), p)
     .then(rs=>{
       this.setState({
         tableList: rs,
-      })
-    })
-    .catch(err=>{
-      console.log(err)
-      message.error('加载失败')
-    })
-    .finally(()=>this.setState({tableLoading: false}))
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('加载失败')
+   })
+   .finally(()=>this.setState({tableLoading: false}))
   }
   // 删除条目处理函数
   delete = (index)=>{
@@ -316,13 +332,13 @@ class PHManagement extends Component{
         return API.deletePHBasic(index)
         .then(()=>{
           message.success('删除成功')
-          self.refresh()
-        })
-        .catch(err=>{
-          console.log(err)
-          message.error('删除失败')
-          if(err.response)
-            message.error(err.response.data.title)
+         self.refresh()
+       })
+       .catch(err=>{
+         console.log(err)
+         message.error('删除失败')
+         if(err.response)
+           message.error(err.response.data.title)
         })
       },
       onCancel() {},
@@ -335,13 +351,13 @@ class PHManagement extends Component{
   }
   closeUploadModal = ()=>{
     this.setState({uploadModal: {visible: false, index:0}})
-  }
-  // 修改条目处理函数
-  change = (index)=>{
-
-  }
-  selectedChange = (newSelected)=>{
-    this.setState({
+ }
+ // 修改条目处理函数
+ change = (index)=>{
+   console.log('change')
+ }
+ selectedChange = (newSelected)=>{
+   this.setState({
       selected: newSelected
     })
   }
@@ -370,10 +386,10 @@ class PHManagement extends Component{
     let groupHelper = {
       delete: this.delete,
       refresh: this.refresh,
+      selected: this.state.selected,
     }
     return <MainContainer name="信息管理">
-      基本信息
-      <Search onSearch={this.search}/>
+      <Search initialValue={this.state.filter} onSearch={this.search}/>
       <Split/>
       <ButtonGroup {...groupHelper}/>
       <DisplayTable loading={this.state.tableLoading}

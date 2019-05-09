@@ -24,7 +24,7 @@ class Dept extends Component{
   render(){
     const { getFieldDecorator } = this.props.form
     return (
-      <Item labelCol={{span:3}} wrapperCol={{span:4}} label="所属部门">
+      <Item labelCol={{span:3}} wrapperCol={{span:10}} label="所属部门">
         {getFieldDecorator('dept',{
           initialValue: this.props.initialValue,
           rules: [{required: true, message:"请选择部门"}]

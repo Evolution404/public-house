@@ -1,6 +1,5 @@
 import axios from './apiConfig'
-import {MapB2F} from './nameMapConfig'
-//import {MapB2F, MapF2B} from './nameMapConfig'
+import {MapB2F, MapF2B} from './nameMapConfig'
 
 const buildingQuery = {
   buildingSearch(buildingName){
@@ -13,13 +12,27 @@ const buildingQuery = {
       .then(rs=>{
         let data = MapB2F(rs.data)
         resolve(data)
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
+  getAllRoomNum(values){
+    return new Promise((resolve,reject)=>{
+      axios.get('/tb-gongyongfang/get-all-fangjianhao', {
+        params: MapF2B(values),
       })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  }
+      .then(rs=>{
+        resolve(rs.data)
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ }
 
 }
 
@@ -37,13 +50,13 @@ const conditionQuery = {
       .then(rs=>{
         let data = rs.data.map(item=>MapB2F(item))
         resolve(data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  }
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ }
 }
 
 export default {

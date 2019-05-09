@@ -32,3 +32,15 @@ input{
   text-decoration:none;
 }
 
+/*修复ie在级联选项框中选中后不显示选择值的问题*/
+.ant-cascader-picker-label{
+  z-index:1;
+}
+.ant-btn-primary{
+  background-color: #5a9dd0;
+  border-color: #5a9dd0;
+}
+.ant-btn-primary:hover, .ant-btn-primary:focus{
+  background-color: #7cb0d8;
+  border-color: #7cb0d8;
+}

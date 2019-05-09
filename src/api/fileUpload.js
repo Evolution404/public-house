@@ -12,13 +12,13 @@ let uploadHelper = (data, url)=>{
     })
     .then(rs=>{
         // 上传成功执行
-        resolve()
-    })
-    .catch(err=>{
-      console.log(err)
-      reject(err)
-    })
-  })
+       resolve()
+   })
+   .catch(err=>{
+     console.log(err)
+     reject(err)
+   })
+ })
 }
 
 const FileUploadAPI = {

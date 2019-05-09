@@ -224,11 +224,12 @@ const PHTransform = {
        })
     })
   },
-  transformAuditSearch(type, p){
+  transformAuditSearch(value, p){
     return new Promise((resolve, reject)=>{
       axios.get('/tb-gongyongfang/gaizao-shenpi-chaxun', {
         params: {
-          leixing: type,
+          ...MapF2B(value),
+          leixing: value.type,
           page: p?p.current-1:0,
           size: pageSize,
         }
@@ -274,6 +275,7 @@ const PHAudit = {
       ...filter,
       leixing,
       shiyongxingzhi,
+      mark: 1,
       page: p?p.current-1:0,
       size: pageSize,
     }
@@ -315,10 +317,11 @@ const PHAuditDetail = {
     let data = new FormData()
     data.append('leixing', index.split('-')[0])
     data.append('id', index.split('-')[1])
-    data.append('shenpizhuangtai', '已批准')
-    data.append('yuanyin', opinion)
+    let isTransform = index.split('-').length>2
+    data.append('shenpizhuangtai', isTransform?1:'已批准')
+    data.append('yuanyin', opinion||"")
     return new Promise((resolve, reject)=>{
-      axios.post('/tb-gongyongfang/change-approval-status', data)
+      axios.post(isTransform?'/tb-gongyongfang/gaizao-shenpi':'/tb-gongyongfang/change-approval-status', data)
       .then(rs=>{
         // 成功后调用
         resolve()
@@ -334,10 +337,11 @@ const PHAuditDetail = {
     let data = new FormData()
     data.append('leixing', index.split('-')[0])
     data.append('id', index.split('-')[1])
-    data.append('shenpizhuangtai', '已驳回')
-    data.append('yuanyin', opinion)
+    let isTransform = index.split('-').length>2
+    data.append('shenpizhuangtai', isTransform?0:'已驳回')
+    data.append('yuanyin', opinion||"")
     return new Promise((resolve, reject)=>{
-      axios.post('/tb-gongyongfang/change-approval-status', data)
+      axios.post(isTransform?'/tb-gongyongfang/gaizao-shenpi':'/tb-gongyongfang/change-approval-status', data)
       .then(rs=>{
         // 成功后调用
         resolve()
@@ -396,6 +400,18 @@ const PHChange = {
       })
     })
 
+  },
+  deleteApprovalDocument(id){
+    return new Promise((resolve, reject)=>{
+      axios.delete('/tb-gongyongfang-pizhunwenshus/delete?id='+id)
+      .then(rs=>{
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
   },
   // 公用房变更的搜索接口
   changeFilterPH(filter){
@@ -577,6 +593,20 @@ const PHChangeBrief = {
         console.log(err)
       })
     })
+  },
+  // 删除图纸
+  deleteDrawings(id){
+    return new Promise((resolve, reject)=>{
+      axios.delete('/tb-gongyongfang-jibenxinxi-tupian/delete?id='+id)
+      .then(rs=>{
+        resolve()
+      })
+      .catch(err=>{
+        reject(err)
+        console.log(err)
+      })
+    })
+
   },
   // 公用房变更的提交接口
   briefChangeSubmitPH(values){

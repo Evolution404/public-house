@@ -4,7 +4,7 @@ import { Divider } from 'antd'
 class Split extends Component{
   render(){
     return (
-      <Divider>{this.props.text}</Divider>
+      <Divider style={{marginTop: '10px'}}>{this.props.text}</Divider>
     )
   }
 }

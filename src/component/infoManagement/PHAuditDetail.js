@@ -5,6 +5,7 @@ import API from '../../api'
 import {Input, Button, Row, Col, message} from 'antd'
 import DetailHelper from './detailHelper'
 import {parseType} from '../common/usingNature'
+import Back from '../common/back'
 const { TextArea } = Input
 
 
@@ -50,21 +51,31 @@ class PHAuditDetail extends Component{
   }
   render(){
     return <MainContainer name="公用房审批">
-      基本信息/公用房审批
-      <h2 style={{textAlign: 'center'}}>公用房审批</h2>
+      <Row>
+        <Col span={2}>
+          <Back></Back>
+        </Col>
+        <Col span={10}>
+          <h2 style={{textAlign: 'right'}}>公用房审批</h2>
+        </Col>
+      </Row>
       <Split></Split>
-      <p>审核意见</p>
-      <div style={{width: '60%'}}>
-        <Row>
-          <Col span={18}>
-            <TextArea onChange={this.opinionChange} rows={4}></TextArea>
-          </Col>
-          <Col offset={1} span={3}>
-            <Button onClick={this.approval} type='primary' block style={{margin: '10px 0'}}>批准</Button>
-            <Button onClick={this.rejected} style={{backgroundColor: 'red', color: 'white'}} block>驳回</Button>
-          </Col>
-        </Row>
-      </div>
+      <Row>
+        <Col style={{marginLeft: '10%'}}>
+          <p>审核意见</p>
+          <div style={{width: '60%'}}>
+            <Row>
+              <Col span={18}>
+                <TextArea onChange={this.opinionChange} rows={4}></TextArea>
+              </Col>
+              <Col offset={1} span={3}>
+                <Button onClick={this.approval} type='primary' block style={{margin: '10px 0'}}>批准</Button>
+                <Button onClick={this.rejected} style={{backgroundColor: 'red', color: 'white'}} block>驳回</Button>
+              </Col>
+            </Row>
+          </div>
+        </Col>
+      </Row>
       {
       this.state.hasLoaded&&(
         <DetailHelper

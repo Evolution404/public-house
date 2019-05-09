@@ -1,4 +1,3 @@
-// 引用假数据, 对接后删除
 import AccountingManagement from './api/accountingManagement'
 import ApartmentManagement from './api/apartmentManagement'
 import DynamicMonitoring from './api/dynamicMonitoring'

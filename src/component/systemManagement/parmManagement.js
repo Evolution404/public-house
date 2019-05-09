@@ -16,9 +16,7 @@ class MainForm extends Component{
       this.setState({paramsList: rs})      
     })
     .catch(err=>{
-      if(err.response)
-        message.error(err.response.data.title)
-      else
+      if(!err.response)
         message.error("加载参数信息失败")
     })
     .finally(()=>this.setState({loading: false}))
@@ -31,9 +29,7 @@ class MainForm extends Component{
         message.success('更新'+rs.canshumingcheng+'成功')
       })
       .catch(err=>{
-        if(err.response)
-          message.error(err.response.data.title)
-        else
+        if(!err.response)
           message.error("更新参数值失败")
       })
       .finally(()=>this.setState({loading: false}))

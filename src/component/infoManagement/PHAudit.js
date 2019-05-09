@@ -2,15 +2,16 @@ import React, {Component} from 'react'
 import {
   HashRouter as Router,
   Link
-} from "react-router-dom";
+} from "react-router-dom"
 import Map from '../../routerMap'
 import {Row, Col, Form, Select, Button, message} from 'antd'
 import MainContainer from '../common/mainContainer'
-import Table, {TableUtil} from '../common/table'
+import Table, {TableUtil, sorterParse} from '../common/table'
 import {SButton} from '../common/button'
 import UsingNature from '../common/usingNature'
 import {DeptSelect} from '../common/select'
 import API from '../../api'
+import {read, write} from '../stateHelper'
 const {Item} = Form
 const Option = Select.Option
 
@@ -18,20 +19,21 @@ class SearchForm extends Component{
   handleSubmit = (e) => {
     let self = this
     e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        self.props.onSearch(values)
-        console.log('Received values of form: ', values);
-      }
-    })
-  }
+   this.props.form.validateFields((err, values) => {
+     if (!err) {
+       self.props.onSearch(values)
+     }
+   })
+ }
   render(){
     const { getFieldDecorator } = this.props.form
     return (
-      <Form onSubmit={this.handleSubmit}><Row>
+      <Form onSubmit={this.handleSubmit} style={{marginTop: 30}}><Row>
           <Col span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
-              {getFieldDecorator('deptName',)(
+              {getFieldDecorator('deptName',{
+                initialValue: this.props.initialValue.deptName,
+              })(
                 <DeptSelect></DeptSelect>
               )}
             </Item>
@@ -39,6 +41,7 @@ class SearchForm extends Component{
           <Col span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="使用性质">
               {getFieldDecorator('usingNature',{
+                initialValue: this.props.initialValue.usingNature,
                 rules: [{required: true, message: '请选择使用性质'}]
               })(
                 <UsingNature></UsingNature>
@@ -47,7 +50,9 @@ class SearchForm extends Component{
           </Col>
           <Col span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="审批状态">
-              {getFieldDecorator('auditStatus',)(
+              {getFieldDecorator('auditStatus',{
+                initialValue: this.props.initialValue.auditStatus,
+              })(
                 <Select allowClear>
                   <Option value="">所有</Option>
                   <Option value="已批准">已批准</Option>
@@ -76,22 +81,27 @@ class DisplayTable extends Component{
       {
         title: '部门',
         dataIndex: 'dept',
+        sorter: true,
       },
       {
         title: '楼宇',
         dataIndex: 'building',
+        sorter: true,
       },
       {
         title: '楼层',
         dataIndex: 'floor',
+        sorter: true,
       },
       {
         title: '房间号',
         dataIndex: 'roomNum',
+        sorter: true,
       },
       {
         title: '审批状态',
         dataIndex: 'auditStatus',
+        sorter: true,
         render: (text)=>(
           TableUtil.mapColor(text)
         )
@@ -107,7 +117,7 @@ class DisplayTable extends Component{
         <Router>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
             <Link to={Map.PHAuditDetail.path.replace(':id', this.props.type+'-'+record.id)}>
-              <SButton text='开始审批'/>
+              <SButton disable={record.auditStatus!=='已上报'} text='开始审批'/>
             </Link>
           </div>
         </Router>
@@ -126,37 +136,45 @@ class PHAudit extends Component{
     current: 0,
     tableLoading: false,
   }
+  componentWillMount(){
+    read(this)
+  }
+  componentWillUnmount(){
+    write(this)
+  }
   // filter的内容是dept, usingNature, status
   search = (filter)=>{
     this.setState({type: filter.usingNature[0], filter, current: 1, tableLoading: true})
     API.auditFilterPH(filter)
     .then(rs=>{
       this.setState({tableList: rs})
-    })
-    .catch(e=>{
-      message.error('获取失败, 请重试')
-      console.log(e)
-    })
-    .finally(()=>{this.setState({tableLoading: false})})
-  }
+   })
+   .catch(e=>{
+     message.error('获取失败, 请重试')
+     console.log(e)
+   })
+   .finally(()=>{this.setState({tableLoading: false})})
+ }
   selectedChange = (newSelected)=>{
     this.setState({
       selected: newSelected
     })
-  }
-  tableChange = (p)=>{
-    this.setState({tableLoading: true, page:p, current: p.current})
-    API.auditFilterPH(this.state.filter, p)
-    .then(rs=>{
-      this.setState({
+ }
+ tableChange = (p, s)=>{
+   this.setState({tableLoading: true, page:p, current: p.current})
+   console.log(this.state.filter)
+   console.log(s)
+   API.auditFilterPH(sorterParse(this.state.filter, s), p)
+   .then(rs=>{
+     this.setState({
         tableList: rs,
-      })
-    })
-    .catch(err=>{
-      console.log(err)
-      message.error('加载失败')
-    })
-    .finally(()=>this.setState({tableLoading: false}))
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('加载失败')
+   })
+   .finally(()=>this.setState({tableLoading: false}))
   }
   selectedChange = (newSelected)=>{
     this.setState({
@@ -165,8 +183,9 @@ class PHAudit extends Component{
   }
   render(){
     return <MainContainer name="公用房审核">
-      基本信息/公用房审批
-      <WrappedSearchForm onSearch={this.search}/>
+      <WrappedSearchForm
+        initialValue={this.state.filter}
+        onSearch={this.search}/>
       <DisplayTable
         current={this.state.current}
         onChange={this.tableChange}

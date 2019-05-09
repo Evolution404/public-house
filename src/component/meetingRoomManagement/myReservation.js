@@ -3,11 +3,12 @@ import {Form, Row, Col, Select, Input, Button, message, Empty} from 'antd'
 import moment from 'moment'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
-import Table, {TableUtil} from '../common/table'
+import Table, {TableUtil,sorterParse} from '../common/table'
 import {SButton} from '../common/button'
 import {DeptSelect, BuildingSelect} from '../common/select'
 import API from '../../api'
 import ReservationModal from './reservationModal'
+import {read, write} from '../stateHelper'
 
 const Item = Form.Item
 const Option = Select.Option
@@ -24,19 +25,24 @@ class MyReservation extends Component{
       data:{},
     },
   }
+  componentWillMount(){
+    read(this)
+  }
+  componentWillUnmount(){
+    write(this)
+  }
   openReservationModal = record=>{
     this.setState({reservationModal:{visible: true, id:record.id, data:record}})
   }
   closeReservationModal = ()=>{
     this.setState({reservationModal:{visible: false, id: 0, data:{}}})
   }
-  search = type=>{
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        values = {
-          ...values,
-          type,
+ search = type=>{
+   this.props.form.validateFields((err, values) => {
+     if (!err) {
+       values = {
+         ...values,
+         type,
         }
         this.setState({tableLoading: true, isSearched: true, filter: values, current: 1})
         API.searchMyReservation(values)
@@ -52,19 +58,19 @@ class MyReservation extends Component{
       }
     })
   }
-  tableChange = (p)=>{
+  tableChange = (p,s)=>{
     this.setState({tableLoading: true, page:p, current: p.current})
-    API.searchMyReservation(this.state.filter, p)
+    API.searchMyReservation(sorterParse(this.state.filter,s), p)
     .then(rs=>{
       this.setState({
         tableList: rs,
-      })
-    })
-    .catch(err=>{
-      console.log(err)
-      message.error('加载失败')
-    })
-    .finally(()=>this.setState({tableLoading: false}))
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('加载失败')
+   })
+   .finally(()=>this.setState({tableLoading: false}))
   }
   refresh = ()=>{
     this.setState({tableLoading: true})
@@ -94,25 +100,31 @@ class MyReservation extends Component{
       {
         title: '房屋部门',
         dataIndex: 'dept',
+        sorter: true,
       },
       {
         title: '楼宇',
         dataIndex: 'building',
+        sorter: true,
       },
       {
         title: '楼层',
         dataIndex: 'floor',
+        sorter: true,
       },
       {
         title: '房间号',
         dataIndex: 'roomNum',
+        sorter: true,
       },
       {
         title: '联系电话',
+        sorter: true,
         dataIndex: 'phone',
       },
       {
         title: '开始时间',
+        sorter: true,
         dataIndex: 'startTime',
         render: text=>{
           return moment(text).format('YYYY-MM-DD HH:mm')
@@ -120,6 +132,7 @@ class MyReservation extends Component{
       },
       {
         title: '结束时间',
+        sorter: true,
         dataIndex: 'stopTime',
         render: text=>{
           return moment(text).format('YYYY-MM-DD HH:mm')
@@ -131,6 +144,7 @@ class MyReservation extends Component{
       },
       {
         title: '预约状态',
+        sorter: true,
         dataIndex: 'reservationStatus',
         render: text=>TableUtil.mapColor(text)
       },
@@ -158,28 +172,36 @@ class MyReservation extends Component{
         <Row>
           <Col span={6}>
             <Item label="部门">
-              {getFieldDecorator('dept',)(
+              {getFieldDecorator('dept',{
+                initialValue: this.state.filter.dept,
+              })(
                 <DeptSelect></DeptSelect>
               )}
             </Item>
           </Col>
           <Col span={5}>
             <Item label="楼宇">
-              {getFieldDecorator('building',)(
+              {getFieldDecorator('building',{
+                initialValue: this.state.filter.building,
+              })(
                 <BuildingSelect></BuildingSelect>
               )}
             </Item>
           </Col>
           <Col span={5}>
             <Item label="房间号">
-              {getFieldDecorator('roomNum',)(
+              {getFieldDecorator('roomNum',{
+                initialValue: this.state.filter.roomNum,
+              })(
                 <Input/>
               )}
             </Item>
           </Col>
           <Col span={5}>
             <Item label="预约状态">
-              {getFieldDecorator('reservationStatus',)(
+              {getFieldDecorator('reservationStatus',{
+                initialValue: this.state.filter.reservationStatus,
+              })(
                 <Select>
                   <Option value="">所有</Option>
                   <Option value="已审批">已审批</Option>

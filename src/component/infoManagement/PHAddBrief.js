@@ -5,7 +5,9 @@ import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Upload from '../common/upload'
 import {BuildingSelect, FloorSelect} from '../common/select'
+import {number} from '../common/pattern'
 import API from '../../api'
+import Back from '../common/back'
 const {Item} = Form
 const Option = Select.Option
 const CheckboxGroup = Checkbox.Group
@@ -14,7 +16,7 @@ function Title(){
   return (
     <Row>
       <Col>
-        <div style={{fontSize:'20px', textAlign:'center'}}>新增公用房</div>
+        <div style={{fontSize:'20px', textAlign:'right'}}>新增公用房</div>
       </Col>
     </Row>
   )
@@ -42,13 +44,12 @@ class MainForm extends Component{
     return building
   }
   handleSubmit = (e) => {
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        this.props.add(values)
+   e.preventDefault();
+   this.props.form.validateFields((err, values) => {
+     if (!err) {
+       this.props.add(values)
 
-      }
+     }
     })
   }
   render(){
@@ -94,7 +95,9 @@ class MainForm extends Component{
         <Row>
           <Col span={8}>
             <Item labelCol={{span:9}} wrapperCol={{span:12}} label="使用面积">
-              {getFieldDecorator('useArea', )(
+              {getFieldDecorator('useArea', {
+                rules: [{pattern: number, message: '请输入正确的数字'}]
+              })(
                 <Input />
               )}
             </Item>
@@ -151,9 +154,15 @@ class PHAddBrief extends Component{
   }
   render(){
     return <MainContainer name="基本信息管理">
-      基本信息/新增公用房
       <Spin spinning={this.state.loading}>
-      <Title/>
+      <Row>
+        <Col span={2}>
+          <Back></Back>
+        </Col>
+        <Col span={10}>
+          <Title/>
+        </Col>
+      </Row>
       <Split/>
         <Row>
           <Col offset={2} span={15}>

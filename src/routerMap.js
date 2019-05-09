@@ -122,7 +122,7 @@ const routerMap = {
   },
   PHAudit: {
     path:'/PHAudit',
-    name:'公用房审核',
+    name:'公用房变更审核',
     component: PHAudit
   },
   PHDetailInfo: {

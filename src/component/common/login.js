@@ -19,13 +19,12 @@ class Login extends Component {
     }
   }
   handleSubmit = (e) => {
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        this.handleRemember(values.remember, values)
-        API.loginCheck(values)    
-        .then(rs=>{
+   e.preventDefault();
+   this.props.form.validateFields((err, values) => {
+     if (!err) {
+       this.handleRemember(values.remember, values)
+       API.loginCheck(values)    
+       .then(rs=>{
           message.success('登录成功')
           this.props.login(rs)
         })

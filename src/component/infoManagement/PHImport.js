@@ -4,6 +4,7 @@ import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import moban from '../mobaninfo'
+import Back from '../common/back'
 
 class Import extends Component{
   state = {
@@ -16,7 +17,6 @@ class Import extends Component{
       if(err)return
       const { fileList } = this.state;
       const formData = new FormData();
-      debugger
       fileList.forEach((file) => {
         formData.append('file', file);
       });
@@ -105,8 +105,14 @@ class PHImport extends Component{
       templateLink: moban('jiben'),
     }
     return <MainContainer name="公用房管理">
-      基本信息/导入公用房信息
-      <h2 style={{textAlign:'center'}}>导入公用房信息</h2>
+      <Row>
+        <Col span={2}>
+          <Back></Back>
+        </Col>
+        <Col span={10}>
+          <h2 style={{textAlign: 'right'}}>导入公用房信息</h2>
+        </Col>
+      </Row>
       <Split></Split>
       <Row>
         <Col>

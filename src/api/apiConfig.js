@@ -1,4 +1,5 @@
 import axios from "axios"
+import {message} from 'antd'
 let host = 'http://140.249.19.181:8910'
 if(localStorage.getItem('host'))
   host = localStorage.getItem('host')
@@ -7,7 +8,7 @@ axios.defaults.withCredentials = true
 
 const http = axios.create({
     baseURL: domainName,
-    timeout: 5000,
+    timeout: 10000,
 })
 http.defaults.withCredentials = true
 http.interceptors.request.use(config=>{
@@ -25,8 +26,22 @@ http.interceptors.request.use(config=>{
 
   return config
 },err=>{
+  message.destroy()
   return Promise.reject(err)
 })
+
+http.interceptors.response.use(rs=>{
+  return rs
+  },
+  err=>{
+    message.destroy()
+    if(err&&err.response&&err.response.data&&err.response.data.title){
+      message.error(err.response.data.title)
+    }
+    return Promise.reject(err)
+  }
+)
+
 let wrapper = (promise) => {
    return promise.then(function(){
        return [null, ...arguments]

@@ -10,6 +10,7 @@ import {ScientificBuilding,
   BusinessBuilding,
   CollegePartyBuilding} from './commonFormItem'
 import API from '../../api'
+import Back from '../common/back'
 const {Item} = Form
 
 class Search extends Component{
@@ -18,13 +19,12 @@ class Search extends Component{
   }
   handleSubmit = (e) => {
     let self = this
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        self.props.onSearch(values)
-      }
-    })
+   e.preventDefault();
+   this.props.form.validateFields((err, values) => {
+     if (!err) {
+       self.props.onSearch(values)
+     }
+   })
   }
   buildingChange = building=>{
     if(building!==this.state.building)
@@ -117,6 +117,18 @@ class MainForm extends Component{
       })
     })
   }
+  removeApprovalDocument = (id)=>{
+    return new Promise((resolve, reject)=>{
+      API.deleteApprovalDocument(id)
+      .then(()=>{
+        resolve()
+      })
+      .catch(err=>{
+        reject()
+        message.error('删除图片失败')
+      })
+    })
+  }
   render(){
     const { getFieldDecorator } = this.props.form
     let info = this.props.info
@@ -153,7 +165,7 @@ class MainForm extends Component{
         </Item>
         <Item labelCol={{span:3}} wrapperCol={{span:12}} label="批准文书">
           {getFieldDecorator('approvalDocument', {})(
-            <Upload disableRemove fileList={info.approvalDocument}></Upload>
+            <Upload onRemove={this.removeApprovalDocument} fileList={info.approvalDocument}></Upload>
           )}
         </Item>
         <Row>
@@ -217,7 +229,10 @@ class PHChange extends Component{
       this.setState({formInfo: rs, id:rs.id, hasSearched: true})
     })
     .catch(err=>{
-      message.error('搜索失败')
+      if(err.response)
+        message.error(err.response.data.title)
+      else
+        message.error('搜索失败')
     })
     .finally(()=>{
       this.setState({loading: false})
@@ -228,8 +243,10 @@ class PHChange extends Component{
     return <MainContainer name="公用房变更">
       <Spin spinning={this.state.loading}>
         {
-          !this.state.isJump&&(
+          !this.state.isJump?(
             <WrappedSearch onSearch={this.search}/>
+          ):(
+            <Back></Back>
           )
         }
         <Split/>

@@ -5,6 +5,7 @@ import {
   HashRouter as Router,
   Route,
 } from "react-router-dom";
+import {stateClear} from './component/stateHelper'
 import Header from './component/common/header'
 import Navigation from './component/common/navigation'
 import RouterMap from './routerMap'
@@ -46,6 +47,7 @@ class App extends Component{
     localStorage.removeItem('navData')
     localStorage.removeItem('userData')
     localStorage.removeItem('mobaninfo')
+    stateClear()
     this.setState({isLogined: false})
   }
   login = (rs)=>{
@@ -92,12 +94,12 @@ class App extends Component{
             <Router>
           <Header getPersistentData={this.getPersistentData} clear={this.clearPersistenData}
             name={this.state.userData.userName}/>
-          <div style={{float: "left"}}>
+          <div style={{float: "left", width: '20%', maxWidth:280}}>
             <Navigation data={this.state.navData} style={{float: "left"}}/>
           </div>
           <div style={{float: "left",
-            margin: "25px",
-            width: '78%',
+            margin: "25px 2%",
+            width: '75%',
           }}>
               <div>
                 <Route exact path='/'

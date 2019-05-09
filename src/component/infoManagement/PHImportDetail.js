@@ -1,9 +1,11 @@
 import React, {Component} from 'react'
+import Map from '../../routerMap'
 import {Upload, Button, Icon, message, Row, Col, Form} from 'antd';
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import {UsingNatureBrief } from '../common/usingNature'
+import Back from '../common/back'
 import moban from '../mobaninfo'
 
 const Item = Form.Item
@@ -85,7 +87,7 @@ class Import extends Component{
         a= <a download href={moban('xueyuandangzhengjiguan')}>导入模板下载</a>
         break;
       default:
-        a= <a href="/">下载模板请先选择类型</a>
+        a= <a href={'#'+Map.PHImportDetail.path}>下载模板请先选择类型</a>
     }
     return (
       <div style={{margin: '20px 0'}}>
@@ -139,8 +141,14 @@ class PHImport extends Component{
       templateLink: '',
     }
     return <MainContainer name="公用房管理">
-      基本信息/导入公用房信息
-      <h2 style={{textAlign:'center'}}>导入公用房信息</h2>
+      <Row>
+        <Col span={2}>
+          <Back></Back>
+        </Col>
+        <Col span={10}>
+          <h2 style={{textAlign:'right'}}>导入公用房信息</h2>
+        </Col>
+      </Row>
       <Split></Split>
       <Row>
         <Col>

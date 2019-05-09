@@ -117,7 +117,6 @@ class DataImport extends Component{
       },
     ]
     return <MainContainer name="数据导入">
-      基本信息/导入公用房信息
       <h2 style={{textAlign:'center'}}>导入公用房信息</h2>
       <Split/>
       {infoList.map((item, index)=>(

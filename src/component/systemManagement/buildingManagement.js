@@ -3,9 +3,10 @@ import MainContainer from '../common/mainContainer'
 import {Input, Empty, Button,Form, Row, Col, message, Modal, InputNumber, Upload, Icon, Select} from 'antd'
 import {SButton} from '../common/button'
 import Split from '../common/split'
-import Table, {TableUtil}from '../common/table'
+import Table, {sorterParse}from '../common/table'
 import API from '../../api'
 import moban from '../mobaninfo'
+import {read, write} from '../stateHelper'
 const Option = Select.Option
 const Item = Form.Item
 const confirm = Modal.confirm;
@@ -13,13 +14,12 @@ const confirm = Modal.confirm;
 class Search extends Component{
   handleSubmit = (e) => {
     let self = this
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        self.props.onSearch(values)
-      }
-    })
+   e.preventDefault();
+   this.props.form.validateFields((err, values) => {
+     if (!err) {
+       self.props.onSearch(values)
+     }
+   })
   }
   render(){
     const { getFieldDecorator } = this.props.form
@@ -28,7 +28,9 @@ class Search extends Component{
         <Row>
           <Col span={7}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="名称">
-              {getFieldDecorator('name',)(
+              {getFieldDecorator('name',{
+                initialValue: this.props.name,
+              })(
                 <Input/>
               )}
             </Item>
@@ -51,7 +53,9 @@ class ButtonGroup extends Component{
       <Row style={{margin: '20px 0'}}>
         <Col span={13}>
           <Col offset={1} span={4}><Button block onClick={this.props.onAdd} type="primary">+新增</Button></Col>
-          <Col offset={1} span={4}><Button block onClick={this.props.onDelete.bind(this, -1)} type="primary">X删除</Button></Col>
+          <Col offset={1} span={4}><Button block
+              disabled={!this.props.selected||this.props.selected.length===0}
+          onClick={this.props.onDelete.bind(this, -1)} type="primary">X删除</Button></Col>
           <Col offset={1} span={4}><Button block onClick={this.props.onImport} type="primary">从文件导入</Button></Col>
         </Col>
       </Row>
@@ -61,11 +65,35 @@ class ButtonGroup extends Component{
 
 class DisplayTable extends Component{
   render(){
-    const columns = TableUtil.mapColumns([
-      '楼宇名称', '楼层数', '建筑面积', '建筑年代', '备注'
-    ])
+    const columns = [
+      {
+        title:'楼宇名称',
+        dataIndex: 'buildingName',
+        sorter:true,
+      },
+      {
+        title:'楼层数',
+        dataIndex: 'buildingFloors',
+        sorter:true,
+      },
+      {
+        title:'建筑面积',
+        dataIndex: 'buildingArea',
+        sorter:true,
+      },
+      {
+        title:'建筑年代',
+        dataIndex: 'buildingTime',
+        sorter:true,
+      },
+      {
+        title:'备注',
+        dataIndex: 'note',
+      },
+    ]
     columns.push({
       title: '操作',
+      width: 300,
       render: (text, record, index)=>(
         <div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
@@ -105,14 +133,12 @@ class AddModal extends Component {
         this.props.refresh()
       })
       .catch(err=>{
+       if(!err.response)
         message.error('添加失败')
-        if(err.response)
-          message.error(err.response.data.title)
-      })
-      console.log('Received values of form: ', values)
-    })
-  }
-  render() {
+     })
+   })
+ }
+ render() {
     const { getFieldDecorator } = this.props.form
     return (
       <Modal
@@ -179,14 +205,12 @@ class UpdateModal extends Component {
         this.props.refresh()
       })
       .catch(err=>{
+       if(!err.response)
         message.error('更新失败')
-        if(err.response)
-          message.error(err.response.data.title)
-      })
-      console.log('Received values of form: ', values)
-    })
-  }
-  render() {
+     })
+   })
+ }
+ render() {
     const { getFieldDecorator } = this.props.form
     let data = this.props.data
     return (
@@ -260,9 +284,8 @@ class Import extends Component{
       this.setState({
         uploading: false,
       })
-      message.error('上传失败');
-      if(err.response)
-        message.error(err.response.data.title)
+      if(!err.response)
+        message.error('上传失败');
     })
   }
 
@@ -377,9 +400,8 @@ class UploadModal extends Component {
         this.setState({
           uploading: false,
         })
-        message.error('上传失败');
-        if(err.response)
-          message.error(err.response.data.title)
+        if(!err.response)
+          message.error('上传失败');
       })
     })
   }
@@ -483,6 +505,12 @@ class BuildingManagement extends Component{
     },
     current: 0,
   }
+  componentWillMount(){
+    read(this)
+  }
+  componentWillUnmount(){
+    write(this)
+  }
   add = ()=>{
     this.setState({addmodal: {visible: true}})
   }
@@ -497,13 +525,12 @@ class BuildingManagement extends Component{
     .then(rs=>{
       this.setState({
         tableList: rs,
-      })
-    })
-    .catch(err=>{
-      console.log(err)
-      message.error('搜索失败')
-      if(err.response)
-        message.error(err.response.data.title)
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     if(!err.response)
+       message.error('搜索失败')
     })
     .finally(()=>{
       this.setState({tableLoading: false})
@@ -514,13 +541,12 @@ class BuildingManagement extends Component{
     .then(rs=>{
       this.setState({
         tableList: rs,
-      })
-    })
-    .catch(err=>{
-      console.log(err)
-      message.error('搜索失败')
-      if(err.response)
-        message.error(err.response.data.title)
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     if(!err.response)
+       message.error('搜索失败')
     })
   }
   selectedChange = (newSelected)=>{
@@ -545,13 +571,12 @@ class BuildingManagement extends Component{
         return API.deleteBuilding(index)
         .then(()=>{
           message.success('删除成功')
-          self.refresh()
-        })
-        .catch(err=>{
-          console.log(err)
-          message.error('删除失败')
-          if(err.response)
-            message.error(err.response.data.title)
+         self.refresh()
+       })
+       .catch(err=>{
+         console.log(err)
+         if(!err.response)
+           message.error('删除失败')
         })
       },
       onCancel() {},
@@ -578,19 +603,19 @@ class BuildingManagement extends Component{
   openImport = ()=>{
     this.setState({importmodal: {visible: true}})
   }
-  tableChange = (p)=>{
+  tableChange = (p,s)=>{
     this.setState({tableLoading: true, page: p, current: p.current})
-    API.searchBuilding(this.state.name, p)
+    API.searchBuilding(this.state.name, p,sorterParse({},s))
     .then(rs=>{
       this.setState({
         tableList: rs,
-      })
-    })
-    .catch(err=>{
-      console.log(err)
-      message.error('加载失败')
-    })
-    .finally(()=>this.setState({tableLoading: false}))
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('加载失败')
+   })
+   .finally(()=>this.setState({tableLoading: false}))
   }
   render(){
     let tableHelper = {
@@ -599,10 +624,11 @@ class BuildingManagement extends Component{
       uploadPic: this.uploadPic,
     }
     return <MainContainer name="楼宇管理">
-      楼宇管理
-      <WrappedSearch onSearch={this.search}/>
+      <WrappedSearch name={this.state.name} onSearch={this.search}/>
       <Split/>
-      <ButtonGroup onAdd={this.add} onDelete={this.delete} onImport={this.openImport}/>
+      <ButtonGroup onAdd={this.add}
+        selected={this.state.selected}
+        onDelete={this.delete} onImport={this.openImport}/>
       <Row>
         <Col span={20}>
           {this.state.isSearched?(

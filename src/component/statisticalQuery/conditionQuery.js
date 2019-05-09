@@ -9,8 +9,9 @@ import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import {SButton} from '../common/button'
 import Split from '../common/split'
-import Table, {TableUtil} from '../common/table'
+import Table, {TableUtil, sorterParse} from '../common/table'
 import Search from '../common/search'
+import {read, write} from '../stateHelper'
 
 
 class DisplayTable extends Component{
@@ -32,22 +33,27 @@ class DisplayTable extends Component{
         {
           title: '部门',
           dataIndex: 'dept',
+          sorter: true,
         },
         {
           title: '楼宇',
           dataIndex: 'building',
+          sorter: true,
         },
         {
           title: '楼层',
           dataIndex: 'floor',
+          sorter: true,
         },
         {
           title: '房间号',
           dataIndex: 'roomNum',
+          sorter: true,
         },
         {
-          title: '使用面积',
+          title: '使用面积(㎡)',
           dataIndex: 'useArea',
+          sorter: true,
         },
         {
           title: '具体用途',
@@ -58,26 +64,135 @@ class DisplayTable extends Component{
           dataIndex: 'scientificTeam',
         },
         {
-          title: '年收入',
+          title: '年收入(元)',
           dataIndex: 'annualIncome',
-        },
-        {
-          title: '状态',
-          dataIndex: 'status',
+          sorter: true,
         },
         {
           title: '审批状态',
           dataIndex: 'auditStatus',
+          sorter: true,
           render: (text)=>(
             TableUtil.mapColor(text)
           )
         },
         {
-          title: '租金单价',
+          title: '租金单价(元/㎡)',
+          dataIndex: 'rentPrice',
+          sorter: true,
+        },
+        {
+          title: '租金类型',
+          dataIndex: 'rentType',
+          sorter: true,
+        },
+      ],
+      [
+        {
+          title: '部门',
+          dataIndex: 'dept',
+          sorter: true,
+        },
+        {
+          title: '楼宇',
+          dataIndex: 'building',
+          sorter: true,
+        },
+        {
+          title: '楼层',
+          dataIndex: 'floor',
+          sorter: true,
+        },
+        {
+          title: '房间号',
+          dataIndex: 'roomNum',
+          sorter: true,
+        },
+        {
+          title: '使用面积(㎡)',
+          dataIndex: 'useArea',
+          sorter: true,
+        },
+        {
+          title: '具体用途',
+          dataIndex: 'spectificPurpose',
+          sorter: true,
+        },
+        {
+          title: '状态',
+          dataIndex: 'status',
+          sorter: true,
+        },
+        {
+          title: '审批状态',
+          dataIndex: 'auditStatus',
+          sorter: true,
+          render: (text)=>(
+            TableUtil.mapColor(text)
+          )
+        },
+        {
+          title: '备注',
+          dataIndex: 'note',
+        },
+      ],
+      [
+        {
+          title: '部门',
+          dataIndex: 'dept',
+          sorter: true,
+        },
+        {
+          title: '楼宇',
+          dataIndex: 'building',
+          sorter: true,
+        },
+        {
+          title: '楼层',
+          dataIndex: 'floor',
+          sorter: true,
+        },
+        {
+          title: '房间号',
+          dataIndex: 'roomNum',
+          sorter: true,
+        },
+        {
+          title: '使用面积(㎡)',
+          dataIndex: 'useArea',
+          sorter: true,
+        },
+        {
+          title: '具体用途',
+          dataIndex: 'spectificPurpose',
+          sorter: true,
+        },
+        {
+          title: '年收入(元)',
+          dataIndex: 'annualIncome',
+          sorter: true,
+        },
+        {
+          title: '状态',
+          dataIndex: 'status',
+          sorter: true,
+        },
+        {
+          title: '审批状态',
+          dataIndex: 'auditStatus',
+          sorter: true,
+          render: (text)=>(
+            TableUtil.mapColor(text)
+          )
+        },
+        {
+          title: '租金单价(元/㎡)',
+          sorter: true,
           dataIndex: 'rentPrice',
         },
         {
           title: '租金类型',
+          sorter: true,
           dataIndex: 'rentType',
         },
         {
@@ -88,125 +203,33 @@ class DisplayTable extends Component{
       [
         {
           title: '部门',
+          sorter: true,
           dataIndex: 'dept',
         },
         {
           title: '楼宇',
+          sorter: true,
           dataIndex: 'building',
         },
         {
           title: '楼层',
+          sorter: true,
           dataIndex: 'floor',
         },
         {
           title: '房间号',
+          sorter: true,
           dataIndex: 'roomNum',
         },
         {
-          title: '使用面积',
-          dataIndex: 'useArea',
-        },
-        {
           title: '具体用途',
-          dataIndex: 'spectificPurpose',
-        },
-        {
-          title: '状态',
-          dataIndex: 'status',
-        },
-        {
-          title: '审批状态',
-          dataIndex: 'auditStatus',
-          render: (text)=>(
-            TableUtil.mapColor(text)
-          )
-        },
-        {
-          title: '备注',
-          dataIndex: 'note',
-        },
-      ],
-      [
-        {
-          title: '部门',
-          dataIndex: 'dept',
-        },
-        {
-          title: '楼宇',
-          dataIndex: 'building',
-        },
-        {
-          title: '楼层',
-          dataIndex: 'floor',
-        },
-        {
-          title: '房间号',
-          dataIndex: 'roomNum',
-        },
-        {
-          title: '使用面积',
-          dataIndex: 'useArea',
-        },
-        {
-          title: '具体用途',
-          dataIndex: 'spectificPurpose',
-        },
-        {
-          title: '年收入',
-          dataIndex: 'annualIncome',
-        },
-        {
-          title: '状态',
-          dataIndex: 'status',
-        },
-        {
-          title: '审批状态',
-          dataIndex: 'auditStatus',
-          render: (text)=>(
-            TableUtil.mapColor(text)
-          )
-        },
-        {
-          title: '租金单价',
-          dataIndex: 'rentPrice',
-        },
-        {
-          title: '租金类型',
-          dataIndex: 'rentType',
-        },
-        {
-          title: '备注',
-          dataIndex: 'note',
-        },
-      ],
-      [
-        {
-          title: '部门',
-          dataIndex: 'dept',
-        },
-        {
-          title: '楼宇',
-          dataIndex: 'building',
-        },
-        {
-          title: '楼层',
-          dataIndex: 'floor',
-        },
-        {
-          title: '房间号',
-          dataIndex: 'roomNum',
-        },
-        {
-          title: '容纳人数',
-          dataIndex: 'galleryful',
-        },
-        {
-          title: '具体用途',
+          sorter: true,
           dataIndex: 'spectificPurpose',
         },
         {
           title: '审批状态',
           dataIndex: 'auditStatus',
+          sorter: true,
           render: (text)=>(
             TableUtil.mapColor(text)
           )
@@ -262,8 +285,14 @@ class ConditionQuery extends Component{
       current: 0,
     }
   }
+  componentWillMount(){
+    read(this)
+  }
+  componentWillUnmount(){
+    write(this)
+  }
   search = (values)=>{
-    this.setState({type: values.usingNature[0], isSearched: true, tableLoading: true})
+    this.setState({type: values.usingNature[0], isSearched: true, tableLoading: true, current: 1})
     this.setState(values)
     API.listFilterPH(values)
     .then(rs=>{
@@ -279,7 +308,7 @@ class ConditionQuery extends Component{
   // 根据当前填写的搜索信息获取后台数据
   refresh = ()=>{
     let filter = {
-      dept: this.state.dept,
+      deptName: this.state.deptName,
       usingNature: this.state.usingNature,
       auditStatus: this.state.auditStatus,
       personnel: this.state.personnel,
@@ -319,9 +348,9 @@ class ConditionQuery extends Component{
       message.error('上报失败')
     })
   }
-  tableChange = (p)=>{
+  tableChange = (p, s)=>{
     let filter = {
-      dept: this.state.dept,
+      deptName: this.state.deptName,
       usingNature: this.state.usingNature,
       auditStatus: this.state.auditStatus,
       personnel: this.state.personnel,
@@ -330,22 +359,32 @@ class ConditionQuery extends Component{
       houseStatus: this.state.houseStatus,
     }
     this.setState({tableLoading: true, page:p, current: p.current})
-    API.listFilterPH(filter, p)
+    API.listFilterPH(sorterParse(filter, s), p)
     .then(rs=>{
       this.setState({
         tableList: rs,
-      })
-    })
-    .catch(err=>{
-      console.log(err)
-      message.error('加载失败')
-    })
-    .finally(()=>this.setState({tableLoading: false}))
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('加载失败')
+   })
+   .finally(()=>this.setState({tableLoading: false}))
   }
   render(){
+    let filter = {
+      deptName: this.state.deptName,
+      usingNature: this.state.usingNature,
+      auditStatus: this.state.auditStatus,
+      personnel: this.state.personnel,
+      buildingName: this.state.buildingName,
+      roomNum: this.state.roomNum,
+      houseStatus: this.state.houseStatus,
+    }
     return <MainContainer name="条件查询">
-      基本信息
-      <Search onSearch={this.search}/>
+      <Search
+        initialValue={filter}
+        onSearch={this.search}/>
       <Split/>
       <Row style={{marginBottom: 10}}>
         <Col offset={16} span={2}><Button type="primary">导出到文件</Button></Col>

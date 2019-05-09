@@ -4,6 +4,17 @@ import {pageSize} from '../component/common/table'
 
 const businessPerformance = {
   // 商业用房绩效
+  exportBusinessPerformance(data){
+    return new Promise((resolve, reject)=>{
+      axios.post('/tb-chanye-shangye-yongfang/export-excel-xls', data)
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
 
   // 搜索商业用房使用效益
   searchBusinessPerformance(info, p){
@@ -11,7 +22,7 @@ const businessPerformance = {
       axios.get('/tb-chanye-shangye-yongfang/get/shangyeyongfangshiyongjixiao',
                  {
                    params: {
-                      bumen: info.dept,
+                      ...MapF2B(info),
                       page: p?p.current-1:0,
                       size: pageSize,
                    },
@@ -27,23 +38,24 @@ const businessPerformance = {
         data.totalRent = rs.data.heji.zongzujin
         data.avgPerformance = rs.data.heji.zongmijunxiaoyi
         resolve(data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
 }
 
 const checkWorkload = {
   // 工作量查看
 
-  searchWorkLoad(dept, p){
+  searchWorkLoad(dept, p, sort){
     return new Promise((resolve, reject)=>{
       axios.get('/tb-jiaoxue-keyan-gongzuoliang/get/all', {
         params: {
           bumen: dept,
+          ...sort,
           page: p?p.current-1:0,
           size: pageSize,
         },
@@ -61,17 +73,28 @@ const checkWorkload = {
           total: rs.headers['x-total-count'],
         }
         resolve(data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
 }
 const classroomPerformance = {
   // 教室绩效
   // 搜索教室
+  exportClassroomPerformance(data){
+    return new Promise((resolve, reject)=>{
+      axios.post('/tb-jiaoshi-shiyanshi-kechengxinxi/jiaoshiexport-excel-xls', data)
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
   getClassrooms(nianfen, bumen){
     return new Promise((resolve, reject)=>{
       axios.get('/tb-jiaoshi-shiyanshi-kechengxinxi/get/jiaoshi',{
@@ -112,13 +135,13 @@ const classroomPerformance = {
         data.totalSchool = rs.data.zongxueshishu
         data.graphData = rs.data.zhuzhuangtu
         resolve(data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
 }
 const dataImport = {
   // 数据导入
@@ -126,6 +149,17 @@ const dataImport = {
 }
 const labPerformance = {
   // 实验室绩效
+  exportLabperformance(data){
+    return new Promise((resolve, reject)=>{
+      axios.post('/tb-jiaoshi-shiyanshi-kechengxinxi/shiyanshiexport-excel-xls', data)
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
 
   // 搜索实验室
   getLabs(nianfen, bumen){
@@ -168,18 +202,28 @@ const labPerformance = {
         data.graphData = rs.data.zhuzhuangtu
         data.totalSchool = rs.data.zongxueshishu
         resolve(data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
 
 }
 const scientificPerformance = {
   // 科研单位绩效
-
+  exportScientificPerformance(data){
+    return new Promise((resolve, reject)=>{
+      axios.post('/tb-keyantuandui-keyangongzuoliang/export-excel-xls', data)
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
   // 搜索科研公用房使用效益
   searchScientificPerformance(info, p){
     // info = {
@@ -213,17 +257,28 @@ const scientificPerformance = {
         }
         data.graphData = rs.data.zhuzhuangtu
         resolve(data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
 }
 const teachingUnitPerformance = {
   // 教学单位绩效
 
+  exportTeachingUnitPerformance(data){
+    return new Promise((resolve, reject)=>{
+      axios.post('/tb-jiaoxue-keyan-gongzuoliang/export-excel-xls', data)
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
   // 搜索教学单位公用房使用效益
   searchTeachingUnitPHUsePerformance(info, p){
     // {
@@ -257,13 +312,13 @@ const teachingUnitPerformance = {
         }
         data.graphData = rs.data.zhuzhuangtu
         resolve(data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
 
 }
 

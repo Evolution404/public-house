@@ -1,5 +1,6 @@
 import axios from './apiConfig'
 import {pageSize} from '../component/common/table'
+import {MapF2B} from './nameMapConfig'
 
 const departmentAccount = {
 
@@ -16,34 +17,58 @@ const overallAccount = {
     })
     return Promise.all([collegeDept, dept])
   },
-  getAccountingData(year){
-    // 党政机关核算
-    let dept = new Promise((resolve, reject)=>{
+  getPartyHouseTableData(values, p){
+    return new Promise((resolve, reject)=>{
       axios.get('/tb-dangzheng-jiguan-yongfang-tongji/get/all', {
-        params: {nianfen: year},
+        params: {
+          ...MapF2B(values),
+          nianfen: values.year,
+          page: p?p.current-1:0,
+          size: pageSize,
+        },
       })
       .then((rs)=>{
+        rs.data.datalist = {
+          tableList:rs.data.datalist,
+          total: rs.headers['x-total-count'],
+        }
         resolve(rs.data)
       })
       .catch(err=>{
         reject(err)
       })
     })
-    // 学院核算
-    let collegeDept = new Promise((resolve, reject)=>{
+  },
+  getAcademyHouseTableData(values, p){
+    return new Promise((resolve, reject)=>{
       axios.get('/tb-xueyuan-yongfang-shiyong-tongji/get/all', {
-        params: {nianfen: year},
+        params: {
+          ...MapF2B(values),
+          nianfen: values.year,
+          page: p?p.current-1:0,
+          size: pageSize,
+        },
       })
       .then(rs=>{
+        rs.data.datalist = {
+          tableList:rs.data.datalist,
+          total: rs.headers['x-total-count'],
+        }
         resolve(rs.data)
       })
       .catch(err=>{
         reject(err)
       })
     })
+  },
+  getAccountingData(year){
+    // 党政机关核算
+    let dept = this.getPartyHouseTableData({year})
+    // 学院核算
+    let collegeDept = this.getAcademyHouseTableData({year})
     return Promise.all([dept, collegeDept])
   },
-  getDeptAccountingDataById(type, id){
+  getDeptAccountingDataById(type, id, p, s){
     // 党政机关
     let url
     if(type==='1'){
@@ -51,44 +76,14 @@ const overallAccount = {
     }else{
       url = '/tb-xueyuan-yongfang-shiyong-tongji/get/'+id
     }
-    return new Promise((resolve, reject)=>{
-      axios.get(url)
-      .then(rs=>{
-        if(type==='2'){
-          let tableData = []
-          tableData.push({slash:'定额面积(DE)', ...rs.data.datalist['dingemianji']})
-          tableData.push({slash:'实际面积(SJ)', ...rs.data.datalist['shijimianji']})
-          tableData.push({slash:'超额面积(CE)', ...rs.data.datalist['chaoemianji']})
-          let graphData = {
-            pieData: rs.data.bingtu,
-            hisData: rs.data.zhuzhuangtu,
-          }
-          resolve({dept:rs.data.bumen, tableData, totalData:rs.data.totaldata, graphData})
-          return
-        }
-        let graphData = rs.data.zhuzhuangtu
-        for(let key in graphData){
-          graphData[key] = {'面积':graphData[key]}
-        }
-        resolve({dept:rs.data.bumen, tableData:rs.data.datalist,
-                graphData,
-                totalData:rs.data.totaldata})
-      })
-      .catch(err=>{
-        reject(err)
-      })
-    })
-  },
-  getDeptAccountingDataByInfo(info){
-    let type = info.type
-    // 党政机关
-    let url, data={}
-    if(type==='1'){
-      url = '/tb-dangzheng-jiguan-yongfang-tongji/get/bumen'
-    }else{
-      url = '/tb-xueyuan-yongfang-shiyong-tongji/get/xueyuan'
-    }
-    data = {bumen: info.dept, nianfen: info.year}
+    let data = {}
+    if(type==='1')
+      data = {
+        ...data,
+        ...s,
+        page: p?p.current-1:0,
+        size: pageSize,
+      }
     return new Promise((resolve, reject)=>{
       axios.get(url, {
         params: data,
@@ -110,9 +105,79 @@ const overallAccount = {
         for(let key in graphData){
           graphData[key] = {'面积':graphData[key]}
         }
-        resolve({dept:rs.data.bumen, tableData:rs.data.datalist,
+        let tableData = {
+          tableList: rs.data.datalist,
+          total: rs.headers['x-total-count'],
+        }
+        resolve({dept:rs.data.bumen, tableData,
                 graphData,
                 totalData:rs.data.totaldata})
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
+  getDeptAccountingDataByInfo(info, p, s){
+    let type = info.type
+    // 党政机关
+    let url, data={}
+    if(type==='1'){
+      url = '/tb-dangzheng-jiguan-yongfang-tongji/get/bumen'
+    }else{
+      url = '/tb-xueyuan-yongfang-shiyong-tongji/get/xueyuan'
+    }
+    data = {bumen: info.dept, nianfen: info.year}
+    if(type==='1')
+      data = {
+        ...data,
+        page: p?p.current-1:0,
+        size: pageSize,
+      }
+    if(s)
+      data = {
+        ...data,
+        ...s,
+      }
+    return new Promise((resolve, reject)=>{
+      axios.get(url, {
+        params: data,
+      })
+      .then(rs=>{
+        if(type==='2'){
+          let tableData = []
+          tableData.push({slash:'定额面积(DE)', ...rs.data.datalist['dingemianji']})
+          tableData.push({slash:'实际面积(SJ)', ...rs.data.datalist['shijimianji']})
+          tableData.push({slash:'超额面积(CE)', ...rs.data.datalist['chaoemianji']})
+          let graphData = {
+            pieData: rs.data.bingtu,
+            hisData: rs.data.zhuzhuangtu,
+          }
+          resolve({dept:rs.data.bumen, tableData, totalData:rs.data.totaldata, graphData})
+          return
+        }
+        let graphData = rs.data.zhuzhuangtu
+        for(let key in graphData){
+          graphData[key] = {'面积':graphData[key]}
+        }
+        let tableData = {
+          tableList: rs.data.datalist,
+          total: rs.headers['x-total-count'],
+        }
+        resolve({dept:rs.data.bumen, tableData,
+                graphData,
+                totalData:rs.data.totaldata})
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
+  exportOverallAccount(data){
+    return new Promise((resolve, reject)=>{
+      axios.post('/tb-dangzheng-jiguan-yongfang-tongji/export-excel', data)
+      .then((rs)=>{
+        resolve(rs.data)
       })
       .catch(err=>{
         reject(err)
@@ -141,7 +206,8 @@ const personalAccount = {
   },
   searchPersonnelAccountingInfo(values, p){
     // 不需要工号
-    delete values.gonghao
+    values.gonghao = values.gonghaoSearch
+    delete values.gonghaoSearch
     values = {
       ...values,
       page: p?p.current-1:0,

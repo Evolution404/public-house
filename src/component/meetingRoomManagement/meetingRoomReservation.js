@@ -8,9 +8,10 @@ import API from '../../api'
 import {SButton} from '../common/button'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
-import Table, {TableUtil} from '../common/table'
+import Table, {TableUtil,sorterParse} from '../common/table'
 import ReservationModal, {rangeData} from './reservationModal'
 import moment from 'moment'
+import {read, write} from '../stateHelper'
 
 const CheckboxGroup = Checkbox.Group
 const Item = Form.Item
@@ -27,6 +28,14 @@ class MeetingRoomReservation extends Component{
       id: 0,
       data:{},
     },
+    filter: {},
+    values: {},
+  }
+  componentWillMount(){
+    read(this)
+  }
+  componentWillUnmount(){
+    write(this)
   }
   openReservationModal = record=>{
     this.setState({reservationModal:{visible: true, id:record.id, data:record}})
@@ -34,27 +43,26 @@ class MeetingRoomReservation extends Component{
   closeReservationModal = ()=>{
     this.setState({reservationModal:{visible: false, id: 0, data:{}}})
   }
-  search = ()=>{
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        this.setState({tableLoading: true, isSearched: true, current: 1})
-        console.log(moment(values.useDate.format('YYYY-MM-DD')+' '+values.startStopTime[0]))
-        let startStopTime = []
-        startStopTime[0] = moment(values.useDate.format('YYYY-MM-DD')+' '+values.startStopTime[0]).valueOf()/1000
-        startStopTime[1] = moment(values.useDate.format('YYYY-MM-DD')+' '+values.startStopTime[1]).valueOf()/1000
+ search = ()=>{
+   this.props.form.validateFields((err, values) => {
+     if (!err) {
+       this.setState({tableLoading: true, isSearched: true, current: 1, values})
+       let startStopTime = []
+       startStopTime[0] = moment(values.useDate.format('YYYY-MM-DD')+' '+values.startStopTime[0]).valueOf()/1000
+       startStopTime[1] = moment(values.useDate.format('YYYY-MM-DD')+' '+values.startStopTime[1]).valueOf()/1000
         let filter = {
           ...values,
           startStopTime,
         }
         delete filter.useDate
-        this.setState(filter)
+        this.setState({filter})
         API.searchMeetingRoomReservation(filter)
         .then(rs=>{
           this.setState({tableList: rs})
         })
         .catch(err=>{
-          message.error('搜索失败')
+          if(!err.response)
+            message.error('搜索失败')
         })
         .finally(()=>{
           this.setState({tableLoading: false})
@@ -62,37 +70,41 @@ class MeetingRoomReservation extends Component{
       }
     })
   }
-  tableChange = (p)=>{
+  tableChange = (p,s)=>{
     this.setState({tableLoading: true, page:p, current: p.current})
-    API.searchMeetingRoomReservation(this.state.filter, p)
+    API.searchMeetingRoomReservation(sorterParse(this.state.filter,s), p)
     .then(rs=>{
       this.setState({
         tableList: rs,
-      })
-    })
-    .catch(err=>{
-      console.log(err)
-      message.error('加载失败')
-    })
-    .finally(()=>this.setState({tableLoading: false}))
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('加载失败')
+   })
+   .finally(()=>this.setState({tableLoading: false}))
   }
   render(){
     let columns = [
       {
         title: '部门',
         dataIndex: 'dept',
+        sorter: true,
       },
       {
         title: '楼宇',
         dataIndex: 'building',
+        sorter: true,
       },
       {
         title: '楼层',
         dataIndex: 'floor',
+        sorter: true,
       },
       {
         title: '房间号',
         dataIndex: 'roomNum',
+        sorter: true,
       },
       {
         title: '管理者',
@@ -101,6 +113,7 @@ class MeetingRoomReservation extends Component{
       {
         title: '审批状态',
         dataIndex: 'auditStatus',
+        sorter: true,
         render: text=>TableUtil.mapColor(text)
       },
       {
@@ -133,6 +146,7 @@ class MeetingRoomReservation extends Component{
           <Col span={6}>
             <Item labelCol={{span:8}} wrapperCol={{span:15}} label="人数要求">
               {getFieldDecorator('galleryful',{
+                initialValue: this.state.values.galleryful||"0",
                 rules: [{required: true, message: '请选择人数要求'}]
               })(
                 <Select>
@@ -148,6 +162,7 @@ class MeetingRoomReservation extends Component{
           <Col span={5}>
             <Item labelCol={{span:12}} wrapperCol={{span:12}} label="使用日期">
               {getFieldDecorator('useDate',{
+                initialValue: moment(this.state.values.useDate),
                 rules: [{required: true, message: '请选择使用日期'}]
               })(
                 <DatePicker></DatePicker>
@@ -157,6 +172,7 @@ class MeetingRoomReservation extends Component{
           <Col span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="起止时间">
               {getFieldDecorator('startStopTime',{
+                initialValue: this.state.values.startStopTime,
                 rules: [{required: true, message: '请选择起止时间'}]
               })(
                 <Cascader
@@ -171,21 +187,23 @@ class MeetingRoomReservation extends Component{
         <Row>
           <Col span={12}>
             <Item labelCol={{span:4}} wrapperCol={{span:20}} label="设备要求">
-              {getFieldDecorator('deviceConfig',)(
+              {getFieldDecorator('deviceConfig',{
+                initialValue: this.state.values.deviceConfig,
+              })(
                 <CheckboxGroup options={options} />
               )}
             </Item>
           </Col>
-            <Col span={3} style={{marginLeft: '-100px'}}>
-              <Button type="primary" onClick={this.search}>搜索房间</Button>
-            </Col>
-            <Col span={4}>
-              <Route>
-                <Link to={Map.MyReservation.path}>
-                  <Button type="primary">历史预约信息</Button>
-                </Link>
-              </Route>
-            </Col>
+          <Col offset={0} span={3}>
+            <Button type="primary" onClick={this.search}>搜索房间</Button>
+          </Col>
+          <Col span={4}>
+            <Route>
+              <Link to={Map.MyReservation.path}>
+                <Button type="primary">历史预约信息</Button>
+              </Link>
+            </Route>
+          </Col>
         </Row>
       </Form>
       <Split/>

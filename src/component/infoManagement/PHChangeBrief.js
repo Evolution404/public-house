@@ -5,6 +5,7 @@ import Split from '../common/split'
 import Upload from '../common/upload'
 import API from '../../api'
 import {BuildingSelect, FloorSelect} from '../common/select'
+import Back from '../common/back'
 const {Item} = Form
 const CheckboxGroup = Checkbox.Group
 
@@ -25,13 +26,12 @@ class MainForm extends Component{
     return newValue
   }
   handleSubmit = (e) => {
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        values = {
-          ...values,
-          id:this.props.id,
+   e.preventDefault();
+   this.props.form.validateFields((err, values) => {
+     if (!err) {
+       values = {
+         ...values,
+         id:this.props.id,
         }
         API.briefChangeSubmitPH(values)
         .then(()=>{
@@ -41,6 +41,18 @@ class MainForm extends Component{
           message.error('提交失败')
         })
       }
+    })
+  }
+  removeDrawings = (id)=>{
+    return new Promise((resolve, reject)=>{
+      API.deleteDrawings(id)
+      .then(()=>{
+        resolve()
+      })
+      .catch(err=>{
+        reject()
+        message.error('删除图片失败')
+      })
     })
   }
   render(){
@@ -95,7 +107,7 @@ class MainForm extends Component{
         </Row>
         <Item labelCol={{span:3}} wrapperCol={{span:12}} label="房屋图纸">
           {getFieldDecorator('drawings', {})(
-            <Upload fileList={this.props.drawings} disableRemove></Upload>
+            <Upload fileList={this.props.drawings} onRemove={this.removeDrawings}></Upload>
           )}
         </Item>
         <Row>
@@ -141,7 +153,14 @@ class PHChangeBrief extends Component{
   render(){
     let formInfo = this.state
     return <MainContainer name="详细信息">
-      <h2 style={{textAlign: 'center'}}>公用房详细信息</h2>
+      <Row>
+        <Col span={2}>
+          <Back></Back>
+        </Col>
+        <Col span={10}>
+          <h2 style={{textAlign: 'right'}}>公用房详细信息</h2>
+        </Col>
+      </Row>
       <Split/>
       {
         this.state.hasLoaded&&(

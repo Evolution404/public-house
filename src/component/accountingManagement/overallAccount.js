@@ -7,12 +7,14 @@ import {Form, Row, Col, Button, Spin, message, Empty} from 'antd'
 import MainContainer from '../common/mainContainer'
 import {YearSelect} from '../common/select'
 import Split from '../common/split'
-import Table from '../common/table'
+import Table, {sorterParse} from '../common/table'
 import {SButton} from '../common/button'
 import Histogram from '../common/histogram'
 import PieChart from '../common/pieChart'
 import API, {wrapper} from '../../api'
 import Map from '../../routerMap'
+import {read, write} from '../stateHelper'
+import download from '../common/download'
 
 const Item = Form.Item
 class DeptContrast1 extends Component {
@@ -65,10 +67,12 @@ class AcademyHouseTable extends Component{
       {
         title: '实际面积',
         dataIndex: 'shijiheji',
+        sorter: true,
       },
       {
         title: '超额面积',
         dataIndex: 'mianji_ce',
+        sorter: true,
       },
       {
         title: '操作',
@@ -98,26 +102,30 @@ class PartyHouseTable extends Component{
     const columns = [
       {
         title: '部门名称',
-        dataIndex: 'bumen'
+        dataIndex: 'bumen',
+        sorter: true,
       },
       {
         title: '定额面积',
-        dataIndex: 'dingemianji'
+        dataIndex: 'dingemianji',
+        sorter: true,
       },
       {
         title: '实际面积',
-        dataIndex: 'shijimianji'
+        dataIndex: 'shijimianji',
+        sorter: true,
       },
       {
         title: '超额面积',
-        dataIndex: 'mianji_ce'
+        dataIndex: 'mianji_ce',
+        sorter: true,
       },
       {
         title: '操作',
         render: (text, record)=>{
           return <Router>
             <Link to={Map.DepartmentAccount.path.replace(':id', '1-'+record.id)}>
-              <SButton text="详细"/>
+              <SButton disable={record.shijimianji<=0} text="详细"/>
             </Link>
           </Router>
         }
@@ -149,6 +157,12 @@ class OverallAccount extends Component{
     DeptContrast3: {},
     CollegeContrast4: {},
   }
+  componentWillMount(){
+    read(this)
+  }
+  componentWillUnmount(){
+    write(this)
+  }
   setInitState = ()=>{
     this.setState({loading: false, year: '',
                   DeptContrast1: [], DeptContrast2: {}, DeptContrast3: [], CollegeContrast4: {}})
@@ -165,9 +179,7 @@ class OverallAccount extends Component{
       this.setState({loading: true, tip: '计算核算信息中...'})
       let [err] = await wrapper(API.accountingData(year))
       if(err){
-        if(err.response)
-          message.error(err.response.data.title)
-        else
+        if(!err.response)
           message.error('核算信息失败')
         this.setInitState()
         return
@@ -177,9 +189,7 @@ class OverallAccount extends Component{
       if(geterr){
         this.setState({loading: false, year: '',
                       DeptContrast1: [], DeptContrast2: {}, DeptContrast3: [], CollegeContrast4: {}})
-        if(geterr.response)
-          message.error(geterr.response.data.title)
-        else
+        if(!geterr.response)
           message.error('加载核算信息失败')
         this.setInitState()
         return
@@ -199,17 +209,12 @@ class OverallAccount extends Component{
       if(err)
         return
       let year = values.year
-      this.setState({
-        year,
-      })
-      this.setState({loading: true,tip: '加载核算信息中...'})
+      this.setState({loading: true,tip: '加载核算信息中...', year, pcurrent: 1, acurrent: 1})
       let [geterr, data] = await wrapper(API.getAccountingData(year))
       if(geterr){
         this.setState({loading: false, year: '',
                       DeptContrast1: [], DeptContrast2: {}, DeptContrast3: [], CollegeContrast4: {}})
-        if(geterr.response)
-          message.error(geterr.response.data.title)
-        else
+        if(!geterr.response)
           message.error('加载核算信息失败')
         this.setInitState()
         return
@@ -249,17 +254,64 @@ class OverallAccount extends Component{
       }, 100)
     })
   }
+  partyHouseTableChange = (p, s)=>{
+    this.setState({partyHouseTableLoading: true, page:p, pcurrent: p.current})
+    API.getPartyHouseTableData(sorterParse({year: this.state.year}, s), p)
+    .then(rs=>{
+      this.setState({
+        partyHouseTableList: rs.datalist,
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('加载失败')
+   })
+   .finally(()=>this.setState({partyHouseTableLoading: false}))
+  }
+  academyHouseTableChange = (p, s)=>{
+    this.setState({academyHouseTableLoading: true, page:p, acurrent: p.current})
+    API.getAcademyHouseTableData(sorterParse({year:this.state.year}, s), p)
+    .then(rs=>{
+      this.setState({
+        academyHouseTableList: rs.datalist,
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('加载失败')
+   })
+   .finally(()=>this.setState({academyHouseTableLoading: false}))
+  }
+  export = ()=>{
+    let data = new FormData()
+    data.append('nianfen', this.state.year)
+    data.append('tubiao1', this.getCanvasURL('DeptContrast1').split(',')[1])
+    data.append('tubiao2', this.getCanvasURL('DeptContrast2').split(',')[1])
+    data.append('tubiao3', this.getCanvasURL('DeptContrast3').split(',')[1])
+    data.append('tubiao4', this.getCanvasURL('CollegeContrast4').split(',')[1])
+    this.setState({loading: true, tip: '计算导出信息中...'})
+    API.exportOverallAccount(data)
+    .then(rs=>{
+      download(rs)
+    })
+    .catch(err=>{
+      if(!err.response)
+        message.error('导出失败')
+    })
+    .finally(()=>this.setState({loading: false}))
+  }
   render(){
     let imgStyle = {
       width: 300,
     }
     const { getFieldDecorator } = this.props.form
     return <MainContainer name="总体核算">
-      <Form>
+      <Form style={{marginTop: 20}}>
         <Row>
           <Col span={4}>
             <Item labelCol={{span:12}} wrapperCol={{span:12}} label='年份'>
               {getFieldDecorator('year',{
+                initialValue:this.state.year,
                 rules: [{required: true, message: '请选择年份'}]
               })(
                 <YearSelect placeholder="请选择年份" size="default"></YearSelect>
@@ -267,7 +319,7 @@ class OverallAccount extends Component{
             </Item>
           </Col>
           <Col style={{marginTop: 5}} onClick={this.search} offset={1} span={2}><Button type="primary">查询结果</Button></Col>
-          <Col style={{marginTop: 5}} onClick={this.account} span={2}><Button type="primary">总体核算</Button></Col>
+          <Col style={{marginTop: 5}} onClick={this.account} offset={1} span={2}><Button type="primary">重新核算</Button></Col>
         </Row>
       </Form>
       <Spin spinning={this.state.loading} tip={this.state.tip}>
@@ -276,7 +328,10 @@ class OverallAccount extends Component{
           全校公用房使用总体情况
         </Col>
         <Col offset={2} span={10}>
-          <Button type='primary'>导出到文件</Button>
+          <Button type='primary'
+            disabled={!this.state.year||(this.state.partyHouseTableList.length===0
+                                        &&this.state.academyHouseTableList.length===0)}
+            onClick={this.export}>导出到文件</Button>
           <Button
             onClick={this.print}
             style={{marginLeft: '20px'}} type='primary'>打印</Button>
@@ -288,12 +343,20 @@ class OverallAccount extends Component{
           <div id="printArea">
             <Row>
               <Col span={20} offset={1}>
-                <PartyHouseTable data={this.state.partyHouseTableList}/>
+                <PartyHouseTable
+                  loading={this.state.partyHouseTableLoading}
+                  current={this.state.pcurrent}
+                  onChange={this.partyHouseTableChange}
+                  data={this.state.partyHouseTableList}/>
               </Col>
             </Row>
             <Row>
               <Col span={20} offset={1}>
-                <AcademyHouseTable data={this.state.academyHouseTableList}/>
+                <AcademyHouseTable
+                  loading={this.state.academyHouseTableLoading}
+                  current={this.state.acurrent}
+                  onChange={this.academyHouseTableChange}
+                  data={this.state.academyHouseTableList}/>
               </Col>
             </Row>
             {

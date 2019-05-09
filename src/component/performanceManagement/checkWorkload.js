@@ -1,22 +1,22 @@
 import React, {Component} from 'react'
 import {Button, Form, Row, Col, message, Empty} from 'antd'
 import API from '../../api'
-import Table from '../common/table'
+import Table, {sorterParse} from '../common/table'
 import MainContainer from '../common/mainContainer'
 import {DeptSelect} from '../common/select'
 import Split from '../common/split'
+import {read, write} from '../stateHelper'
 const Item = Form.Item
 
 class Search extends Component{
   handleSubmit = (e) => {
     let self = this
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        self.props.onSearch(values)
-      }
-    })
+   e.preventDefault();
+   this.props.form.validateFields((err, values) => {
+     if (!err) {
+       self.props.onSearch(values)
+     }
+   })
   }
   render(){
     const { getFieldDecorator } = this.props.form
@@ -25,7 +25,9 @@ class Search extends Component{
         <Row>
           <Col span={7}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
-              {getFieldDecorator('dept',)(
+              {getFieldDecorator('dept',{
+                initialValue: this.props.initialValue,
+              })(
                 <DeptSelect></DeptSelect>
               )}
             </Item>
@@ -48,18 +50,22 @@ class DisplayTable extends Component{
       {
         title: '年份',
         dataIndex: 'nianfen',
+        sorter: true,
       },
       {
         title: '部门',
         dataIndex: 'bumen',
+        sorter: true,
       },
       {
         title: '教学工作量',
         dataIndex: 'jiaoxuegongzuoliang',
+        sorter: true,
       },
       {
         title: '科研工作量',
         dataIndex: 'keyangongzuoliang',
+        sorter: true,
       },
       {
         title: '备注',
@@ -78,6 +84,12 @@ class CheckWorkload extends Component{
     tableLoading: false,
     current: 0,
   }
+  componentWillMount(){
+    read(this)
+  }
+  componentWillUnmount(){
+    write(this)
+  }
   search = ({dept})=>{
     this.setState({
       dept,
@@ -87,34 +99,36 @@ class CheckWorkload extends Component{
     .then(rs=>{
       this.setState({
         tableList: rs,
-      })
-    })
-    .catch(err=>{
-      console.log(err)
-      message.error('搜索失败')
-    })
-    .finally(()=>{
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('搜索失败')
+   })
+   .finally(()=>{
       this.setState({tableLoading: false})
     })
   }
-  tableChange = (p)=>{
+  tableChange = (p, s)=>{
     this.setState({tableLoading: true, page:p, current: p.current})
-    API.searchWorkLoad(this.state.dept, p)
+    API.searchWorkLoad(this.state.dept, p, sorterParse({}, s))
     .then(rs=>{
       this.setState({
         tableList: rs,
-      })
-    })
-    .catch(err=>{
-      console.log(err)
-      message.error('加载失败')
-    })
-    .finally(()=>this.setState({tableLoading: false}))
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('加载失败')
+   })
+   .finally(()=>this.setState({tableLoading: false}))
   }
 
   render(){
     return <MainContainer name="工作量查看">
-      <WrappedSearch onSearch={this.search}/>
+      <WrappedSearch
+        initialValue={this.state.dept}
+        onSearch={this.search}/>
       <Split/>
       {
         this.state.isSearched?(

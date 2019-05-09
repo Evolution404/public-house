@@ -1,4 +1,5 @@
 import React, {Component} from 'react'
+import {mapNameF2B} from '../../api/nameMapConfig'
 import {Table} from 'antd'
 
 // 需要传入data, columns, onSelectedChange参数
@@ -9,15 +10,15 @@ const pageSize = 10
 
 class MyTable extends Component{
   state = {
-    selected: [],
-  }
-  render(){
-    let propOnChange = this.props.onChange||((p)=>{console.log(p)})
-    let onChange = (p)=>{
-      this.setState({selected:[]})
-      if(this.props.onSelectedChange)
+   selected: [],
+ }
+ render(){
+   let propOnChange = this.props.onChange||((p)=>{console.log(p)})
+   let onChange = (p, f, s)=>{
+     this.setState({selected:[]})
+     if(this.props.onSelectedChange)
         this.props.onSelectedChange([])
-      propOnChange(p)
+      propOnChange(p, s)
     }
     // 为data添加key键,这个键就是其在数组中的位置, 这样在调用的时候data不需要有key键
     let data = []
@@ -199,5 +200,16 @@ const TableUtil = {
   }
 }
 
-export {TableUtil, pageSize}
+const sorterParse = (filter, sorter)=>{
+  if(Object.keys(sorter).length===0)
+    return filter
+  let {order, field} = sorter
+  let newfilter = {
+    ...filter,
+    sort: `${mapNameF2B[field]||field},${order==='ascend'?'asc':'desc'}`
+  }
+  return newfilter
+}
+
+export {TableUtil, pageSize, sorterParse}
 export default MyTable

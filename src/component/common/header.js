@@ -3,6 +3,8 @@ import { Modal, message ,Form, Input} from 'antd'
 import css from '../../cssConfig.js'
 import API from '../../api'
 import headerPic from './images/header.png'
+import {createHashHistory} from 'history'
+const history = createHashHistory()
 
 const confirm = Modal.confirm
 const Item = Form.Item
@@ -22,13 +24,12 @@ class ChangePwModal extends Component {
   changePW = ()=>{
     const form = this.props.form
     form.validateFields((err, values) => {
-      if (err) {
-        return
-      }
-      console.log('Received values of form: ', values)
-      let loginAccount = this.props.getPersistentData().userData.loginAccount
-      values.loginAccount = loginAccount
-      API.changePW(values)
+     if (err) {
+       return
+     }
+     let loginAccount = this.props.getPersistentData().userData.loginAccount
+     values.loginAccount = loginAccount
+     API.changePW(values)
       .then(()=>{
         this.hideModal()
         message.success('密码修改成功')
@@ -154,6 +155,7 @@ class Exit extends Component{
         API.logout()
         .finally(()=>{
           self.props.clear()
+          history.push('/')
         })
       },
       onCancel() {
@@ -186,7 +188,7 @@ class Header extends Component{
   }
   render(){
     let styleDiv = {
-      backgroundColor: '#4091f7',
+      backgroundColor: '#5a9dd0',
       height: "76px",
       border: '1px solid #40bdf7',
     }
@@ -206,8 +208,8 @@ class Header extends Component{
     return (
       <div style={{...styleDiv,
       }}>
-        <img style={{height: "62px", 
-          marginTop: "7px"
+        <img style={{height: "47px", 
+          marginTop: "15px"
         }} src={headerPic} alt="" />
         <span style={fontStyle}>公用房管理系统</span>
         <div style={rightStyle}>

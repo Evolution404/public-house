@@ -9,6 +9,7 @@ import {ScientificBuilding,
   LogisticsBuilding,
   BusinessBuilding,
   CollegePartyBuilding} from './commonFormItem'
+import Back from '../common/back'
 const {Item} = Form
 
 
@@ -16,7 +17,7 @@ function Title(){
   return (
     <Row>
       <Col>
-        <div style={{fontSize:'20px', textAlign:'center'}}>新增公用房</div>
+        <div style={{fontSize:'20px', textAlign:'right'}}>新增公用房</div>
       </Col>
     </Row>
   )
@@ -32,25 +33,23 @@ class MainForm extends Component{
     this.setState({type: props[0]})
     return props
   }
-  staging = ()=>{
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-      }
-    })
-  }
+ staging = ()=>{
+   this.props.form.validateFields((err, values) => {
+     if (!err) {
+     }
+   })
+ }
   reset = ()=>{
     this.props.form.resetFields()
     this.setState({type: '1'})
   }
   handleSubmit = (e) => {
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        this.setState({loading: true})
-        API.addPH(values)
-        .then(()=>{
+   e.preventDefault();
+   this.props.form.validateFields((err, values) => {
+     if (!err) {
+       this.setState({loading: true})
+       API.addPH(values)
+       .then(()=>{
           message.success('添加成功')
         })
         .catch(err=>{
@@ -129,8 +128,14 @@ const WrappedMainForm = Form.create({ name: 'main_form' })(MainForm)
 class PHAdd extends Component{
   render(){
     return <MainContainer name="公用房新增">
-      基本信息/新增公用房
-      <Title/>
+      <Row>
+        <Col span={2}>
+          <Back></Back>
+        </Col>
+        <Col span={10}>
+          <Title/>
+        </Col>
+      </Row>
       <Split/>
       <Row>
         <Col span={15}>

@@ -5,7 +5,8 @@ import MainContainer from '../common/mainContainer'
 import {ReservationAuditSearch} from '../common/search'
 import Split from '../common/split'
 import API from '../../api'
-import Table, {TableUtil} from '../common/table'
+import Table, {TableUtil, sorterParse} from '../common/table'
+import {read, write} from '../stateHelper'
 
 const Item = Form.Item
 
@@ -15,13 +16,12 @@ class RefuseModal extends Component {
   }
 
   // 提交拒绝原因
-  submit = ()=>{
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        let postData = {
-          id: this.props.id,
-          ...values,
+ submit = ()=>{
+   this.props.form.validateFields((err, values) => {
+     if (!err) {
+       let postData = {
+         id: this.props.id,
+         ...values,
         }
         this.props.onRefuse(postData)
         .finally(()=>{
@@ -71,6 +71,12 @@ class ReservationAudit extends Component{
     },
     filter: {},
   }
+  componentWillMount(){
+    read(this)
+  }
+  componentWillUnmount(){
+    write(this)
+  }
   search = (values)=>{
     this.setState({tableLoading: true, isSearched: true, filter: values, current: 1})
     API.searchReservationAudit(values)
@@ -86,19 +92,19 @@ class ReservationAudit extends Component{
       this.setState({tableLoading: false})
     })
   }
-  tableChange = (p)=>{
+  tableChange = (p,s)=>{
     this.setState({tableLoading: true, page:p, current: p.current})
-    API.searchReservationAudit(this.state.filter, p)
+    API.searchReservationAudit(sorterParse(this.state.filter,s), p)
     .then(rs=>{
       this.setState({
         tableList: rs,
-      })
-    })
-    .catch(err=>{
-      console.log(err)
-      message.error('加载失败')
-    })
-    .finally(()=>this.setState({tableLoading: false}))
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('加载失败')
+   })
+   .finally(()=>this.setState({tableLoading: false}))
   }
   refresh = ()=>{
     return API.searchReservationAudit(this.state.filter)
@@ -170,26 +176,32 @@ class ReservationAudit extends Component{
       {
         title: '房屋部门',
         dataIndex: 'dept',
+        sorter: true,
       },
       {
         title: '楼宇',
         dataIndex: 'building',
+        sorter: true,
       },
       {
         title: '楼层',
         dataIndex: 'floor',
+        sorter: true,
       },
       {
         title: '房间号',
         dataIndex: 'roomNum',
+        sorter: true,
       },
       {
         title: '预约人',
         dataIndex: 'reservationPerson',
+        sorter: true,
       },
       {
         title: '联系电话',
         dataIndex: 'phone',
+        sorter: true,
       },
       {
         title: '预约用途',
@@ -197,6 +209,7 @@ class ReservationAudit extends Component{
       },
       {
         title: '预约状态',
+        sorter: true,
         dataIndex: 'reservationStatus',
         render: text=>TableUtil.mapColor(text)
       },
@@ -221,7 +234,9 @@ class ReservationAudit extends Component{
       }
     ]
     return <MainContainer name="预约审批">
-      <ReservationAuditSearch onSearch={this.search}/>
+      <ReservationAuditSearch
+        initialValue={this.state.filter}
+        onSearch={this.search}/>
       <Split />
       {
         this.state.isSearched?(

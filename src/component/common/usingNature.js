@@ -201,13 +201,17 @@ class UsingNature extends Component{
     if(this.props.changeOnSelect===false){
       changeOnSelect = false
     }
+    let props = {
+      ...this.props,
+    }
+    delete props.value
     return (
       <Cascader
         placeholder=''
         options={options}
         expandTrigger="hover"
         changeOnSelect={changeOnSelect}
-        {...this.props}
+        {...props}
       />
     )
   }

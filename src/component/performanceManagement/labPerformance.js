@@ -3,16 +3,16 @@ import {Form, Row, Col, Button, message, Empty} from 'antd'
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
-import Table from '../common/table'
+import Table,{sorterParse} from '../common/table'
 import Histogram from '../common/histogram'
 import { YearSelect, DeptSelect, LabSelect } from '../common/select'
+import {read, write} from '../stateHelper'
+import download from '../common/download'
 
 const Item = Form.Item
 
 class LabPerformance extends Component{
   state = {
-    year: 0,
-    dept: '',
     // 实时搜索实验室使用的临时状态
     formYear: '',
     formDept: '',
@@ -23,6 +23,13 @@ class LabPerformance extends Component{
     printData: {},
     isPrinting: false,
     graphData: {},
+    filter: {},
+  }
+  componentWillMount(){
+    read(this)
+  }
+  componentWillUnmount(){
+    write(this)
   }
   getCanvasURL = (id)=>{
     return document.querySelector(`#${id} canvas`).toDataURL()
@@ -62,56 +69,76 @@ class LabPerformance extends Component{
       }
     })
   }
-  tableChange = (p)=>{
+  tableChange = (p, s)=>{
     this.setState({tableLoading: true, page:p, current: p.current})
-    API.searchLabPerformance(this.state.filter, p)
+    API.searchLabPerformance(sorterParse(this.state.filter, s), p)
     .then(rs=>{
       this.setState({
         tableList: rs.tableList,
-      })
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('加载失败')
+   })
+   .finally(()=>this.setState({tableLoading: false}))
+  }
+  export = ()=>{
+    let data = new FormData()
+    if(this.state.filter.year)
+      data.append('nianfen', this.state.filter.year)
+    if(this.state.filter.dept)
+      data.append('bumen', this.state.filter.dept)
+    if(this.state.filter.roomNum)
+      data.append('fangjianhao', this.state.filter.roomNum)
+    data.append('tubiao', this.getCanvasURL('graph').split(',')[1])
+    this.setState({loading: true})
+    API.exportLabperformance(data)
+    .then(rs=>{
+      download(rs)
     })
     .catch(err=>{
-      console.log(err)
-      message.error('加载失败')
+      if(!err.response)
+        message.error('导出失败')
     })
-    .finally(()=>this.setState({tableLoading: false}))
+    .finally(()=>this.setState({loading: false}))
   }
   render(){
     let columns = [
       {
         title: '年份',
         dataIndex: 'nianfen',
-        sorter: (a, b) => a.nianfen - b.nianfen,
+        sorter: true,
       },
       {
         title: '部门',
         dataIndex: 'bumen',
-        sorter: (a, b) => a.bumen.localeCompare(b.bumen),
+        sorter: true,
       },
       {
         title: '楼宇',
         dataIndex: 'louyu',
-        sorter: (a, b) => a.louyu.localeCompare(b.louyu),
+        sorter: true,
       },
       {
         title: '楼层',
         dataIndex: 'louceng',
-        sorter: (a, b) => a.louceng - b.louceng,
+        sorter: true,
       },
       {
         title: '房间号',
         dataIndex: 'fangjianhao',
-        sorter: (a, b) => a.fangjianhao - b.fangjianhao,
+        sorter: true,
       },
       {
         title: '课程名',
         dataIndex: 'kechengming',
-        sorter: (a, b) => a.kechengming.localeCompare(b.kechengming),
+        sorter: true,
       },
       {
         title: '学时数',
         dataIndex: 'xueshishu',
-        sorter: (a, b) => a.xueshishu - b.xueshishu,
+        sorter: true,
       },
     ]
     const { getFieldDecorator } = this.props.form
@@ -120,21 +147,27 @@ class LabPerformance extends Component{
         <Row>
           <Col span={3}>
             <Item labelCol={{span:8}} wrapperCol={{span:15}} label="年份">
-              {getFieldDecorator('year',)(
+              {getFieldDecorator('year',{
+                initialValue: this.state.filter.year,
+              })(
                 <YearSelect onChange={formYear=>this.setState({formYear})} size="default"></YearSelect>
               )}
             </Item>
           </Col>
           <Col offset={1} span={5}>
             <Item labelCol={{span:7}} wrapperCol={{span:16}} label="部门名称">
-              {getFieldDecorator('dept',)(
+              {getFieldDecorator('dept',{
+                initialValue: this.state.filter.dept,
+              })(
                 <DeptSelect onChange={formDept=>this.setState({formDept})} type="2"></DeptSelect>
               )}
             </Item>
           </Col>
           <Col offset={1} span={4}>
             <Item labelCol={{span:7}} wrapperCol={{span:16}} label="实验室">
-              {getFieldDecorator('roomNum',)(
+              {getFieldDecorator('roomNum',{
+                initialValue: this.state.filter.roomNum,
+              })(
                 <LabSelect year={this.state.formYear}
                   dept={this.state.formDept}
                 ></LabSelect>
@@ -148,7 +181,11 @@ class LabPerformance extends Component{
           </Col>
           <Col offset={1} span={2}>
             <div style={{marginTop:'5px'}}>
-              <Button type='primary'>导出到文件</Button>
+              <Button type='primary'
+                disabled={
+                  Object.keys(this.state.tableList).length===0||
+                  this.state.tableList.tableList.length===0}
+                onClick={this.export}>导出到文件</Button>
             </div>
           </Col>
           <Col offset={1} span={2}>

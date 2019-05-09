@@ -50,13 +50,13 @@ const meetingRoomReservation = {
           total: rs.headers['x-total-count'],
         }
         resolve(data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   // 开始预约
   startReservation(info){
     // info = {
@@ -79,13 +79,13 @@ const meetingRoomReservation = {
       .then(rs=>{
         // 不需要返回结果, 确保成功调用resolve
         resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
 
 }
 
@@ -128,13 +128,13 @@ const myReservation = {
           total: rs.headers['x-total-count'],
         }
         resolve(data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   // 再次预约
   retryReservation(info){
     let formData = new FormData()
@@ -148,13 +148,13 @@ const myReservation = {
       .then(rs=>{
         // 成功调用
         resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   // 取消预约
   cancleReservation(id){
     return new Promise((resolve, reject)=>{
@@ -164,13 +164,13 @@ const myReservation = {
       .then(rs=>{
         // 成功调用
         resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
 }
 
 const reservationAudit = {
@@ -215,13 +215,13 @@ const reservationAudit = {
           total: rs.headers['x-total-count'],
         }
         resolve(data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   // 同意预约
   agreeReservation(id){
     let data = new FormData()
@@ -231,13 +231,13 @@ const reservationAudit = {
       .then(rs=>{
         // 不需要返回信息
         resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   // 拒绝预约
   refuseReservation(info){
     let data = new FormData()
@@ -252,13 +252,13 @@ const reservationAudit = {
       .then(rs=>{
         // 不需要返回信息
         resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
 }
 
 const useStatistical = {
@@ -310,13 +310,13 @@ const useStatistical = {
         }
         data.graphData = parseGraphData(rs.data)
         resolve(data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   // 使用统计导出
   exportUseStatistical(info){
     let formData = new FormData()
@@ -328,13 +328,13 @@ const useStatistical = {
       axios.post('/tb-huiyishi-yuyue/export-excel-xls', formData)
       .then(rs=>{
         resolve(rs.data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   // 单个会议室使用详细信息
   useStatisticalDetail(id){
     let [huiyishiid, kaishishijian, jieshushijian] = id.split('-')
@@ -352,13 +352,13 @@ const useStatistical = {
         data.building = rs.data.huiyishimingcheng
         data.tableList = rs.data.resultlist.map(i=>MapB2F(i))
         resolve(data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   // 导出单个会议室使用详细信息
   exportUseStatisticalDetail(info){
     let data = MapF2B(info)
@@ -368,13 +368,13 @@ const useStatistical = {
       })
       .then(rs=>{
         resolve(rs.data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
 }
 
 export default {

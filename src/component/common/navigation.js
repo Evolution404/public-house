@@ -77,7 +77,7 @@ class Sider extends Component {
         selectedKeys={this.state.selectedKeys}
         onOpenChange={this.onOpenChange}
         onSelect={this.onSelect}
-        style={{ width: 256}}
+        style={{ width: '100%', height: '100vh'}}
       >
         {
           this.props.data.map((item, index)=>(

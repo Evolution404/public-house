@@ -72,6 +72,7 @@ class DeptSelect extends Component{
     depts: [],
     loading: true,
     value: this.props.value,
+    justOne: false,
   }
   onChange = (value)=>{
     this.setState({value})
@@ -81,6 +82,10 @@ class DeptSelect extends Component{
     this.setState({loading: true})
     API.getDepts(type)
     .then(rs=>{
+      if(rs.length===1){
+        this.setState({justOne: true, value: rs[0]})
+        this.props.onChange(rs[0])
+      }
       this.setState({depts: rs})
     })
     .catch(err=>{
@@ -107,6 +112,7 @@ class DeptSelect extends Component{
     return (
       <Select {...this.props}
         allowClear
+        disabled={this.state.justOne}
         onChange={this.onChange}
         value={this.state.value}
         loading={this.state.loading}>

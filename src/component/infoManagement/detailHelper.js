@@ -5,6 +5,16 @@ import Table from '../common/table'
 import {host} from '../../api/apiConfig'
 const CheckboxGroup = Checkbox.Group;
 
+let parseAuditStatus = (status)=>{
+  if(status===0||status==='0')
+    return '已驳回'
+  else if(status>0&&status < 5)
+    return '审批中'
+  else if(status===5||status==='5')
+    return '已批准'
+  else
+    return status
+}
 class PicDisplay extends Component{
   render(){
     return (
@@ -34,6 +44,18 @@ class PicDisplay extends Component{
     )
   }
 }*/
+
+class Label extends Component{
+  render(){
+    return (
+      <Col span={8}>
+        <Col span={8}>{this.props.label}</Col>
+        <Col span={14} style={{fontWeight:700}}>{this.props.value}</Col>
+      </Col>
+    )
+  }
+}
+
 class HistoryInfo extends Component{
   render(){
     const columns = [
@@ -91,84 +113,49 @@ class DetailHelper extends Component{
       (
         <div>
           <Row style={{marginTop: 20}}>
-            <Col span={8}>
-              租金类型: {this.props.rentType}
-            </Col>
-            <Col span={8}>
-              租金单价: {this.props.rentPrice}
-            </Col>
-            <Col span={8}>
-              年收入: {this.props.annualIncome}
-            </Col>
+            <Label label="租金类型:" value={this.props.rentType}></Label>
+            <Label label="租金单价:" value={this.props.rentPrice}></Label>
+            <Label label="年收入:" value={this.props.annualIncome}></Label>
           </Row>
           <Row style={{marginTop: 20}}>
-            <Col span={8}>
-              状态: {this.props.status}
-            </Col>
-            <Col span={8}>
-              科研团队: {this.props.scientificTeam}
-            </Col>
+            <Label label="状态:" value={this.props.status}></Label>
+            <Label label="科研团队:" value={this.props.scientificTeam}></Label>
+            <Label label="使用面积:" value={this.props.useArea}></Label>
           </Row>
         </div>
       ),
       (
         <div>
           <Row style={{marginTop: 20}}>
-            <Col span={8}>
-              使用面积: {this.props.useArea}
-            </Col>
-            <Col span={8}>
-              管理者: {this.props.manager}
-            </Col>
-            <Col span={8}>
-              容纳人数: {this.props.galleryful}
-            </Col>
+            <Label label="使用面积:" value={this.props.useArea}></Label>
+            <Label label="管理者:" value={this.props.manager}></Label>
+            <Label label="容纳人数:" value={this.props.galleryful}></Label>
           </Row>
         </div>
       ),
       (
         <div>
           <Row style={{marginTop: 20}}>
-            <Col span={8}>
-              租金类型: {this.props.rentType}
-            </Col>
-            <Col span={8}>
-              租金单价: {this.props.rentPrice}
-            </Col>
-            <Col span={8}>
-              年收入: {this.props.annualIncome}
-            </Col>
+            <Label label="租金类型:" value={this.props.rentType}></Label>
+            <Label label="租金单价:" value={this.props.rentPrice}></Label>
+            <Label label="年收入:" value={this.props.annualIncome}></Label>
           </Row>
           <Row style={{marginTop: 20}}>
-            <Col span={8}>
-              状态: {this.props.status}
-            </Col>
-            <Col span={8}>
-              承租人: {this.props.lessee}
-            </Col>
-            <Col span={8}>
-              使用面积: {this.props.useArea}
-            </Col>
+            <Label label="状态:" value={this.props.status}></Label>
+            <Label label="承租人:" value={this.props.lessee}></Label>
+            <Label label="使用面积:" value={this.props.useArea}></Label>
           </Row>
         </div>
       ),
       (
         <div>
           <Row style={{marginTop: 20}}>
-            <Col span={8}>
-              负责人: {this.props.head}
-            </Col>
-            <Col span={8}>
-              管理者: {this.props.manager}
-            </Col>
-            <Col span={8}>
-              使用者: {this.props.personnel}
-            </Col>
+            <Label label="负责人:" value={this.props.head}></Label>
+            <Label label="管理者:" value={this.props.manager}></Label>
+            <Label label="使用者:" value={this.props.personnel}></Label>
           </Row>
           <Row style={{marginTop: 20}}>
-            <Col span={8}>
-              容纳人数: {this.props.galleryful}
-            </Col>
+            <Label label="容纳人数:" value={this.props.galleryful}></Label>
           </Row>
           <Row style={{marginTop: 20}}>
             <Col span={3}>设备配置:</Col>
@@ -181,54 +168,38 @@ class DetailHelper extends Component{
       ),
     ]
     return <div>
-        <div style={{width: '70%'}}>
+        <div style={{marginLeft: '10%', width: '80%'}}>
           <Row style={{marginTop: 20}}>
-            <Col span={8}>
-              所属部门: {this.props.dept}
-            </Col>
-            <Col span={8}>
-              类型: {this.props.type}
-            </Col>
-            <Col span={8}>
-              具体用途: {this.props.spectificPurpose}
-            </Col>
+            <Label label="所属部门:" value={this.props.dept}></Label>
+            <Label label="类型:" value={this.props.type}></Label>
+            <Label label="具体用途:" value={this.props.spectificPurpose}></Label>
           </Row>
           <Row style={{marginTop: 20}}>
-            <Col span={8}>
-              楼宇: {this.props.building}
-            </Col>
-            <Col span={8}>
-              楼层: {this.props.floor}
-            </Col>
-            <Col span={8}>
-              房间号: {this.props.roomNum}
-            </Col>
+            <Label label="楼宇:" value={this.props.building}></Label>
+            <Label label="楼层:" value={this.props.floor}></Label>
+            <Label label="房间号:" value={this.props.roomNum}></Label>
           </Row>
           <Row style={{marginTop: 20}}>
-            <Col span={8}>
-              审批状态: {this.props.auditStatus}
-            </Col>
-            <Col span={8}>
-              原因: {this.props.reason||'暂无'}
-            </Col>
+            <Label label="审批状态:" value={parseAuditStatus(this.props.auditStatus)}></Label>
+            <Label label="原因:" value={this.props.reason||'暂无'}></Label>
           </Row>
           {
             changePart[this.props.numType-1]
           }
           <Row style={{marginTop: 20}}>
-            <Col span={3}>房屋图纸:</Col>
+            <Col span={2}>房屋图纸:</Col>
             <Col offset={1} span={20}>
               <PicDisplay imgList={this.props.drawings?this.props.drawings.map(i=>host+i.tupianlujing):[]}></PicDisplay>
             </Col>
           </Row>
           <Row style={{marginTop: 20}}>
-            <Col span={3}>房屋照片:</Col>
+            <Col span={2}>房屋照片:</Col>
             <Col offset={1} span={20}>
               <PicDisplay imgList={this.props.housePic?this.props.housePic.map(i=>host+i.tupianlujing):[]}></PicDisplay>
             </Col>
           </Row>
           <Row style={{marginTop: 20}}>
-            <Col span={3}>备注:</Col>
+            <Col span={2}>备注:</Col>
             <Col offset={1} span={20}>
               <p style={{width: '100%',
                 height: 'auto',
@@ -249,29 +220,3 @@ class DetailHelper extends Component{
 }
 
 export default DetailHelper
-/*
-          <Row style={{marginTop: 20}}>
-            <Col>使用面积: {this.props.useArea}</Col>
-          </Row>
-          <Row style={{marginTop: 20}}>
-            <Col>使用者: {this.props.personnel&&this.props.personnel.map(item=>(
-              <PersonalLink {...item}></PersonalLink>
-            ))}</Col>
-          </Row>
-          <Row style={{marginTop: 20}}>
-            <Col>负责人: {this.props.head&&this.props.head.map(item=>(
-              <PersonalLink {...item}></PersonalLink>
-            ))}</Col>
-          </Row>
-          <Row style={{marginTop: 20}}>
-            <Col>防火负责人: {this.props.fireHead&&this.props.fireHead.map(item=>(
-              <PersonalLink {...item}></PersonalLink>
-            ))}</Col>
-          </Row>
-          <Row style={{marginTop: 20}}>
-            <Col span={3}>设备配置:</Col>
-            <Col offset={1} span={20}>
-              <CheckboxGroup options={checkboxOption}
-                value={this.props.equipment}/>
-            </Col>
-          </Row>*/

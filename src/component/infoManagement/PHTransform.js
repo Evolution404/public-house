@@ -141,7 +141,7 @@ class BasicInfo extends Component{
             </Item>
           </Col>
         </Row>
-        <Row>
+        <Row style={{margin: '20px 0'}}>
           <Col offset={11} span={2}>
             <Button
               onClick={this.submit}
@@ -190,13 +190,12 @@ class MainForm extends Component{
     return props
   }
   handleSubmit = (e) => {
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        this.setState({loading: true})
-        API.addPH(values)
-        .then(()=>{
+   e.preventDefault();
+   this.props.form.validateFields((err, values) => {
+     if (!err) {
+       this.setState({loading: true})
+       API.addPH(values)
+       .then(()=>{
           message.success('添加成功')
         })
         .catch(err=>{
@@ -249,14 +248,14 @@ class MainForm extends Component{
               </div>
             ):(
               <Row>
-                <Col offset={2}>
+                <Col offset={0}>
                   <Empty style={{marginBottom: 20}} description="请先选择使用性质"></Empty>
                 </Col>
               </Row>
             )
           }
         </Form>
-        <Row>
+        <Row style={{margin: '20px 0'}}>
           <Col offset={10} span={2}>
             <Button
               onClick={this.prev}
@@ -476,7 +475,7 @@ class PHTransform extends Component{
     }
     return (
       <MainContainer name="公用房改造">
-        <Row>
+        <Row style={{margin: '20px 0'}}>
           <Col offset={1} span={22}>
             <Steps current={current}>
               {steps.map(item => <Step key={item.title} title={item.title} />)}

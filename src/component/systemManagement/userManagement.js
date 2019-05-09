@@ -3,22 +3,22 @@ import MainContainer from '../common/mainContainer'
 import {Input, Empty, Button,Form, Row, Col, message, Modal} from 'antd'
 import {SButton} from '../common/button'
 import Split from '../common/split'
-import Table, {TableUtil}from '../common/table'
+import Table, {sorterParse}from '../common/table'
 import {RoleSelect} from '../common/select'
 import API from '../../api'
+import {read, write} from '../stateHelper'
 const Item = Form.Item
 const confirm = Modal.confirm;
 
 class Search extends Component{
   handleSubmit = (e) => {
     let self = this
-    e.preventDefault();
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        self.props.onSearch(values)
-      }
-    })
+   e.preventDefault();
+   this.props.form.validateFields((err, values) => {
+     if (!err) {
+       self.props.onSearch(values)
+     }
+   })
   }
   render(){
     const { getFieldDecorator } = this.props.form
@@ -27,7 +27,9 @@ class Search extends Component{
         <Row>
           <Col span={7}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="用户名称">
-              {getFieldDecorator('userName',)(
+              {getFieldDecorator('userName',{
+                initialValue: this.props.userName,
+              })(
                 <Input/>
               )}
             </Item>
@@ -50,7 +52,9 @@ class ButtonGroup extends Component{
       <Row style={{margin: '20px 0'}}>
         <Col span={13}>
           <Col offset={1} span={4}><Button block onClick={this.props.onAdd} type="primary">+新增</Button></Col>
-          <Col offset={1} span={4}><Button block onClick={this.props.onDelete.bind(this, -1)} type="primary">X删除</Button></Col>
+          <Col offset={1} span={4}><Button
+              disabled={!this.props.selected||this.props.selected.length===0}
+              block onClick={this.props.onDelete.bind(this, -1)} type="primary">X删除</Button></Col>
         </Col>
       </Row>
     )
@@ -59,11 +63,31 @@ class ButtonGroup extends Component{
 
 class DisplayTable extends Component{
   render(){
-    const columns = TableUtil.mapColumns([
-      '用户名称', '登录账号', '工号', '角色'
-    ])
+    const columns = [
+      {
+        title: '用户名称',
+        dataIndex: 'userName',
+        sorter: true,
+      },
+      {
+        title: '登录账号',
+        dataIndex: 'loginAccount',
+        sorter: true,
+      },
+      {
+        title: '工号',
+        dataIndex: 'workNum',
+        sorter: true,
+      },
+      {
+        title: '角色',
+        dataIndex: 'role',
+        sorter: true,
+      },
+    ]
     columns.push({
       title: '操作',
+      width: 180,
       render: (text, record, index)=>(
         <div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
@@ -90,20 +114,17 @@ class AddModal extends Component {
   add = ()=>{
     const form = this.props.form
     form.validateFields((err, values) => {
-      if (err) {
-        return
-      }
-      console.log('Received values of form: ', values)
-      API.addUser(values)
-      .then(()=>{
-        this.hideModal()
+     if (err) {
+       return
+     }
+     API.addUser(values)
+     .then(()=>{
+       this.hideModal()
         this.props.refresh()
         message.success('添加成功')
       })
       .catch(err=>{
-        if(err.response)
-          message.error(err.response.data.title)
-        else
+        if(!err.response)
           message.error('添加失败')
       })
     })
@@ -212,13 +233,12 @@ class ChangeModal extends Component {
   change = ()=>{
     const form = this.props.form
     form.validateFields((err, values) => {
-      if (err) {
-        return
-      }
-      console.log('Received values of form: ', values)
-      let newData = {
-        id: this.props.id,
-        // other data
+     if (err) {
+       return
+     }
+     let newData = {
+       id: this.props.id,
+       // other data
         ...this.props.data,
         ...values,
       }
@@ -230,9 +250,7 @@ class ChangeModal extends Component {
         form.resetFields()
       })
       .catch(err=>{
-        if(err.response)
-          message.error(err.response.data.title)
-        else
+        if(!err.response)
           message.error('更新失败')
       })
     })
@@ -305,6 +323,12 @@ class UserManagement extends Component{
     },
     current: 0,
   }
+  componentWillMount(){
+    read(this)
+  }
+  componentWillUnmount(){
+    write(this)
+  }
   add = ()=>{
     this.setState({addmodal: {visible: true}})
   }
@@ -319,13 +343,13 @@ class UserManagement extends Component{
     .then(rs=>{
       this.setState({
         tableList: rs,
-      })
-    })
-    .catch(err=>{
-      console.log(err)
-      message.error('搜索失败')
-    })
-    .finally(()=>{
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('搜索失败')
+   })
+   .finally(()=>{
       this.setState({tableLoading: false})
     })
   }
@@ -335,13 +359,13 @@ class UserManagement extends Component{
     .then(rs=>{
       this.setState({
         tableList: rs,
-      })
-    })
-    .catch(err=>{
-      console.log(err)
-      message.error('刷新失败')
-    })
-    .finally(()=>{
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('刷新失败')
+   })
+   .finally(()=>{
       this.setState({tableLoading: false})
     })
   }
@@ -367,13 +391,13 @@ class UserManagement extends Component{
         return API.deleteUser(index)
         .then(()=>{
           message.success('删除成功')
-          self.refresh()
-        })
-        .catch(err=>{
-          console.log(err)
-          message.error('删除失败')
-        })
-      },
+         self.refresh()
+       })
+       .catch(err=>{
+         console.log(err)
+         message.error('删除失败')
+       })
+     },
       onCancel() {},
     });
   }
@@ -387,19 +411,19 @@ class UserManagement extends Component{
   closeChangeModal = ()=>{
     this.setState({changemodal: {visible: false, id:0, data:{}}})
   }
-  tableChange = (p)=>{
+  tableChange = (p,s)=>{
     this.setState({tableLoading: true, page: p, current: p.current})
-    API.searchUser(this.state.userName, p)
+    API.searchUser(this.state.userName, p, sorterParse({},s))
     .then(rs=>{
       this.setState({
         tableList: rs,
-      })
-    })
-    .catch(err=>{
-      console.log(err)
-      message.error('加载失败')
-    })
-    .finally(()=>this.setState({tableLoading: false}))
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('加载失败')
+   })
+   .finally(()=>this.setState({tableLoading: false}))
   }
   render(){
     let tableHelper = {
@@ -407,9 +431,11 @@ class UserManagement extends Component{
       change: this.change,
     }
     return <MainContainer name="用户管理">
-      <WrappedSearch onSearch={this.search}/>
+      <WrappedSearch userName={this.state.userName} onSearch={this.search}/>
       <Split/>
-      <ButtonGroup onAdd={this.add} onDelete={this.delete}/>
+      <ButtonGroup
+        selected={this.state.selected}
+        onAdd={this.add} onDelete={this.delete}/>
       <Row>
         <Col span={20}>
           {this.state.isSearched?(

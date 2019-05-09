@@ -27,11 +27,13 @@ const deptManagement = {
     // 搜索部门, type可能是bc(部处)也可能是xy(学院)
     let type = values.type
     let bumen = values.dept
+    delete values.type
     // 部处
     if(type==='bc'){
       return new Promise((resolve, reject)=>{
         axios.get('/tb-buchu-bumen/get/all', {
           params:{
+            ...MapF2B(values),
             bumen,
             page: p?p.current-1:0,
             size: pageSize,
@@ -43,17 +45,18 @@ const deptManagement = {
             total: rs.headers['x-total-count'],
           }
           resolve(data)
-        })
-        .catch(err=>{
-          reject(err)
-          console.log(err)
-        })
-      })
-      // 学院
+       })
+       .catch(err=>{
+         reject(err)
+         console.log(err)
+       })
+     })
+     // 学院
     }else if(type==='xy'){
       return new Promise((resolve, reject)=>{
         axios.get('/tb-xueyuan-bumen/get/all', {
           params:{
+            ...MapF2B(values),
             bumen,
             page: p?p.current-1:0,
             size: pageSize,
@@ -74,13 +77,13 @@ const deptManagement = {
           //    postdoctoral: 1,  博士后   
           // }
           resolve(data)
-        })
-        .catch(err=>{
-          reject(err)
-          console.log(err)
-        })
-      })
-    }
+       })
+       .catch(err=>{
+         reject(err)
+         console.log(err)
+       })
+     })
+   }
   },
   // 删除部门
   deleteDept({index, type}){
@@ -91,26 +94,26 @@ const deptManagement = {
         .then(rs=>{
           // 不需要传参数, 这里要确保是删除成功
           resolve()
-        })
-        .catch(err=>{
-          reject(err)
-          console.log(err)
-        })
-      })
-    }else if(type==='xy'){
+       })
+       .catch(err=>{
+         reject(err)
+         console.log(err)
+       })
+     })
+   }else if(type==='xy'){
       return new Promise((resolve, reject)=>{
         axios.delete('/tb-xueyuan-bumen/delete',
                      {params:{ids:`[${index.toString()}]`}})
         .then(rs=>{
           // 不需要传参数, 这里要确保是删除成功
           resolve()
-        })
-        .catch(err=>{
-          reject(err)
-          console.log(err)
-        })
-      })
-    }
+       })
+       .catch(err=>{
+         reject(err)
+         console.log(err)
+       })
+     })
+   }
   },
   // 新增部门
   addDept(data){
@@ -122,12 +125,12 @@ const deptManagement = {
         .then(rs=>{
           // 不需要传参数, 这里要确保是添加成功
           resolve()
-        })
-        .catch(err=>{
-          reject(err)
-          console.log(err)
-        })
-      })
+       })
+       .catch(err=>{
+         reject(err)
+         console.log(err)
+       })
+     })
 
     } else if(type==='xy'){
       let mapData = MapF2B(data)
@@ -136,13 +139,13 @@ const deptManagement = {
         .then(rs=>{
           // 不需要传参数, 这里要确保是添加成功
           resolve()
-        })
-        .catch(err=>{
-          reject(err)
-          console.log(err)
-        })
-      })
-    }
+       })
+       .catch(err=>{
+         reject(err)
+         console.log(err)
+       })
+     })
+   }
   },
   // 更新部门
   // {
@@ -156,25 +159,25 @@ const deptManagement = {
         .then(rs=>{
           // 不需要传参数, 这里要确保是删除成功
           resolve()
-        })
-        .catch(err=>{
-          reject(err)
-          console.log(err)
-        })
-      })
-    }else if(newData.type==='xy'){
+       })
+       .catch(err=>{
+         reject(err)
+         console.log(err)
+       })
+     })
+   }else if(newData.type==='xy'){
       return new Promise((resolve, reject)=>{
         axios.post('/tb-xueyuan-bumen/update', MapF2B(newData))
         .then(rs=>{
           // 不需要传参数, 这里要确保是删除成功
           resolve()
-        })
-        .catch(err=>{
-          reject(err)
-          console.log(err)
-        })
-      })
-    }
+       })
+       .catch(err=>{
+         reject(err)
+         console.log(err)
+       })
+     })
+   }
   },
 }
 
@@ -185,13 +188,13 @@ const parmManagement = {
       axios.get('/tb-canshu-peizhi/get/all')
       .then(rs=>{
         resolve(rs.data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   setParmValue(id, canshuzhi){
     let data = new FormData()
     data.append('id', id)
@@ -200,13 +203,13 @@ const parmManagement = {
       axios.post('/tb-canshu-peizhi/update', data)
       .then(rs=>{
         resolve(rs.data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   // 设置地下室面积系数
   setBasementCoefficient(basementCoefficient){
     return new Promise((resolve, reject)=>{
@@ -218,13 +221,13 @@ const parmManagement = {
       .then(rs=>{
         // 不需要传参数, 只需要确保成功的时候才调用
         resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   // 设置简易房面积系数
   setBunkCoefficient(bunkCoefficient){
     return new Promise((resolve, reject)=>{
@@ -236,13 +239,13 @@ const parmManagement = {
       .then(rs=>{
         // 不需要传参数, 只需要确保成功的时候才调用
         resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
 }
 
 const buildingManagement = {
@@ -272,10 +275,11 @@ const buildingManagement = {
       })
     })
   },
-  searchBuilding(name, p){
+  searchBuilding(name, p,s){
     return new Promise((resolve, reject)=>{
       axios.get('/tb-louyu/get/all',{
         params: {
+          ...s,
           louyumingcheng: name,
           page: p?p.current-1:0,
           size: pageSize,
@@ -294,26 +298,26 @@ const buildingManagement = {
           total: rs.headers['x-total-count'],
         }
         resolve(data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   addBuilding(data){
     return new Promise((resolve, reject)=>{
       axios.post('/tb-louyu/create', MapF2B(data))
       .then(rs=>{
         // 成功时调用
         resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   deleteBuilding(indexList){
     return new Promise((resolve, reject)=>{
       axios.delete('/tb-louyu/delete',
@@ -321,34 +325,35 @@ const buildingManagement = {
       .then(rs=>{
         // 成功时调用
         resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   updateBuilding(data){
     return new Promise((resolve, reject)=>{
       axios.post('/tb-louyu/update', MapF2B(data))
       .then(rs=>{
         // 成功时调用
         resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
 }
 
 const theUserManagement = {
   // 使用者管理
-  searchPersonnel(name, p){
+  searchPersonnel(name, p,s){
     return new Promise((resolve, reject)=>{
       axios.get('/tb-shiyongzhe/get/all', {
         params: {
+          ...s,
           xingming: name,
           page: p?p.current-1:0,
           size: pageSize,
@@ -367,13 +372,13 @@ const theUserManagement = {
           total: rs.headers['x-total-count'],
         }
         resolve(data)
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   addPersonnel(data){
     let mapData = MapF2B(data)
     return new Promise((resolve, reject)=>{
@@ -381,13 +386,13 @@ const theUserManagement = {
       .then(rs=>{
         // 成功时调用
         resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   deletePersonnel(indexList){
     return new Promise((resolve, reject)=>{
       axios.delete('/tb-shiyongzhes/delete',
@@ -395,26 +400,26 @@ const theUserManagement = {
       .then(rs=>{
         // 成功时调用
         resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   changePersonnel(data){
     return new Promise((resolve, reject)=>{
       axios.post('/tb-shiyongzhe/update', MapF2B(data))
       .then(rs=>{
         // 成功时调用
         resolve()
-      })
-      .catch(err=>{
-        reject(err)
-        console.log(err)
-      })
-    })
-  },
+     })
+     .catch(err=>{
+       reject(err)
+       console.log(err)
+     })
+   })
+ },
   detailPersonnel(index){
     return new Promise((resolve, reject)=>{
       axios.get('/tb-shiyongzhe/get/'+index)
@@ -611,10 +616,11 @@ const userManagement = {
       })
     })
   },
-  searchUser(name, p){
+  searchUser(name, p,s){
     return new Promise((resolve, reject)=>{
       axios.get('/tb-denglu-renyuan/get/all',{
         params:{
+          ...s,
           yonghumingcheng: name,
           page: p?p.current-1:0,
           size: pageSize,

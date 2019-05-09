@@ -28,13 +28,12 @@ class ReservationModal extends Component {
   }
 
   // 开始预约
-  submit = ()=>{
-    this.props.form.validateFields((err, values) => {
-      if (!err) {
-        console.log('Received values of form: ', values);
-        let startStopTime = []
-        let start = moment(values.useDate.format('YYYY-MM-DD')+' '+values.startStopTime[0])
-        let end = moment(values.useDate.format('YYYY-MM-DD')+' '+values.startStopTime[1])
+ submit = ()=>{
+   this.props.form.validateFields((err, values) => {
+     if (!err) {
+       let startStopTime = []
+       let start = moment(values.useDate.format('YYYY-MM-DD')+' '+values.startStopTime[0])
+       let end = moment(values.useDate.format('YYYY-MM-DD')+' '+values.startStopTime[1])
         startStopTime[0] = start.valueOf()/1000
         startStopTime[1] = end.valueOf()/1000
         let filter = {

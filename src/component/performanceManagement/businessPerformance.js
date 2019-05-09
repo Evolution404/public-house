@@ -4,15 +4,15 @@ import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import {DeptSelect} from '../common/select'
 import Split from '../common/split'
-import Table from '../common/table'
+import download from '../common/download'
+import Table, {sorterParse} from '../common/table'
 import Histogram from '../common/histogram'
+import {read, write} from '../stateHelper'
 
 const Item = Form.Item
 
 class BusinessPerformance extends Component{
   state = {
-    year: 0,
-    dept: '',
     loading: false,
     hasSearched: false,
     isPrinting: false,
@@ -23,6 +23,13 @@ class BusinessPerformance extends Component{
     totalArea: 0,
     totalRent: 0,
     avgPerformance: 0,
+    filter: {},
+  }
+  componentWillMount(){
+    read(this)
+  }
+  componentWillUnmount(){
+    write(this)
   }
   search = ()=>{
     this.props.form.validateFields((err, values) => {
@@ -33,87 +40,107 @@ class BusinessPerformance extends Component{
           this.setState(rs)
         })
         .catch(err=>{
-          message.error('搜索失败')
-        })
-        .finally(()=>this.setState({loading: false}))
-        console.log('Received values of form: ', values);
-      }
-    })
-  }
-  tableChange = (p)=>{
+         message.error('搜索失败')
+       })
+       .finally(()=>this.setState({loading: false}))
+     }
+   })
+ }
+  tableChange = (p, s)=>{
     this.setState({tableLoading: true, page:p, current: p.current})
-    API.searchBusinessPerformance(this.state.filter, p)
+    API.searchBusinessPerformance(sorterParse(this.state.filter, s), p)
     .then(rs=>{
       this.setState({
         tableList: rs.tableList,
-      })
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('加载失败')
+   })
+   .finally(()=>this.setState({tableLoading: false}))
+  }
+  getCanvasURL = (id)=>{
+    return document.querySelector(`#${id} canvas`).toDataURL()
+  }
+  export = ()=>{
+    let data = new FormData()
+    if(this.state.filter.dept)
+      data.append('bumen', this.state.filter.dept)
+    data.append('tubiao', this.getCanvasURL('graph').split(',')[1])
+    this.setState({loading: true})
+    API.exportBusinessPerformance(data)
+    .then(rs=>{
+      download(rs)
     })
     .catch(err=>{
-      console.log(err)
-      message.error('加载失败')
+      if(!err.response)
+        message.error('导出失败')
     })
-    .finally(()=>this.setState({tableLoading: false}))
+    .finally(()=>this.setState({loading: false}))
   }
   render(){
     let columns = [
       {
         title: '部门',
         dataIndex: 'bumen',
-        sorter: (a, b) => a.bumen.localeCompare(b.bumen),
+        sorter: true,
       },
       {
         title: '楼宇',
         dataIndex: 'louyu',
-        sorter: (a, b) => a.louyu.localeCompare(b.louyu),
+        sorter: true,
       },
       {
         title: '楼层',
         dataIndex: 'louceng',
-        sorter: (a, b) => a.louceng - b.louceng,
+        sorter: true,
       },
       {
         title: '房间号',
         dataIndex: 'fangjianhao',
-        sorter: (a, b) => a.fangjianhao - b.fangjianhao,
+        sorter: true,
       },
       {
         title: '使用面积(㎡)',
         dataIndex: 'shiyongmianji',
-        sorter: (a, b) => a.shiyongmianji - b.shiyongmianji,
+        sorter: true,
       },
       {
         title: '使用者',
         dataIndex: 'shiyongzhe',
-        sorter: (a, b) => a.shiyongzhe - b.shiyongzhe,
+        sorter: true,
       },
       {
         title: '租金单价(元)',
         dataIndex: 'zujindanjia',
-        sorter: (a, b) => a.zujindanjia - b.zujindanjia,
+        sorter: true,
       },
       {
         title: '年租金(元)',
         dataIndex: 'nianzujin',
-        sorter: (a, b) => a.nianzujin - b.nianzujin,
+        sorter: true,
       },
       {
         title: '租金类型',
         dataIndex: 'zujinleixing',
-        sorter: (a, b) => a.zujinleixing.localeCompare(b.zujinleixing),
+        sorter: true,
       },
       {
         title: '米均效益(元/㎡)',
         dataIndex: 'mijunxiaoyi',
-        sorter: (a, b) => a.mijunxiaoyi - b.mijunxiaoyi,
+        sorter: true,
       },
     ]
     const { getFieldDecorator } = this.props.form
     return <MainContainer name="商业用房绩效">
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
-          <Col offset={1} span={5}>
-            <Item labelCol={{span:7}} wrapperCol={{span:16}} label="部门名称">
-              {getFieldDecorator('dept',)(
+          <Col offset={1} span={6}>
+            <Item labelCol={{span:6}} wrapperCol={{span:18}} label="部门名称">
+              {getFieldDecorator('dept',{
+                initialValue: this.state.filter.dept,
+              })(
                 <DeptSelect></DeptSelect>
               )}
             </Item>
@@ -125,7 +152,11 @@ class BusinessPerformance extends Component{
           </Col>
           <Col offset={1} span={2}>
             <div style={{marginTop:'5px'}}>
-              <Button type='primary'>导出到文件</Button>
+              <Button type='primary'
+                disabled={
+                  Object.keys(this.state.tableList).length===0||
+                  this.state.tableList.tableList.length===0}
+                onClick={this.export}>导出到文件</Button>
             </div>
           </Col>
           <Col offset={1} span={2}>

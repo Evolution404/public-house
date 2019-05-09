@@ -82,6 +82,7 @@ const mapNameF2B = {
   useDate: 'shiyongriqi', // 使用日期
   createTime: 'chuangjianshijian', // 创建时间
   updateTime: 'gengxinshijian', // 更新时间
+  sort: 'sort', // 排序
 
 }
 let mapNameB2F = {}
@@ -111,4 +112,4 @@ function MapB2F(item){
   return rs
 }
 
-export {MapF2B, MapB2F}
+export {mapNameF2B, mapNameB2F, MapF2B, MapB2F}

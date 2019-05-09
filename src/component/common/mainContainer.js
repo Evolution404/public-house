@@ -6,7 +6,7 @@ class MainContainer extends Component{
     return <div>
       <div style={{width: "114px",
         height: "37px",
-        backgroundColor: "#4091f7",
+        backgroundColor: "#5a9dd0",
         ...css.commonFontStyle,
         fontSize: "13px",
         lineHeight: "37px",
@@ -19,8 +19,7 @@ class MainContainer extends Component{
         ...css.borderLight,
         borderRadius: 5,
       }}>
-        <div style={{paddingLeft: "20px",
-          paddingTop: "10px",
+        <div style={{padding: '10px 20px',
           fontSize: "14px",
           fontWeight: "400",
           color: "#333",

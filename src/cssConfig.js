@@ -1,7 +1,7 @@
 const css = {
   green: "#009900",
   cyan: "#00cccc",
-  blue: "#1890ff",
+  blue: "#5a9dd0",
   commonFontStyle:{
     color: "white",
     fontSize: "14px",

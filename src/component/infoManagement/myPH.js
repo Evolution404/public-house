@@ -7,10 +7,11 @@ import Map from '../../routerMap'
 import {message, Spin, Card, Tag, Empty} from 'antd'
 import API from '../../api'
 import Split from '../common/split'
-import Table, {TableUtil} from '../common/table'
+import Table, {TableUtil, sorterParse} from '../common/table'
 import {SButton} from '../common/button'
 import {MyPHSearch} from '../common/search'
 import MainContainer from '../common/mainContainer'
+import {read, write} from '../stateHelper'
 
 
 class InfoTag extends Component{
@@ -32,7 +33,7 @@ class PersonalInfo extends Component{
     }
     let data = this.props.data
     return (
-      <Card style={{marginBottom: 25}} title="使用者信息">
+      <Card style={{marginBottom: 10, border:0}} >
         <Card.Grid style={gridStyle}><Label>工号:</Label>
           <InfoTag data={data.workNum}/></Card.Grid>
         <Card.Grid style={gridStyle}><Label>姓名:</Label>
@@ -53,22 +54,27 @@ class DisplayTable extends Component{
         {
           title: '部门',
           dataIndex: 'dept',
+          sorter: true,
         },
         {
           title: '楼宇',
           dataIndex: 'building',
+          sorter: true,
         },
         {
           title: '楼层',
           dataIndex: 'floor',
+          sorter: true,
         },
         {
           title: '房间号',
           dataIndex: 'roomNum',
+          sorter: true,
         },
         {
           title: '使用面积',
           dataIndex: 'useArea',
+          sorter: true,
         },
         {
           title: '具体用途',
@@ -81,50 +87,51 @@ class DisplayTable extends Component{
         {
           title: '年收入',
           dataIndex: 'annualIncome',
-        },
-        {
-          title: '状态',
-          dataIndex: 'status',
+          sorter: true,
         },
         {
           title: '审批状态',
           dataIndex: 'auditStatus',
+          sorter: true,
           render: (text)=>(
             TableUtil.mapColor(text)
           )
         },
         {
           title: '租金单价',
+          sorter: true,
           dataIndex: 'rentPrice',
         },
         {
           title: '租金类型',
+          sorter: true,
           dataIndex: 'rentType',
-        },
-        {
-          title: '备注',
-          dataIndex: 'note',
         },
       ],
       [
         {
           title: '部门',
+          sorter: true,
           dataIndex: 'dept',
         },
         {
           title: '楼宇',
+          sorter: true,
           dataIndex: 'building',
         },
         {
           title: '楼层',
+          sorter: true,
           dataIndex: 'floor',
         },
         {
           title: '房间号',
+          sorter: true,
           dataIndex: 'roomNum',
         },
         {
           title: '使用面积',
+          sorter: true,
           dataIndex: 'useArea',
         },
         {
@@ -133,10 +140,12 @@ class DisplayTable extends Component{
         },
         {
           title: '状态',
+          sorter: true,
           dataIndex: 'status',
         },
         {
           title: '审批状态',
+          sorter: true,
           dataIndex: 'auditStatus',
           render: (text)=>(
             TableUtil.mapColor(text)
@@ -150,22 +159,27 @@ class DisplayTable extends Component{
       [
         {
           title: '部门',
+          sorter: true,
           dataIndex: 'dept',
         },
         {
           title: '楼宇',
+          sorter: true,
           dataIndex: 'building',
         },
         {
           title: '楼层',
+          sorter: true,
           dataIndex: 'floor',
         },
         {
           title: '房间号',
+          sorter: true,
           dataIndex: 'roomNum',
         },
         {
           title: '使用面积',
+          sorter: true,
           dataIndex: 'useArea',
         },
         {
@@ -174,14 +188,17 @@ class DisplayTable extends Component{
         },
         {
           title: '年收入',
+          sorter: true,
           dataIndex: 'annualIncome',
         },
         {
           title: '状态',
+          sorter: true,
           dataIndex: 'status',
         },
         {
           title: '审批状态',
+          sorter: true,
           dataIndex: 'auditStatus',
           render: (text)=>(
             TableUtil.mapColor(text)
@@ -189,10 +206,12 @@ class DisplayTable extends Component{
         },
         {
           title: '租金单价',
+          sorter: true,
           dataIndex: 'rentPrice',
         },
         {
           title: '租金类型',
+          sorter: true,
           dataIndex: 'rentType',
         },
         {
@@ -203,23 +222,23 @@ class DisplayTable extends Component{
       [
         {
           title: '部门',
+          sorter: true,
           dataIndex: 'dept',
         },
         {
           title: '楼宇',
+          sorter: true,
           dataIndex: 'building',
         },
         {
           title: '楼层',
+          sorter: true,
           dataIndex: 'floor',
         },
         {
           title: '房间号',
+          sorter: true,
           dataIndex: 'roomNum',
-        },
-        {
-          title: '容纳人数',
-          dataIndex: 'galleryful',
         },
         {
           title: '具体用途',
@@ -227,6 +246,7 @@ class DisplayTable extends Component{
         },
         {
           title: '审批状态',
+          sorter: true,
           dataIndex: 'auditStatus',
           render: (text)=>(
             TableUtil.mapColor(text)
@@ -275,6 +295,12 @@ class MyPH extends Component{
     current: 0,
     filter: {},
   }
+  componentWillMount(){
+    read(this)
+  }
+  componentWillUnmount(){
+    write(this)
+  }
   initPersonnelInfo = id=>{
     API.getPersonnelInfo(id)
     .then(rs=>{
@@ -318,26 +344,28 @@ class MyPH extends Component{
       this.setState({tableLoading: false})
     })
   }
-  tableChange = (p)=>{
+  tableChange = (p, s)=>{
     this.setState({tableLoading: true, page:p, current: p.current})
-    API.myPHSearch(this.state.filter, p)
+    API.myPHSearch(sorterParse(this.state.filter, s), p)
     .then(rs=>{
       this.setState({
         tableList: rs,
-      })
-    })
-    .catch(err=>{
-      console.log(err)
-      message.error('加载失败')
-    })
-    .finally(()=>this.setState({tableLoading: false}))
+     })
+   })
+   .catch(err=>{
+     console.log(err)
+     message.error('加载失败')
+   })
+   .finally(()=>this.setState({tableLoading: false}))
   }
   render(){
     return <MainContainer name="我的公用房">
       <Spin spinning={this.state.infoLoading}>
         <PersonalInfo data={this.state.personnelInfo}></PersonalInfo>
       </Spin>
-      <MyPHSearch onSearch={this.search}></MyPHSearch>
+      <MyPHSearch
+        initialValue={this.state.filter}
+        onSearch={this.search}></MyPHSearch>
       <Split></Split>
       {
         this.state.isSearched?(
