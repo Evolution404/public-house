@@ -2,8 +2,8 @@ import React, {Component} from 'react'
 import {Upload, Button, Icon, message, Row, Col} from 'antd';
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
-import Split from '../common/split'
 import moban from '../mobaninfo'
+import {TButton} from '../common/button'
 
 class Import extends Component{
   state = {
@@ -33,9 +33,7 @@ class Import extends Component{
       this.setState({
         uploading: false,
       });
-      if(err.response)
-        message.error(err.response.data.title)
-      else
+      if(!err.response)
         message.error('上传失败');
     })
   }
@@ -74,14 +72,14 @@ class Import extends Component{
             </Upload>
           </Col>
           <Col span={4}>
-            <Button
+            <TButton.ImButton
               type="primary"
               onClick={this.handleUpload}
               disabled={fileList.length === 0}
               loading={uploading}
             >
               {uploading ? '导入中' : '开始导入' }
-            </Button>
+            </TButton.ImButton>
           </Col>
           <Col style={{marginTop: 5}}>
             <a download href={this.props.templateLink}>导入模板下载</a>
@@ -117,8 +115,6 @@ class DataImport extends Component{
       },
     ]
     return <MainContainer name="数据导入">
-      <h2 style={{textAlign:'center'}}>导入公用房信息</h2>
-      <Split/>
       {infoList.map((item, index)=>(
         <Import {...item} key={index}></Import>
       ))}

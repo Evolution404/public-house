@@ -5,12 +5,14 @@ import {
 } from "react-router-dom"
 import Map from '../../routerMap'
 import {UsingNatureBrief} from '../common/usingNature'
-import {Form, Row, Col, Button, message} from 'antd'
+import {Form, Row, Col, message} from 'antd'
 import Table, {sorterParse} from '../common/table'
 import {SButton} from '../common/button'
 import MainContainer from '../common/mainContainer'
 import API from '../../api'
 import {read, write} from '../stateHelper'
+import Split from '../common/split'
+import {TButton} from '../common/button'
 
 const Item = Form.Item
 
@@ -25,7 +27,7 @@ class Search extends Component{
   render(){
     const { getFieldDecorator } = this.props.form
     return (
-      <Form labelCol={{span:12}} wrapperCol={{span:12}} style={{marginTop: 20}}>
+      <Form labelCol={{span:12}} wrapperCol={{span:12}} style={{marginTop: 50}}>
         <Row>
           <Col span={6}>
             <Item label="使用性质">
@@ -36,8 +38,8 @@ class Search extends Component{
               )}
             </Item>
           </Col>
-          <Col offset={2} style={{marginTop: 5}} span={2}>
-            <Button onClick={this.search} type="primary">搜索</Button>
+          <Col offset={0} style={{marginTop: 5, marginLeft: 15}} span={2}>
+            <TButton.SearchButton onClick={this.search} type="primary">搜索</TButton.SearchButton>
           </Col>
         </Row>
       </Form>
@@ -140,9 +142,7 @@ class PHTransformAudit extends Component{
       this.refresh()
     })
     .catch(err=>{
-      if(err.response)
-        message.error(err.response.data.title)
-      else
+      if(!err.response)
         message.error('审批失败')
     })
     .finally(()=>{this.setState({loading: false})})
@@ -157,9 +157,7 @@ class PHTransformAudit extends Component{
       this.setState({tableList: rs})
     })
     .catch(err=>{
-      if(err.response)
-        message.error(err.response.data.title)
-      else
+      if(!err.response)
         message.error('刷新失败')
     })
     .finally(()=>{this.setState({loading: false})})
@@ -171,9 +169,7 @@ class PHTransformAudit extends Component{
       this.setState({tableList: rs})
     })
     .catch(err=>{
-      if(err.response)
-        message.error(err.response.data.title)
-      else
+      if(!err.response)
         message.error('搜索失败')
     })
     .finally(()=>{this.setState({loading: false})})
@@ -201,6 +197,7 @@ class PHTransformAudit extends Component{
         <Search 
           initialValue={this.state.type}
           onSearch={this.search}></Search>
+        <Split></Split>
         <DisplayTable loading={this.state.loading}
           type={this.state.type}
           current={this.state.current}

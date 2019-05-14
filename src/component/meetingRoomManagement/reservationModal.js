@@ -60,7 +60,7 @@ class ReservationModal extends Component {
           </div>
           notification.success({
             message: '预约申请成功',
-            duration: 0,
+            duration: 5,
             description: content,
           })
         })
@@ -87,19 +87,22 @@ class ReservationModal extends Component {
         <Form labelCol={{span: 5}} wrapperCol={{span:14}}>
           <Item label="使用日期">
             {getFieldDecorator('useDate',{
-              rules: [{required: true, message: '请选择使用日期'}]
+              rules: [{required: true, message: '请选择使用日期'}],
+              initialValue: this.props.useDate,
             })(
-              <DatePicker></DatePicker>
+              <DatePicker disabled></DatePicker>
             )}
           </Item>
           <Item label="起止时间">
             {getFieldDecorator('startStopTime',{
-              rules: [{required: true, message: '请选择起止时间'}]
+              rules: [{required: true, message: '请选择起止时间'}],
+              initialValue: this.props.startStopTime,
             })(
               <Cascader
                 options={rangeData}
                 expandTrigger="hover"
                 placeholder='请选择起止时间'
+                disabled
               ></Cascader>
             )}
           </Item>

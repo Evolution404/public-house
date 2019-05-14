@@ -1,8 +1,10 @@
 import React, {Component} from 'react'
-import { Modal, message ,Form, Input} from 'antd'
+import { Modal, message ,Form, Input, Avatar} from 'antd'
 import css from '../../cssConfig.js'
 import API from '../../api'
 import headerPic from './images/header.png'
+import changePw from './images/changepw.png'
+import exit from './images/exit.png'
 import {createHashHistory} from 'history'
 const history = createHashHistory()
 
@@ -11,7 +13,10 @@ const Item = Form.Item
 
 const commonFontStyle=css.commonFontStyle
 function Welcome(props){
-  return <span style={{...commonFontStyle, padding:"10px"}}>欢迎: {props.name}</span>
+  return <span style={{...commonFontStyle, padding:"10px"}}>欢迎: <Avatar style={{
+    width: 30, height: 30, lineHeight:'30px', margin: '0 5px',
+    backgroundColor: '#efbe65'
+    }} icon="user" />{props.name}</span>
 }
 
 class ChangePwModal extends Component {
@@ -37,9 +42,7 @@ class ChangePwModal extends Component {
         this.props.clear()
       })
       .catch(err=>{
-        if(err.response)
-          message.error(err.response.data.title)
-        else
+        if(!err.response)
           message.error('修改失败')
       })
     })
@@ -135,7 +138,9 @@ class ChangePW extends Component{
       <span
         onClick={this.showModal}
         style={{...commonFontStyle,
-          cursor: 'pointer', padding:"10px"}}>修改密码</span>
+          cursor: 'pointer', padding:"10px"}}>
+          <img src={changePw} style={{width: 30, height: 30}} alt=""/>
+          修改密码</span>
 
         <WrappedChangePwModal
           {...this.props}
@@ -163,7 +168,9 @@ class Exit extends Component{
     })
   }
   render(){
-    return <span onClick={this.exit} style={{...commonFontStyle, cursor: 'pointer',padding:"10px"}}>退出登录</span>
+    return <span onClick={this.exit} style={{...commonFontStyle, cursor: 'pointer',padding:"10px"}}>
+      <img style={{width: 30, height: 30, marginRight: 5}} src={exit} alt=""/>
+    退出登录</span>
   }
 }
 class RightInfo extends Component{
@@ -193,25 +200,26 @@ class Header extends Component{
       border: '1px solid #40bdf7',
     }
     let fontStyle = {
-      fontSize: "20px",
+      fontSize: "23px",
       fontWeight: 700,
       color: "white",
       position: "absolute",
       left: "280px",
-      top: "31px",
+      top: "25px",
     }
     let rightStyle = {
       position: "absolute",
       right: "100px",
-      top: "50px",
+      top: "33px",
     }
     return (
       <div style={{...styleDiv,
       }}>
         <img style={{height: "47px", 
-          marginTop: "15px"
+          marginTop: "15px",
+          marginLeft: 10,
         }} src={headerPic} alt="" />
-        <span style={fontStyle}>公用房管理系统</span>
+        <span style={fontStyle}>学校公用房管理系统</span>
         <div style={rightStyle}>
           <RightInfo {...this.props} name={this.state.name}/>
         </div>

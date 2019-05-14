@@ -4,7 +4,7 @@ import {
   Link
 } from "react-router-dom";
 import Map from '../../routerMap'
-import {message, Empty, Button, Row, Col} from 'antd';
+import {message, Empty, Row} from 'antd';
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import {SButton} from '../common/button'
@@ -12,6 +12,7 @@ import Split from '../common/split'
 import Table, {TableUtil, sorterParse} from '../common/table'
 import Search from '../common/search'
 import {read, write} from '../stateHelper'
+import {TButton} from '../common/button'
 
 
 class DisplayTable extends Component{
@@ -387,8 +388,8 @@ class ConditionQuery extends Component{
         onSearch={this.search}/>
       <Split/>
       <Row style={{marginBottom: 10}}>
-        <Col offset={16} span={2}><Button type="primary">导出到文件</Button></Col>
-        <Col offset={1} span={2}><Button type="primary">打印</Button></Col>
+          <TButton.ExButton type="primary" style={{width: 140}}>导出到文件</TButton.ExButton>
+          <TButton.PrintButton type="primary">打印</TButton.PrintButton>
       </Row>
       {
         this.state.isSearched?(

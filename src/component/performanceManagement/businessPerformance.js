@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Form, Row, Col, Button, message, Spin, Empty} from 'antd'
+import {Form, Row, Col, message, Spin, Empty} from 'antd'
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
 import {DeptSelect} from '../common/select'
@@ -7,6 +7,7 @@ import Split from '../common/split'
 import download from '../common/download'
 import Table, {sorterParse} from '../common/table'
 import Histogram from '../common/histogram'
+import {TButton} from '../common/button'
 import {read, write} from '../stateHelper'
 
 const Item = Form.Item
@@ -134,7 +135,7 @@ class BusinessPerformance extends Component{
     ]
     const { getFieldDecorator } = this.props.form
     return <MainContainer name="商业用房绩效">
-      <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
+      <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
           <Col offset={1} span={6}>
             <Item labelCol={{span:6}} wrapperCol={{span:18}} label="部门名称">
@@ -147,26 +148,21 @@ class BusinessPerformance extends Component{
           </Col>
           <Col offset={1} span={2}>
             <div style={{marginTop:'5px'}}>
-              <Button block type='primary' onClick={this.search}>搜索</Button>
-            </div>
-          </Col>
-          <Col offset={1} span={2}>
-            <div style={{marginTop:'5px'}}>
-              <Button type='primary'
-                disabled={
-                  Object.keys(this.state.tableList).length===0||
-                  this.state.tableList.tableList.length===0}
-                onClick={this.export}>导出到文件</Button>
-            </div>
-          </Col>
-          <Col offset={1} span={2}>
-            <div style={{marginTop:'5px'}}>
-              <Button block type='primary'>打印</Button>
+              <TButton.SearchButton block type='primary' onClick={this.search}>搜索</TButton.SearchButton>
             </div>
           </Col>
         </Row>
       </Form>
       <Split/>
+      <Row style={{marginBottom: 25, marginLeft: 50}}>
+        <TButton.ExButton type='primary'
+          style={{width: 140}}
+          disabled={
+            Object.keys(this.state.tableList).length===0||
+            this.state.tableList.tableList.length===0}
+          onClick={this.export}>导出到文件</TButton.ExButton>
+        <TButton.PrintButton type='primary'>打印</TButton.PrintButton>
+      </Row>
       <Spin spinning={this.state.loading}>
         {
           this.state.hasSearched?(

@@ -3,7 +3,7 @@ import {
   HashRouter as Router,
   Link
 } from "react-router-dom"
-import {Form, Row, Col, Button, Spin, message, Empty} from 'antd'
+import {Form, Row, Col, Spin, message, Empty} from 'antd'
 import MainContainer from '../common/mainContainer'
 import {YearSelect} from '../common/select'
 import Split from '../common/split'
@@ -14,6 +14,7 @@ import PieChart from '../common/pieChart'
 import API, {wrapper} from '../../api'
 import Map from '../../routerMap'
 import {read, write} from '../stateHelper'
+import {TButton} from '../common/button'
 import download from '../common/download'
 
 const Item = Form.Item
@@ -306,7 +307,7 @@ class OverallAccount extends Component{
     }
     const { getFieldDecorator } = this.props.form
     return <MainContainer name="总体核算">
-      <Form style={{marginTop: 20}}>
+      <Form style={{marginTop: 50}}>
         <Row>
           <Col span={4}>
             <Item labelCol={{span:12}} wrapperCol={{span:12}} label='年份'>
@@ -318,31 +319,36 @@ class OverallAccount extends Component{
               )}
             </Item>
           </Col>
-          <Col style={{marginTop: 5}} onClick={this.search} offset={1} span={2}><Button type="primary">查询结果</Button></Col>
-          <Col style={{marginTop: 5}} onClick={this.account} offset={1} span={2}><Button type="primary">重新核算</Button></Col>
+          <Col style={{marginTop: 5}} onClick={this.search} offset={1} span={2}>
+            <TButton.SearchButton type="primary">查询结果</TButton.SearchButton>
+          </Col>
+          <Col style={{marginTop: 5}} onClick={this.account} offset={1} span={2}>
+            <TButton.AccButton type="primary">重新核算</TButton.AccButton>
+          </Col>
         </Row>
       </Form>
       <Spin spinning={this.state.loading} tip={this.state.tip}>
       <Row>
-        <Col span={12} style={{fontSize: '20px', textAlign: 'right'}}>
+        <Col span={10} style={{fontSize: '20px', textAlign: 'right'}}>
           全校公用房使用总体情况
-        </Col>
-        <Col offset={2} span={10}>
-          <Button type='primary'
-            disabled={!this.state.year||(this.state.partyHouseTableList.length===0
-                                        &&this.state.academyHouseTableList.length===0)}
-            onClick={this.export}>导出到文件</Button>
-          <Button
-            onClick={this.print}
-            style={{marginLeft: '20px'}} type='primary'>打印</Button>
         </Col>
       </Row>      
       <Split/>
+      <Row style={{marginBottom: 25, marginLeft: 50}}>
+          <TButton.ExButton type='primary'
+            style={{width: 160}}
+            disabled={!this.state.year||(this.state.partyHouseTableList.length===0
+                                        &&this.state.academyHouseTableList.length===0)}
+            onClick={this.export}>导出到文件</TButton.ExButton>
+          <TButton.PrintButton
+            onClick={this.print}
+            style={{marginLeft: '20px'}} type='primary'>打印</TButton.PrintButton>
+      </Row>
       {
         this.state.year?(
           <div id="printArea">
             <Row>
-              <Col span={20} offset={1}>
+              <Col span={22} offset={1}>
                 <PartyHouseTable
                   loading={this.state.partyHouseTableLoading}
                   current={this.state.pcurrent}
@@ -351,7 +357,7 @@ class OverallAccount extends Component{
               </Col>
             </Row>
             <Row>
-              <Col span={20} offset={1}>
+              <Col span={22} offset={1}>
                 <AcademyHouseTable
                   loading={this.state.academyHouseTableLoading}
                   current={this.state.acurrent}

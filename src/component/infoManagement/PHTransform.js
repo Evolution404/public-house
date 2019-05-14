@@ -1,6 +1,5 @@
 import React, {Component} from 'react'
-import {Button, Steps, message,
-  Spin, Row, Col, Form, TreeSelect, Empty,
+import {Steps, message, Spin, Row, Col, Form, TreeSelect, Empty,
   Modal, Input, Select, Checkbox} from 'antd'
 import MainContainer from '../common/mainContainer'
 import {BuildingSelect, FloorSelect} from '../common/select'
@@ -11,6 +10,7 @@ import {ScientificBuilding,
   LogisticsBuilding,
   BusinessBuilding,
   CollegePartyBuilding} from './commonFormItem'
+import {TButton} from '../common/button'
 
 const Step = Steps.Step
 const Item = Form.Item
@@ -66,9 +66,7 @@ class BasicInfo extends Component{
       this.setState({treeData: rs})
     })
     .catch(err=>{
-      if(err.response)
-        message.error(err.response.data.title)
-      else
+      if(!err.response)
         message.error("加载房间号失败")
     })
   }
@@ -99,7 +97,9 @@ class BasicInfo extends Component{
               }
             </Item>
           </Col>
-          <Col span={8}>
+        </Row>
+        <Row>
+          <Col offset={2} span={8}>
             <Item label="楼层">
               {
                 getFieldDecorator('louceng',{
@@ -135,7 +135,7 @@ class BasicInfo extends Component{
                   initialValue: initialValue.targetNum,
                   rules: [{required: true, message: '请输入改造目标房间数'}]
                 })(
-                  <Input></Input>
+                  <Input placeholder="请输入改造目标房间数"></Input>
                 )
               }
             </Item>
@@ -143,9 +143,9 @@ class BasicInfo extends Component{
         </Row>
         <Row style={{margin: '20px 0'}}>
           <Col offset={11} span={2}>
-            <Button
+            <TButton.NextButton
               onClick={this.submit}
-              type="primary">下一步</Button>
+              type="primary">下一步</TButton.NextButton>
           </Col>
         </Row>
       </Form>
@@ -199,9 +199,8 @@ class MainForm extends Component{
           message.success('添加成功')
         })
         .catch(err=>{
-          message.error('添加失败')
-          if(err.response){
-            message.error(err.response.data.title)
+          if(!err.response){
+            message.error('添加失败')
           }
         })
         .finally(()=>{
@@ -255,16 +254,24 @@ class MainForm extends Component{
             )
           }
         </Form>
-        <Row style={{margin: '20px 0'}}>
-          <Col offset={10} span={2}>
-            <Button
-              onClick={this.prev}
-              type="primary">上一步</Button>
-          </Col>
-          <Col span={2}>
-            <Button
-              onClick={this.next}
-              type="primary">{this.props.isEnd?'完成':'下一步'}</Button>
+        <Row>
+          <Col offset={8}>
+            <Row style={{margin: '20px 0'}}>
+              <TButton.PrevButton
+                onClick={this.prev}
+                type="primary">上一步</TButton.PrevButton>
+              {
+                this.props.isEnd?(
+                  <TButton.ConfirmButton
+                    onClick={this.next}
+                    type="primary">完成</TButton.ConfirmButton>
+                ):(
+                  <TButton.NextButton
+                    onClick={this.next}
+                    type="primary">下一步</TButton.NextButton>
+                )
+              }
+            </Row>
           </Col>
         </Row>
       </Spin>
@@ -433,9 +440,7 @@ class PHTransform extends Component{
               message.success('提交改造信息成功')
             })
             .catch(err=>{
-              if(err.response)
-                message.error(err.response.data.title)
-              else
+              if(!err.response)
                 message.error('提交改造信息失败')
             })
           },

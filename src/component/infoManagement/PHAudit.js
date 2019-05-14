@@ -4,13 +4,15 @@ import {
   Link
 } from "react-router-dom"
 import Map from '../../routerMap'
-import {Row, Col, Form, Select, Button, message} from 'antd'
+import {Row, Col, Form, Select, message} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Table, {TableUtil, sorterParse} from '../common/table'
 import {SButton} from '../common/button'
 import UsingNature from '../common/usingNature'
 import {DeptSelect} from '../common/select'
+import Split from '../common/split'
 import API from '../../api'
+import {TButton} from '../common/button'
 import {read, write} from '../stateHelper'
 const {Item} = Form
 const Option = Select.Option
@@ -28,7 +30,7 @@ class SearchForm extends Component{
   render(){
     const { getFieldDecorator } = this.props.form
     return (
-      <Form onSubmit={this.handleSubmit} style={{marginTop: 30}}><Row>
+      <Form onSubmit={this.handleSubmit} style={{marginTop: 50}}><Row>
           <Col span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
               {getFieldDecorator('deptName',{
@@ -65,7 +67,7 @@ class SearchForm extends Component{
           </Col>
           <Col offset={1} span={4}>
             <div style={{marginTop:'5px'}}>
-              <Button type='primary' htmlType='submit'>搜索</Button>
+              <TButton.SearchButton type='primary' htmlType='submit'>搜索</TButton.SearchButton>
             </div>
           </Col>
       </Row></Form>
@@ -182,10 +184,11 @@ class PHAudit extends Component{
     })
   }
   render(){
-    return <MainContainer name="公用房审核">
+    return <MainContainer name="变更审核">
       <WrappedSearchForm
         initialValue={this.state.filter}
         onSearch={this.search}/>
+      <Split></Split>
       <DisplayTable
         current={this.state.current}
         onChange={this.tableChange}

@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Modal, message, notification, Form, Input, Empty} from 'antd';
+import {Modal, message, notification, Form, Input} from 'antd';
 import {SButton} from '../common/button'
 import MainContainer from '../common/mainContainer'
 import {ReservationAuditSearch} from '../common/search'
@@ -238,16 +238,10 @@ class ReservationAudit extends Component{
         initialValue={this.state.filter}
         onSearch={this.search}/>
       <Split />
-      {
-        this.state.isSearched?(
-          <Table
-            current={this.state.current}
-            onChange={this.tableChange}
-            columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
-        ):(
-          <Empty description="请先搜索"></Empty>
-        )
-      }
+      <Table
+        current={this.state.current}
+        onChange={this.tableChange}
+        columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
       <WrappedRefuseModal onRefuse={this.refuse} close={this.closeRefuseModal} {...this.state.refuseModal} />
     </MainContainer>
   }

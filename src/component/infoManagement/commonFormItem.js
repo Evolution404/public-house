@@ -102,7 +102,7 @@ class RoomNum extends Component{
         {getFieldDecorator('roomNum', {
           initialValue: this.props.initialValue,
         })(
-          <Input />
+          <Input placeholder="如: 南405" />
         )}
       </Item>
     )

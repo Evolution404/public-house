@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import { Route, Link } from "react-router-dom";
 import Map from '../../routerMap'
 import
-  {Form, Select, Row, Col, Button, message, DatePicker, Checkbox, Empty, Cascader}
+  {Form, Select, Row, Col, Button, message, DatePicker, Checkbox, Cascader}
 from 'antd'
 import API from '../../api'
 import {SButton} from '../common/button'
@@ -12,6 +12,7 @@ import Table, {TableUtil,sorterParse} from '../common/table'
 import ReservationModal, {rangeData} from './reservationModal'
 import moment from 'moment'
 import {read, write} from '../stateHelper'
+import {TButton} from '../common/button'
 
 const CheckboxGroup = Checkbox.Group
 const Item = Form.Item
@@ -30,6 +31,8 @@ class MeetingRoomReservation extends Component{
     },
     filter: {},
     values: {},
+    useDate: {},
+    startStopTime: [],
   }
   componentWillMount(){
     read(this)
@@ -46,7 +49,7 @@ class MeetingRoomReservation extends Component{
  search = ()=>{
    this.props.form.validateFields((err, values) => {
      if (!err) {
-       this.setState({tableLoading: true, isSearched: true, current: 1, values})
+       this.setState({tableLoading: true, isSearched: true, current: 1, values, useDate: values.useDate, startStopTime: values.startStopTime})
        let startStopTime = []
        startStopTime[0] = moment(values.useDate.format('YYYY-MM-DD')+' '+values.startStopTime[0]).valueOf()/1000
        startStopTime[1] = moment(values.useDate.format('YYYY-MM-DD')+' '+values.startStopTime[1]).valueOf()/1000
@@ -141,7 +144,7 @@ class MeetingRoomReservation extends Component{
       { label: '电脑', value: '电脑' },
     ]
     return <MainContainer name="会议室预约">
-      <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
+      <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
           <Col span={6}>
             <Item labelCol={{span:8}} wrapperCol={{span:15}} label="人数要求">
@@ -160,7 +163,7 @@ class MeetingRoomReservation extends Component{
             </Item>
           </Col>
           <Col span={5}>
-            <Item labelCol={{span:12}} wrapperCol={{span:12}} label="使用日期">
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="使用日期">
               {getFieldDecorator('useDate',{
                 initialValue: moment(this.state.values.useDate),
                 rules: [{required: true, message: '请选择使用日期'}]
@@ -195,7 +198,7 @@ class MeetingRoomReservation extends Component{
             </Item>
           </Col>
           <Col offset={0} span={3}>
-            <Button type="primary" onClick={this.search}>搜索房间</Button>
+            <TButton.SearchButton type="primary" onClick={this.search}>搜索房间</TButton.SearchButton>
           </Col>
           <Col span={4}>
             <Route>
@@ -207,17 +210,13 @@ class MeetingRoomReservation extends Component{
         </Row>
       </Form>
       <Split/>
-      {
-        this.state.isSearched?(
-          <Table
-            current={this.state.current}
-            onChange={this.tableChange}
-            columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
-        ):(
-          <Empty description="请先搜索"></Empty>
-        )
-      }
+      <Table
+        current={this.state.current}
+        onChange={this.tableChange}
+        columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
       <ReservationModal
+        useDate={this.state.useDate}
+        startStopTime={this.state.startStopTime}
         request={API.startReservation}
         {...this.state.reservationModal} close={this.closeReservationModal} />
     </MainContainer>

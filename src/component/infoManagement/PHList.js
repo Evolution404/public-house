@@ -7,7 +7,7 @@ import Map from '../../routerMap'
 import {Modal, message, Empty} from 'antd';
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
-import {LButton, SButton} from '../common/button'
+import {SButton, TButton} from '../common/button'
 import Split from '../common/split'
 import Table, {TableUtil, sorterParse} from '../common/table'
 import Search from '../common/search'
@@ -21,15 +21,21 @@ class ButtonGroup extends Component{
       <Router><div style={{marginTop: '10px'}}>
           <div style={{padding: '10px', display: 'inline-block'}}>
             <Link to={Map.PHAdd.path}>
-              <LButton text='+新增公用房'/>
+              <TButton.AddButton>新增公用房</TButton.AddButton>
             </Link>
           </div>
-          <div style={{padding: '10px', display: 'inline-block'}}><LButton onClick={this.props.delete.bind(this, -1)}
-          disable={!this.props.selected||this.props.selected.length===0} text='X删除'/></div>
-          <div style={{padding: '10px', display: 'inline-block'}}><LButton onClick={this.props.refresh} text='刷新'/></div>
+          <div style={{padding: '10px', display: 'inline-block'}}>
+            <TButton.DelButton
+              onClick={this.props.delete.bind(this, -1)}
+              disabled={!this.props.selected||this.props.selected.length===0}
+            >删除</TButton.DelButton>
+          </div>
+          <div style={{padding: '10px', display: 'inline-block'}}>
+            <TButton.RefreshButton onClick={this.props.refresh}>刷新</TButton.RefreshButton>
+          </div>
           <div style={{padding: '10px', display: 'inline-block'}}>
             <Link to={Map.PHImportDetail.path}>
-              <LButton text='从文件夹导入'/>
+              <TButton.ImButton>从文件夹导入</TButton.ImButton>
             </Link>
           </div>
       </div></Router>
@@ -442,7 +448,7 @@ class PHList extends Component{
       status: this.state.status,
     }
     this.setState({tableLoading: true})
-    return API.listFilterPH(filter, this.state.page)
+    return API.listFilterPH(filter, {current: this.state.current})
     .then(rs=>{
       this.setState({
         tableList: rs

@@ -63,7 +63,7 @@ class App extends Component{
       return false
     this.setState(this.getPersistentData())
     // TODO 对token进行有效性验证
-    let [err] = await wrapper(API.getDepts('0'))
+    let [err] = await wrapper(API.tgetDepts('0'))
     if(err)
       return false
     return true
@@ -90,23 +90,27 @@ class App extends Component{
         routerList.push(router)
       }
       node = (
-        <div>
+        <div style={{display: 'flex', flexDirection: 'column'}}>
             <Router>
-          <Header getPersistentData={this.getPersistentData} clear={this.clearPersistenData}
+          <div style={{flex:1}}>
+            <Header getPersistentData={this.getPersistentData} clear={this.clearPersistenData}
             name={this.state.userData.userName}/>
-          <div style={{float: "left", width: '20%', maxWidth:280}}>
-            <Navigation data={this.state.navData} style={{float: "left"}}/>
           </div>
-          <div style={{float: "left",
-            margin: "25px 2%",
-            width: '75%',
-          }}>
-              <div>
-                <Route exact path='/'
-                  render={()=>(<Redirect  to={RouterMap.MyPH.path} />)}></Route>
-                
-                {routerList}
-              </div>
+          <div style={{display: 'flex'}}>
+            <div style={{flex:.3, maxWidth: 280}}>
+              <Navigation data={this.state.navData} />
+            </div>
+            <div style={{
+              margin: "25px 2%",
+              flex:1,
+            }}>
+                <div>
+                  <Route exact path='/'
+                    render={()=>(<Redirect  to={RouterMap.MyPH.path} />)}></Route>
+                  
+                  {routerList}
+                </div>
+            </div>
           </div>
             </Router>
         </div>

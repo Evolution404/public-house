@@ -8,6 +8,7 @@ import { YearSelect } from '../common/select'
 import API from '../../api'
 import moban from '../mobaninfo'
 import {read, write} from '../stateHelper'
+import {TButton} from '../common/button'
 const Item = Form.Item
 const confirm = Modal.confirm;
 const Option = Select.Option
@@ -38,7 +39,7 @@ class Search extends Component{
   render(){
     const { getFieldDecorator } = this.props.form
     return (
-      <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
+      <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
           <Col span={7}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门性质">
@@ -57,13 +58,13 @@ class Search extends Component{
               {getFieldDecorator('dept',{
                 initialValue: this.props.dept,
               })(
-                <Input/>
+                <Input placeholder="请输入部门名称"/>
               )}
             </Item>
           </Col>
           <Col offset={1} span={4}>
             <div style={{marginTop:'5px'}}>
-              <Button type='primary' htmlType='submit'>搜索</Button>
+              <TButton.SearchButton type='primary' htmlType='submit'>搜索</TButton.SearchButton>
             </div>
           </Col>
         </Row>
@@ -76,14 +77,13 @@ const WrappedSearch = Form.create({ name: 'search' })(Search)
 class ButtonGroup extends Component{
   render(){
     return (
-      <Row style={{margin: '20px 0'}}>
-        <Col span={13}>
-          <Col offset={1} span={4}><Button block onClick={this.props.onAdd} type="primary">+新增</Button></Col>
-          <Col offset={1} span={4}><Button block
-          disabled={!this.props.selected||this.props.selected.length===0}
-          onClick={this.props.onDelete.bind(this, -1)} type="primary">X删除</Button></Col>
-          <Col offset={1} span={4}><Button block onClick={this.props.onImport} type="primary">从文件导入</Button></Col>
-        </Col>
+      <Row style={{margin: '20px 30px'}}>
+        <TButton.AddButton onClick={this.props.onAdd} type="primary">新增</TButton.AddButton>
+        <TButton.DelButton disabled={!this.props.selected||this.props.selected.length===0}
+          onClick={this.props.onDelete.bind(this, -1)} type="primary">删除</TButton.DelButton>
+        <TButton.ImButton
+          style={{width: 140}}
+          onClick={this.props.onImport} type="primary">从文件导入</TButton.ImButton>
       </Row>
     )
   }
@@ -465,6 +465,28 @@ class UpdateForm extends Component{
               </Item>
             </Col>
           </Row>
+          <Row>
+            <Col offset={2} span={10}>
+              <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="综合调节系数">
+                {getFieldDecorator('zonghetiaojiexishu',{
+                  initialValue: data.zonghetiaojiexishu,
+                })(
+                  <Input size="small" />
+                )}
+              </Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col offset={2} span={20}>
+              <Item style={{marginBottom: '0px'}}  labelCol={{span:6}} wrapperCol={{span:18}} label="备注">
+                {getFieldDecorator('note',{
+                  initialValue: data.note,
+                })(
+                  <Input size="small" />
+                )}
+              </Item>
+            </Col>
+          </Row>
         </Form>
       )
     }
@@ -777,6 +799,15 @@ class AddForm extends Component{
               <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="博士后数">
                 {getFieldDecorator('postdoctoral',)(
                   <InputNumber size="small" />
+                )}
+              </Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col offset={2} span={10}>
+              <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="综合调节系数">
+                {getFieldDecorator('zonghetiaojiexishu',)(
+                  <Input size="small" />
                 )}
               </Item>
             </Col>

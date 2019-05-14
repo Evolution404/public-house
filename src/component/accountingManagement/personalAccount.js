@@ -1,11 +1,12 @@
 import React, {Component} from 'react'
 import MainContainer from '../common/mainContainer'
-import {Form, Row, Col, Input, Button, Empty, Spin, message} from 'antd'
+import {Form, Row, Col, Input, Empty, Spin, message} from 'antd'
 import {YearSelect} from '../common/select'
 import Split from '../common/split'
 import Table, {sorterParse} from '../common/table'
 import API from '../../api'
 import {read, write} from '../stateHelper'
+import {TButton} from '../common/button'
 
 const Item = Form.Item
 
@@ -28,7 +29,7 @@ class Search extends Component{
   render(){
     const { getFieldDecorator } = this.props.form
     return (
-      <Form labelCol={{span:12}} wrapperCol={{span: 12}}>
+      <Form labelCol={{span:12}} wrapperCol={{span: 12}} style={{marginTop: 50}}>
         <Row>
           <Col span={4}>
             <Item label="年份">
@@ -48,10 +49,10 @@ class Search extends Component{
               )}
             </Item>
           </Col>
-          <Col offset={0} style={{marginTop: 5}}
-            span={2}><Button
+          <Col offset={0} style={{marginTop: 5, marginRight: 10}}
+            span={2}><TButton.SearchButton
               onClick={this.search}
-              type="primary">查询结果</Button></Col>
+              type="primary">查询结果</TButton.SearchButton></Col>
           <Col span={6}>
             <Item labelCol={{span: 7}} wrapperCol={{span: 14}} label="工号">
               {getFieldDecorator('gonghao',{
@@ -62,9 +63,9 @@ class Search extends Component{
             </Item>
           </Col>
           <Col style={{marginTop: 5}}
-            span={2}><Button
+            span={2}><TButton.AccButton
               onClick={this.accounting}
-              type="primary">重新核算</Button></Col>
+              type="primary">重新核算</TButton.AccButton></Col>
         </Row>
       </Form>      
     )

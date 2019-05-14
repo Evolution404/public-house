@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import MainContainer from '../common/mainContainer'
-import {Input, Empty,Button,Form, Row, Col, message, Modal, Select, Upload, Icon} from 'antd'
+import {Input, Button,Form, Row, Col, message, Modal, Select, Upload, Icon} from 'antd'
 import moment from 'moment'
 import {SButton} from '../common/button'
 import {DeptSelect} from '../common/select'
@@ -9,6 +9,7 @@ import Table,{sorterParse} from '../common/table'
 import API from '../../api'
 import moban from '../mobaninfo'
 import {read, write} from '../stateHelper'
+import {TButton} from '../common/button'
 const Item = Form.Item
 const confirm = Modal.confirm;
 const Option = Select.Option
@@ -26,20 +27,20 @@ class Search extends Component{
   render(){
     const { getFieldDecorator } = this.props.form
     return (
-      <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
+      <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
           <Col span={7}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="姓名">
               {getFieldDecorator('name',{
                 initialValue: this.props.name,
               })(
-                <Input/>
+                <Input placeholder="请输入姓名"/>
               )}
             </Item>
           </Col>
           <Col offset={1} span={4}>
             <div style={{marginTop:'5px'}}>
-              <Button type='primary' htmlType='submit'>搜索</Button>
+              <TButton.SearchButton type='primary' htmlType='submit'>搜索</TButton.SearchButton>
             </div>
           </Col>
         </Row>
@@ -52,14 +53,13 @@ const WrappedSearch = Form.create({ name: 'search' })(Search)
 class ButtonGroup extends Component{
   render(){
     return (
-      <Row style={{margin: '20px 0'}}>
-        <Col span={13}>
-          <Col offset={1} span={4}><Button block onClick={this.props.onAdd} type="primary">+新增</Button></Col>
-          <Col offset={1} span={4}><Button
-              disabled={!this.props.selected||this.props.selected.length===0}
-              block onClick={this.props.onDelete.bind(this, -1)} type="primary">X删除</Button></Col>
-          <Col offset={1} span={4}><Button block onClick={this.props.onImport} type="primary">从文件导入</Button></Col>
-        </Col>
+      <Row style={{margin: '20px 30px'}}>
+        <TButton.AddButton onClick={this.props.onAdd} type="primary">新增</TButton.AddButton>
+        <TButton.DelButton disabled={!this.props.selected||this.props.selected.length===0}
+              onClick={this.props.onDelete.bind(this, -1)} type="primary">删除</TButton.DelButton>
+            <TButton.ImButton
+              style={{width: 140}}
+              onClick={this.props.onImport} type="primary">从文件导入</TButton.ImButton>
       </Row>
     )
   }
@@ -611,26 +611,18 @@ class TheUserManagement extends Component{
       detail: this.detail,
       change: this.change,
     }
-    return <MainContainer name="使用者管理">
+    return <MainContainer name="人员信息管理">
       <WrappedSearch name={this.state.name} onSearch={this.search}/>
       <Split/>
       <ButtonGroup
         selected={this.state.selected}
         onAdd={this.add} onDelete={this.delete} onImport={this.openImport}/>
-      <Row>
-        <Col span={20}>
-          {this.state.isSearched?(
-            <DisplayTable
-              current={this.state.current}
-              onChange={this.tableChange}
-              loading={this.state.tableLoading}
-              data={this.state.tableList}
-              onSelectedChange={this.selectedChange} {...tableHelper}/>
-          ):(
-            <Empty description="请先搜索"></Empty>
-          )}
-        </Col>
-      </Row>
+      <DisplayTable
+        current={this.state.current}
+        onChange={this.tableChange}
+        loading={this.state.tableLoading}
+        data={this.state.tableList}
+        onSelectedChange={this.selectedChange} {...tableHelper}/>
       <WrappedAddModal refresh={this.refresh}
         {...this.state.addmodal} close={this.closeAddModal}/>
       <DetailModal {...this.state.detailmodal} close={this.closeDetailModal}/>

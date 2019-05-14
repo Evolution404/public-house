@@ -204,7 +204,6 @@ class UsingNature extends Component{
     let props = {
       ...this.props,
     }
-    delete props.value
     return (
       <Cascader
         placeholder=''

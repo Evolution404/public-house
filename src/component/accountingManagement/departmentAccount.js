@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Form, Select, Row, Col, Button, Tag, Empty, message, Spin} from 'antd'
+import {Form, Select, Row, Col, Tag, Empty, message, Spin} from 'antd'
 import MainContainer from '../common/mainContainer'
 import {DeptSelect, YearSelect} from '../common/select'
 import Histogram from '../common/histogram'
@@ -8,6 +8,8 @@ import Split from '../common/split'
 import API from '../../api'
 import Table, {sorterParse} from '../common/table'
 import Back from '../common/back'
+import {TButton} from '../common/button'
+import download from '../common/download'
 
 const Option = Select.Option
 const Item = Form.Item
@@ -22,7 +24,7 @@ class Graph extends Component{
                 <Row>
                   <Col offset={2} span={6}>
                     <Histogram id="graph"
-                      title="定额面积、实际面积、人均面积对比情况"
+                      title="定额面积、实际面积对比"
                       data={graphData}></Histogram>
                   </Col>
                 </Row>
@@ -42,7 +44,7 @@ class Graph extends Component{
             </Col>
             <Col span={12}>
               <Histogram id="graph2"
-                title="各分项定额面积、实际面积、人均面积对比情况"
+                title="各分项定额面积、实际面积对比情况"
                 data={graphData.hisData}></Histogram>
             </Col>
           </Row>
@@ -54,7 +56,7 @@ class Graph extends Component{
 class MyTag extends Component{
   render(){
     return (
-      <Tag style={{width: 50,textAlign: 'center', marginLeft: 20}} color="blue">{this.props.children}</Tag>      
+      <Tag style={{width: 70,textAlign: 'center', marginLeft: 20}} color="blue">{this.props.children}</Tag>      
     )
   }
 }
@@ -64,15 +66,14 @@ class TotalData extends Component{
     return (
       <div>
       <Row style={{margin: '25px 0'}}>
-        <Col span={8}><Col style={{textAlign: 'right'}} offset={6} span={6}>总面积:</Col><MyTag>{this.props.data.zongmianji}</MyTag></Col>
-        <Col span={8}><Col style={{textAlign: 'right'}} offset={6} span={6}>人数:</Col><MyTag>{this.props.data.zongrenshu}</MyTag></Col>
-        <Col span={8}><Col style={{textAlign: 'right'}} offset={6} span={6}>人均面积:</Col><MyTag>{this.props.data.renjunmianji}</MyTag></Col>
+        <Col span={12}><Col style={{textAlign: 'right'}} offset={4} span={6}>人数:</Col><MyTag>{this.props.data.zongrenshu}</MyTag></Col>
+        <Col span={12}><Col style={{textAlign: 'right'}} offset={4} span={6}>人均面积:</Col><MyTag>{this.props.data.renjunmianji}</MyTag></Col>
       </Row>
       {
         this.props.type==='1'&&(
           <Row style={{marginBottom: 25}}>
-            <Col span={8}><Col style={{textAlign: 'right'}} offset={6} span={6}>定额面积合计:</Col><MyTag>{this.props.data.zongdingemianji}</MyTag></Col>
-            <Col span={8}><Col style={{textAlign: 'right'}} offset={6} span={6}>实际面积合计:</Col><MyTag>{this.props.data.zongmianji}</MyTag></Col>
+            <Col span={12}><Col style={{textAlign: 'right'}} offset={4} span={6}>定额面积合计:</Col><MyTag>{this.props.data.zongdingemianji}</MyTag></Col>
+            <Col span={12}><Col style={{textAlign: 'right'}} offset={4} span={6}>实际面积合计:</Col><MyTag>{this.props.data.zongmianji}</MyTag></Col>
           </Row>
         )
       }
@@ -163,7 +164,7 @@ class PartyHouse extends Component{
         sorter: true,
       },
       {
-        title: '使用面积',
+        title: '使用面积(㎡)',
         dataIndex: 'shiyongmianji',
         sorter: true,
       },
@@ -250,6 +251,35 @@ class DepartmentAccount extends Component{
   onTypeChange = (formtype)=>{
     this.setState({formtype})
   }
+  getCanvasURL = (id)=>{
+    return document.querySelector(`#${id} canvas`).toDataURL().split(',')[1]
+  }
+  export = ()=>{
+    let promise
+    this.setState({loading: true})
+    if(this.state.id){
+      // 党政机关一个图
+      // 学院部门两个图
+      if(this.state.type==='1')
+        promise = API.exportPDeptAccountDataById(this.state.id, {tubiao:this.getCanvasURL('graph')})
+      else
+        promise = API.exportCDeptAccountDataById(this.state.id,
+          {tubiao1:this.getCanvasURL('graph1'), tubiao2:this.getCanvasURL('graph2')})
+    }else{
+      if(this.state.type==='1')
+        promise = API.exportPDeptAccountDataByInfo(this.state.filter.dept, this.state.filter.year, {tubiao: this.getCanvasURL('graph')})
+      else
+        promise = API.exportCDeptAccountDataByInfo(this.state.filter.dept, this.state.filter.year, {tubiao1: this.getCanvasURL('graph1'), tubiao2: this.getCanvasURL('graph2')})
+    }
+    promise.then(rs=>{
+      download(rs)
+    })
+    .catch(err=>{
+      if(!err.response)
+        message.error('导出失败')
+    })
+    .finally(()=>{this.setState({loading: false})})
+  }
   tableChange = (p, s)=>{
     // 党政机关的才有可能翻页排序
     if(this.state.type!=='1')
@@ -316,24 +346,24 @@ class DepartmentAccount extends Component{
               )}
             </Item>
           </Col>
-          <Col offset={1} span={2}>
-            <div style={{marginTop:'5px'}}>
-              <Button onClick={this.getDataByInfo} type='primary'>查询核算信息</Button>
-            </div>
-          </Col>
-          <Col offset={1} span={2}>
-            <div style={{marginTop:'5px'}}>
-              <Button type='primary'>导出到文件</Button>
-            </div>
-          </Col>
-          <Col offset={1} span={2}>
-            <div style={{marginTop:'5px'}}>
-              <Button type='primary' block>打印</Button>
-            </div>
-          </Col>
+          <TButton.SearchButton
+            style={{width: 140, marginTop: 5}}
+            onClick={this.getDataByInfo} type='primary'>查询核算信息</TButton.SearchButton>
         </Row>
       </Form>
       <Split />
+      <Row style={{marginBottom: 25, marginLeft: 50}}>
+        <TButton.ExButton
+          style={{width: 140}}
+          onClick={this.export}
+          disabled={
+            (this.state.type==='1'&&(Object.keys(this.state.tableData).length===0||
+              this.state.tableData.tableList.length===0))||
+            (this.state.type==='2'&&this.state.tableData.length===0)
+          }
+          type='primary'>导出到文件</TButton.ExButton>
+        <TButton.PrintButton type='primary' block>打印</TButton.PrintButton>
+      </Row>
       {
         this.state.hasSearched?(
           <Spin spinning={this.state.loading} tip="加载信息中">

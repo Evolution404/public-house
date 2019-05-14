@@ -44,3 +44,11 @@ input{
   background-color: #7cb0d8;
   border-color: #7cb0d8;
 }
+
+.ant-form.ant-form-horizontal{
+  margin-bottom:-10px;
+}
+.ant-row>.ant-btn{
+  margin: 0 15px;
+  width:105px;
+}

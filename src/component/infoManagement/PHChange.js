@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Empty, message, Row, Col, Form, Input, Button, Spin} from 'antd'
+import {Empty, message, Row, Col, Form, Input, Spin} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import UsingNature, { UsingNatureBrief } from '../common/usingNature'
@@ -10,6 +10,7 @@ import {ScientificBuilding,
   BusinessBuilding,
   CollegePartyBuilding} from './commonFormItem'
 import API from '../../api'
+import {TButton} from '../common/button'
 import Back from '../common/back'
 const {Item} = Form
 
@@ -34,7 +35,7 @@ class Search extends Component{
   render(){
     const { getFieldDecorator } = this.props.form
     return (
-      <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
+      <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
           <Col span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="使用性质">
@@ -69,13 +70,13 @@ class Search extends Component{
               {getFieldDecorator('roomNum',{
                 rules: [{required: true, message: '请选择房间号'}]
               })(
-                <Input/>
+                <Input placeholder="如: 南405"/>
               )}
             </Item>
           </Col>
           <Col offset={1} span={2}>
             <div style={{marginTop:'5px'}}>
-              <Button type='primary' htmlType='submit'>搜索</Button>
+              <TButton.SearchButton type='primary' htmlType='submit'>搜索</TButton.SearchButton>
             </div>
           </Col>
         </Row>
@@ -170,7 +171,7 @@ class MainForm extends Component{
         </Item>
         <Row>
           <Col offset={12} span={4}>
-            <Button type='primary' htmlType='submit'>提交变更</Button>
+            <TButton.SaveButton type='primary' htmlType='submit'>提交变更</TButton.SaveButton>
           </Col>
         </Row>
       </Form>
@@ -213,9 +214,8 @@ class PHChange extends Component{
       message.success('修改成功')
     })
     .catch(err=>{
-      message.error('修改失败')
-      if(err.response){
-        message.error(err.response.data.title)
+      if(!err.response){
+        message.error('修改失败')
       }
     })
     .finally(()=>{this.setState({loading: false})})
@@ -229,9 +229,7 @@ class PHChange extends Component{
       this.setState({formInfo: rs, id:rs.id, hasSearched: true})
     })
     .catch(err=>{
-      if(err.response)
-        message.error(err.response.data.title)
-      else
+      if(!err.response)
         message.error('搜索失败')
     })
     .finally(()=>{

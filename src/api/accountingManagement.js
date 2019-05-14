@@ -173,6 +173,66 @@ const overallAccount = {
       })
     })
   },
+  exportPDeptAccountDataByInfo(dept, year, graph){
+    let data = new FormData()
+    data.append('bumen', dept)
+    data.append('nianfen', year)
+    data.append('tubiao', graph.tubiao)
+    return new Promise((resolve, reject)=>{
+      axios.post('/tb-dangzheng-jiguan-yongfang-tongji/xiangqing/export-excel', data)
+      .then((rs)=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
+  exportCDeptAccountDataByInfo(dept, year, graph){
+    let data = new FormData()
+    data.append('bumen', dept)
+    data.append('nianfen', year)
+    data.append('tubiao1', graph.tubiao1)
+    data.append('tubiao2', graph.tubiao2)
+    return new Promise((resolve, reject)=>{
+      axios.post('/tb-xueyuan-yongfang-shiyong-tongji/xiangqing/export-excel', data)
+      .then((rs)=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
+  exportPDeptAccountDataById(id, graph){
+    let data = new FormData()
+    data.append('id', id)
+    data.append('tubiao', graph.tubiao)
+    return new Promise((resolve, reject)=>{
+      axios.post('/tb-dangzheng-jiguan-yongfang-tongji/xiangqing/export-excel', data)
+      .then((rs)=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
+  exportCDeptAccountDataById(id, graph){
+    let data = new FormData()
+    data.append('id', id)
+    data.append('tubiao1', graph.tubiao1)
+    data.append('tubiao2', graph.tubiao2)
+    return new Promise((resolve, reject)=>{
+      axios.post('/tb-xueyuan-yongfang-shiyong-tongji/xiangqing/export-excel', data)
+      .then((rs)=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
   exportOverallAccount(data){
     return new Promise((resolve, reject)=>{
       axios.post('/tb-dangzheng-jiguan-yongfang-tongji/export-excel', data)

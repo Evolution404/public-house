@@ -8,7 +8,7 @@ import {Button,Form, Row, Col, message, Modal, Upload,
   Icon, Input} from 'antd'
 import API from '../../api'
 import MainContainer from '../common/mainContainer'
-import {LButton, SButton} from '../common/button'
+import {SButton, TButton} from '../common/button'
 import Split from '../common/split'
 import Table,{sorterParse}from '../common/table'
 import {BuildingSelect, FloorSelect} from '../common/select'
@@ -63,12 +63,14 @@ class Search extends Component{
               {getFieldDecorator('roomNum',{
                 initialValue: this.props.initialValue.roomNum,
               })(
-                <Input></Input>
+                <Input
+                  placeholder="如:南405"
+                ></Input>
               )}
             </Item>
           </Col>
           <Col style={{marginTop: 5}} offset={1} span={2}>
-            <Button onClick={this.search} type="primary">搜索</Button>
+            <TButton.SearchButton onClick={this.search} type="primary">搜索</TButton.SearchButton>
           </Col>
         </Row>
       </Form>
@@ -83,15 +85,19 @@ class ButtonGroup extends Component{
       <Router><div style={{marginTop: '10px'}}>
           <div style={{padding: '10px', display: 'inline-block'}}>
             <Link to={Map.PHAddBrief.path}>
-              <LButton text='+新增公用房'/>
+              <TButton.AddButton>新增公用房</TButton.AddButton>
             </Link>
           </div>
-          <div style={{padding: '10px', display: 'inline-block'}}><LButton onClick={this.props.delete.bind(this, -1)}
-          disable={!this.props.selected||this.props.selected.length===0} text='X删除'/></div>
-          <div style={{padding: '10px', display: 'inline-block'}}><LButton onClick={this.props.refresh} text='刷新'/></div>
+          <div style={{padding: '10px', display: 'inline-block'}}>
+            <TButton.DelButton onClick={this.props.delete.bind(this, -1)}
+              disabled={!this.props.selected||this.props.selected.length===0}
+            >删除</TButton.DelButton></div>
+        <div style={{padding: '10px', display: 'inline-block'}}>
+          <TButton.RefreshButton onClick={this.props.refresh}>刷新</TButton.RefreshButton>
+        </div>
           <div style={{padding: '10px', display: 'inline-block'}}>
             <Link to={Map.PHImport.path}>
-              <LButton text='从文件中导入'/>
+              <TButton.ImButton>从文件导入</TButton.ImButton>
             </Link>
           </div>
       </div></Router>
@@ -336,9 +342,8 @@ class PHManagement extends Component{
        })
        .catch(err=>{
          console.log(err)
-         message.error('删除失败')
-         if(err.response)
-           message.error(err.response.data.title)
+         if(!err.response)
+           message.error('删除失败')
         })
       },
       onCancel() {},
@@ -364,7 +369,7 @@ class PHManagement extends Component{
   // 根据当前填写的搜索信息获取后台数据
   refresh = ()=>{
     this.setState({selected:[], tableLoading: true})
-    return API.filterPH(this.state.filter, this.state.page)
+    return API.filterPH(this.state.filter, {current:this.state.current})
     .then(rs=>{
       this.setState({
         tableList: rs

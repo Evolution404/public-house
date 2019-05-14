@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import {
-  Form, Icon, Input, Button, Checkbox, message
+  Form, Icon, Input, Button, Checkbox, message,
 } from 'antd';
 import API from '../../api'
 import './login.css'
@@ -29,9 +29,7 @@ class Login extends Component {
           this.props.login(rs)
         })
         .catch(err=>{
-          if(err.response)
-            message.error('用户名或密码错误')
-          else
+          if(!err.response)
             message.error('登录失败')
         })
       }

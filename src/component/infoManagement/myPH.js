@@ -4,17 +4,18 @@ import {
   Link
 } from "react-router-dom";
 import Map from '../../routerMap'
-import {message, Spin, Card, Tag, Empty} from 'antd'
+import {message, Spin, Empty} from 'antd'
 import API from '../../api'
 import Split from '../common/split'
 import Table, {TableUtil, sorterParse} from '../common/table'
 import {SButton} from '../common/button'
 import {MyPHSearch} from '../common/search'
 import MainContainer from '../common/mainContainer'
+import css from '../../cssConfig'
 import {read, write} from '../stateHelper'
+import badge1 from './images/badge1.png'
 
-
-class InfoTag extends Component{
+/*class InfoTag extends Component{
   render(){
     return (
       <Tag style={{}} color="blue">{this.props.data}</Tag>
@@ -24,16 +25,16 @@ class InfoTag extends Component{
 
 function Label(props){
   return <span style={{width: 65, display: 'inline-block'}}>{props.children}</span>
-}
+}*/
 
 class PersonalInfo extends Component{
   render(){
-    const gridStyle = {
+    /*const gridStyle = {
       width: '25%',
-    }
+    }*/
     let data = this.props.data
     return (
-      <Card style={{marginBottom: 10, border:0}} >
+      /*<Card style={{marginBottom: 10, border:0}} >
         <Card.Grid style={gridStyle}><Label>工号:</Label>
           <InfoTag data={data.workNum}/></Card.Grid>
         <Card.Grid style={gridStyle}><Label>姓名:</Label>
@@ -42,7 +43,23 @@ class PersonalInfo extends Component{
           <InfoTag data={data.dept}/></Card.Grid>
         <Card.Grid style={gridStyle}><Label>职务级别:</Label>
           <InfoTag data={data.dutyGrade}/></Card.Grid>
-      </Card>
+      </Card>*/
+      <div style={{backgroundColor: '#f2f2f2', height: 120, padding: 20, paddingLeft: '3%',display: 'flex'}}>
+        <div style={{ width: 300, display: 'flex', justifyContent: 'center', flexDirection: 'column', borderRight: '1px solid #a4a4a4'}}>
+          <p style={{fontSize: 20, paddingBottom: 10}}>{data.name}</p>
+          <p style={{fontSize: 16, color: css.blue}}>工号:{data.workNum}</p>
+        </div>
+        <div style={{color:'#a4a4a4',paddingLeft: 20, width: 400, display: 'flex', justifyContent: 'center', flexDirection: 'column'}}>
+          <p style={{fontSize: 12, paddingBottom: 10}}>部门: 
+            <span style={{color: '#696969', fontSize: 15, paddingLeft: 10}}>{data.dept}</span>
+          </p>
+          <p style={{fontSize: 12, paddingBottom: 10}}>职务: 
+            <span style={{color: '#696969', fontSize: 15, paddingLeft: 10}}>{data.dutyGrade}
+              <img style={{padding: '0 5px', marginTop: -3}} src={badge1} alt=""/>
+            </span>
+          </p>
+        </div>
+      </div>
     )
   }
 }
@@ -307,9 +324,8 @@ class MyPH extends Component{
       this.setState({personnelInfo: rs})
     })
     .catch(err=>{
-      message.error('获取个人信息失败')
-      if(err.response)
-        message.error(err.response.data.title)
+      if(!err.response)
+        message.error('获取个人信息失败')
     })
     .finally(()=>{
       this.setState({infoLoading: false})
@@ -336,9 +352,8 @@ class MyPH extends Component{
       this.setState({tableList:rs})
     })
     .catch(err=>{
-      message.error('搜索失败')
-      if(err.response)
-        message.error(err.response.data.title)
+      if(!err.response)
+        message.error('搜索失败')
     })
     .finally(()=>{
       this.setState({tableLoading: false})

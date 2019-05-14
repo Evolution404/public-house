@@ -64,9 +64,8 @@ class UseStatisticalDetail extends Component{
       this.setState({tableList, building})
     })
     .catch(err=>{
-      message.error('搜索失败')
-      if(err.response)
-        message.error(err.response.data.title)
+      if(!err.response)
+        message.error('搜索失败')
     })
     .finally(()=>this.setState({loading: false, hasSearched: true}))
   }

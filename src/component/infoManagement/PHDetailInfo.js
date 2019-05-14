@@ -40,9 +40,8 @@ class PHDetailInfo extends Component{
       this.setState({detailInfo: rs})
     })
     .catch(err=>{
-      message.error('加载信息失败')
-      if(err.response)
-        message.error(err.response.data.title)
+      if(!err.response)
+        message.error('加载信息失败')
     })
     .finally(()=>{
       this.setState({infoLoading: false})

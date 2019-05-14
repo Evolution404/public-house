@@ -1,11 +1,12 @@
 import React, {Component} from 'react'
-import {Button, Form, Row, Col, message, Empty} from 'antd'
+import {Form, Row, Col, message, Empty} from 'antd'
 import API from '../../api'
 import Table, {sorterParse} from '../common/table'
 import MainContainer from '../common/mainContainer'
 import {DeptSelect} from '../common/select'
 import Split from '../common/split'
 import {read, write} from '../stateHelper'
+import {TButton} from '../common/button'
 const Item = Form.Item
 
 class Search extends Component{
@@ -21,7 +22,7 @@ class Search extends Component{
   render(){
     const { getFieldDecorator } = this.props.form
     return (
-      <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
+      <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
           <Col span={7}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
@@ -34,7 +35,8 @@ class Search extends Component{
           </Col>
           <Col offset={1} span={4}>
             <div style={{marginTop:'5px'}}>
-              <Button type='primary' htmlType='submit'>搜索</Button>
+              <TButton.SearchButton
+                type='primary' htmlType='submit'>搜索</TButton.SearchButton>
             </div>
           </Col>
         </Row>

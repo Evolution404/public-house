@@ -11,6 +11,7 @@ import Zmage from 'react-zmage'
 import API from '../../api'
 import {host} from '../../api/apiConfig'
 import {read, write} from '../stateHelper'
+import {TButton} from '../common/button'
 const Item = Form.Item
 
 class Search extends Component{
@@ -25,7 +26,7 @@ class Search extends Component{
   render(){
     const { getFieldDecorator } = this.props.form
     return (
-      <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
+      <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
           <Col span={7}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="楼宇名称">
@@ -39,7 +40,7 @@ class Search extends Component{
           </Col>
           <Col offset={1} span={4}>
             <div style={{marginTop:'5px'}}>
-              <Button type='primary' htmlType='submit'>搜索</Button>
+              <TButton.SearchButton type='primary' htmlType='submit'>搜索</TButton.SearchButton>
             </div>
           </Col>
         </Row>
@@ -143,9 +144,7 @@ class BuildingQuery extends Component{
    })
    .catch(err=>{
      console.log(err)
-     if(err.response)
-       message.error(err.response.data.title)
-     else
+     if(!err.response)
         message.error('加载房间号信息失败')
     })
     .finally(()=>this.setState({floorsLoading: false}))
@@ -183,11 +182,11 @@ class BuildingQuery extends Component{
             {
                 <Zmage style={{width: '100%'}} src={this.state.modal.src} alt=""></Zmage>
             }
-            <div style={{marginTop: 20}}>
+            <div style={{marginTop: 20, display: 'flex', flexWrap: 'wrap'}}>
               {
                 this.state.modal.roomList.map((i,key)=>(
-                  <Link key={key} to={Map.PHDetailInfo.path.replace(':id', `${i.leixing}-${i.id}`)}>
-                    <Button style={{margin: 10}} type="primary">{i.fangjianhao}</Button>
+                  <Link style={{flex: '0 0 15%', margin: 10}} key={key} to={Map.PHDetailInfo.path.replace(':id', `${i.leixing}-${i.id}`)}>
+                    <Button block type="primary">{i.fangjianhao}</Button>
                   </Link>
                 ))
               }

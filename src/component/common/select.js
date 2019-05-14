@@ -46,7 +46,8 @@ class BuildingSelect extends Component{
       this.setState({building: rs})
     })
     .catch(err=>{
-      message.error('加载楼宇信息失败')
+      if(!err.response)
+        message.error('加载楼宇信息失败')
     })
     .finally(()=>{
       this.setState({loading: false})
@@ -89,7 +90,8 @@ class DeptSelect extends Component{
       this.setState({depts: rs})
     })
     .catch(err=>{
-      message.error('加载部门信息失败')
+      if(!err.response)
+        message.error('加载部门信息失败')
     })
     .finally(()=>{
       this.setState({loading: false})
@@ -165,7 +167,9 @@ class FloorSelect extends Component{
     this.props.onChange(value)
   }
   render(){
-    return <Input {...this.props}></Input>
+    return <Input
+      placeholder="如：1或B1(地下室)"
+      {...this.props}></Input>
     /*let options = []
     for(let i=0;i< this.state.floors;i++){
       options.push(
@@ -225,7 +229,8 @@ class LabSelect extends Component{
       this.setState({labs: rs})
     })
     .catch(err=>{
-      message.error('加载实验室信息失败')
+      if(!err.response)
+        message.error('加载实验室信息失败')
     })
     .finally(()=>{
       this.setState({loading: false})
@@ -282,7 +287,8 @@ class ClassroomSelect extends Component{
       this.setState({classrooms: rs})
     })
     .catch(err=>{
-      message.error('加载教室信息失败')
+      if(!err.response)
+        message.error('加载教室信息失败')
     })
     .finally(()=>{
       this.setState({loading: false})
@@ -337,7 +343,8 @@ class RoleSelect extends Component{
       this.setState({roles: rs})
     })
     .catch(err=>{
-      message.error('加载角色信息失败')
+      if(!err.response)
+        message.error('加载角色信息失败')
     })
     .finally(()=>{
       this.setState({loading: false})

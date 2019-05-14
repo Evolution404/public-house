@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
 import MainContainer from '../common/mainContainer'
 import API from '../../api'
-import {Input, Form, Row, Col, Button, message, Spin} from 'antd'
+import {Input, Form, Row, Col, message, Spin} from 'antd'
+import {TButton} from '../common/button'
 const Item = Form.Item
 
 class MainForm extends Component{
@@ -53,10 +54,13 @@ class MainForm extends Component{
                     )}
                   </Item>
                 </Col>
-                <Col offset={2} span={2}>
-                  <Button style={{marginTop: '5px'}}
+                <Col offset={1} span={3} style={{marginTop: 12}}>
+                  <span>(请输入0-1的小数)</span>
+                </Col>
+                <Col offset={1} span={2}>
+                  <TButton.ConfirmButton style={{marginTop: '5px'}}
                     onClick={this.submit.bind(this, i.id)}
-                    type="primary">确定</Button>
+                    type="primary">确定</TButton.ConfirmButton>
                 </Col>
               </Row>
 

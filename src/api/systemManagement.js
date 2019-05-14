@@ -1,4 +1,5 @@
-import axios, {host} from './apiConfig'
+import axios, {host, domainName} from './apiConfig'
+import taxios from 'axios'
 import {MapB2F, MapF2B} from './nameMapConfig'
 import Map from '../routerMap'
 import {pageSize} from '../component/common/table'
@@ -13,6 +14,28 @@ const deptManagement = {
     return new Promise((resolve, reject)=>{
       axios.get('/tb-bumen/get/all/bumengmingcheng', {
         params: data,
+      })
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
+  // 检测登录状态
+  tgetDepts(type){
+    let data = {}     
+    if(type!=='0'){
+      data.bumenleixing=type
+    }
+    let token = localStorage.getItem("x-auth-token")
+    return new Promise((resolve, reject)=>{
+      taxios.get(domainName+'/tb-bumen/get/all/bumengmingcheng', {
+        params: data,
+        headers: {
+          'X-gongyongfangguanliApp-params': token,
+        }
       })
       .then(rs=>{
         resolve(rs.data)

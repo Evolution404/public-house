@@ -2,6 +2,7 @@ const css = {
   green: "#009900",
   cyan: "#00cccc",
   blue: "#5a9dd0",
+  lightBlue: "#1890ff",
   commonFontStyle:{
     color: "white",
     fontSize: "14px",

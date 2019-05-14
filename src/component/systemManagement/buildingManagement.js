@@ -1,12 +1,13 @@
 import React, {Component} from 'react'
 import MainContainer from '../common/mainContainer'
-import {Input, Empty, Button,Form, Row, Col, message, Modal, InputNumber, Upload, Icon, Select} from 'antd'
+import {Input, Button,Form, Row, Col, message, Modal, InputNumber, Upload, Icon, Select} from 'antd'
 import {SButton} from '../common/button'
 import Split from '../common/split'
 import Table, {sorterParse}from '../common/table'
 import API from '../../api'
 import moban from '../mobaninfo'
 import {read, write} from '../stateHelper'
+import {TButton} from '../common/button'
 const Option = Select.Option
 const Item = Form.Item
 const confirm = Modal.confirm;
@@ -24,20 +25,20 @@ class Search extends Component{
   render(){
     const { getFieldDecorator } = this.props.form
     return (
-      <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
+      <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
           <Col span={7}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="名称">
               {getFieldDecorator('name',{
                 initialValue: this.props.name,
               })(
-                <Input/>
+                <Input placeholder="请输入楼宇名称"/>
               )}
             </Item>
           </Col>
           <Col offset={1} span={4}>
             <div style={{marginTop:'5px'}}>
-              <Button type='primary' htmlType='submit'>搜索</Button>
+              <TButton.SearchButton type='primary' htmlType='submit'>搜索</TButton.SearchButton>
             </div>
           </Col>
         </Row>
@@ -50,14 +51,13 @@ const WrappedSearch = Form.create({ name: 'search' })(Search)
 class ButtonGroup extends Component{
   render(){
     return (
-      <Row style={{margin: '20px 0'}}>
-        <Col span={13}>
-          <Col offset={1} span={4}><Button block onClick={this.props.onAdd} type="primary">+新增</Button></Col>
-          <Col offset={1} span={4}><Button block
-              disabled={!this.props.selected||this.props.selected.length===0}
-          onClick={this.props.onDelete.bind(this, -1)} type="primary">X删除</Button></Col>
-          <Col offset={1} span={4}><Button block onClick={this.props.onImport} type="primary">从文件导入</Button></Col>
-        </Col>
+      <Row style={{margin: '20px 30px'}}>
+        <TButton.AddButton onClick={this.props.onAdd} type="primary">新增</TButton.AddButton>
+        <TButton.DelButton disabled={!this.props.selected||this.props.selected.length===0}
+          onClick={this.props.onDelete.bind(this, -1)} type="primary">删除</TButton.DelButton>
+        <TButton.ImButton
+          style={{width: 140}}
+          onClick={this.props.onImport} type="primary">从文件导入</TButton.ImButton>
       </Row>
     )
   }
@@ -629,20 +629,12 @@ class BuildingManagement extends Component{
       <ButtonGroup onAdd={this.add}
         selected={this.state.selected}
         onDelete={this.delete} onImport={this.openImport}/>
-      <Row>
-        <Col span={20}>
-          {this.state.isSearched?(
-            <DisplayTable
-              current={this.state.current}
-              onChange={this.tableChange}
-              data={this.state.tableList}
-              loading={this.state.tableLoading}
-              onSelectedChange={this.selectedChange} {...tableHelper}/>
-          ):(
-            <Empty description="请先搜索"></Empty>
-          )}
-        </Col>
-      </Row>
+      <DisplayTable
+        current={this.state.current}
+        onChange={this.tableChange}
+        data={this.state.tableList}
+        loading={this.state.tableLoading}
+        onSelectedChange={this.selectedChange} {...tableHelper}/>
       <WrappedAddModal refresh={this.refresh} {...this.state.addmodal} close={this.closeAddModal}/>
       <WrappedUpdateModal refresh={this.refresh} {...this.state.updatemodal} close={this.closeUpdateModal}/>
       <ImportModal {...this.state.importmodal} close={this.closeImportModal}/>

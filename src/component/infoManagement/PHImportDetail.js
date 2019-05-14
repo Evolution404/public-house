@@ -41,9 +41,8 @@ class Import extends Component{
         this.setState({
           uploading: false,
         })
-        message.error('上传失败');
-        if(err.response)
-          message.error(err.response.data.detail)
+        if(!err.response)
+          message.error('上传失败');
       })
     })
   }

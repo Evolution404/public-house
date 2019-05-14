@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
-import {Select, Input, Form, Row, Col, Button} from 'antd'
+import {Select, Input, Form, Row, Col} from 'antd'
 import UsingNature from '../common/usingNature'
 import {DeptSelect, BuildingSelect} from '../common/select'
+import {TButton} from './button'
 
 const Item = Form.Item
 const Option = Select.Option
@@ -17,6 +18,7 @@ class Search extends Component{
     })
   }
   render(){
+    console.log(this.props.initialValue)
     const { getFieldDecorator } = this.props.form
     return (
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
@@ -60,7 +62,9 @@ class Search extends Component{
               {getFieldDecorator('personnel',{
                 initialValue: this.props.initialValue.personnel,
               })(
-                  <Input size="small"></Input>
+                <Input
+                  placeholder="请输入使用者姓名"
+                  size="small"></Input>
               )}
             </Item>
           </Col>
@@ -80,7 +84,9 @@ class Search extends Component{
               {getFieldDecorator('roomNum',{
                 initialValue: this.props.initialValue.roomNum,
               })(
-                  <Input size="small"></Input>
+                <Input
+                  placeholder='如: 南405'
+                  size="small"></Input>
               )}
             </Item>
           </Col>
@@ -98,7 +104,7 @@ class Search extends Component{
             </Item>
           </Col>
           <Col style={{marginTop: 5}} offset={1} span={2}>
-            <Button block onClick={this.search} type="primary">搜索</Button>
+            <TButton.SearchButton block onClick={this.search} type="primary">搜索</TButton.SearchButton>
           </Col>
         </Row>
       </Form>
@@ -169,12 +175,12 @@ class ReservationAuditSearch extends Component{
               {getFieldDecorator('roomNum',{
                 initialValue: this.props.initialValue.roomNum,
               })(
-                  <Input size="small"></Input>
+                  <Input placeholder="如: 南405" size="small"></Input>
               )}
             </Item>
           </Col>
           <Col style={{marginTop: 5}} offset={3} span={2}>
-            <Button block onClick={this.search} type="primary">搜索</Button>
+            <TButton.SearchButton block onClick={this.search} type="primary">搜索</TButton.SearchButton>
           </Col>
         </Row>
       </Form>
@@ -239,7 +245,9 @@ class MyPHSearch extends Component{
               {getFieldDecorator('roomNum',{
                 initialValue: this.props.initialValue.roomNum,
               })(
-                  <Input size="small"></Input>
+                <Input 
+                  placeholder="如: 南405"
+                  size="small"></Input>
               )}
             </Item>
           </Col>
@@ -257,7 +265,7 @@ class MyPHSearch extends Component{
             </Item>
           </Col>
           <Col style={{marginTop: 5}} offset={1} span={2}>
-            <Button block onClick={this.search} type="primary">搜索</Button>
+            <TButton.SearchButton block onClick={this.search} type="primary">搜索</TButton.SearchButton>
           </Col>
         </Row>
       </Form>

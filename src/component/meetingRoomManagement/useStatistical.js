@@ -3,7 +3,7 @@ import {
   HashRouter as Router,
   Link
 } from "react-router-dom";
-import {Form, Row, Col, Input, Button, message, DatePicker, Empty} from 'antd'
+import {Form, Row, Col, Input, message, DatePicker} from 'antd'
 import Map from '../../routerMap'
 import {SButton} from '../common/button'
 import {DeptSelect, BuildingSelect} from '../common/select'
@@ -13,6 +13,7 @@ import Table, {sorterParse} from '../common/table'
 import API from '../../api'
 import download from '../common/download'
 import Histogram from '../common/histogram'
+import {TButton} from '../common/button'
 
 const Item = Form.Item
 const {RangePicker} = DatePicker
@@ -161,7 +162,7 @@ class UseStatistical extends Component{
     ]
     const { getFieldDecorator } = this.props.form
     return <MainContainer name="使用统计">
-      <Form labelCol={{span:8}} wrapperCol={{span: 16}}>
+      <Form labelCol={{span:8}} wrapperCol={{span: 16}} style={{marginTop: 50}}>
         <Row>
           <Col span={6}>
             <Item label="部门名称">
@@ -202,47 +203,41 @@ class UseStatistical extends Component{
             </Item>
           </Col>
           <Col style={{marginTop: 5}} span={2}>
-            <Button block type="primary" onClick={this.search}>搜索</Button>
+            <TButton.SearchButton block type="primary" onClick={this.search}>搜索</TButton.SearchButton>
           </Col>
         </Row>
       </Form>
       <Split/>
-      <Row style={{margin: '20px 10px'}}>
-        <Col span={2}><Button
-            onClick={this.export}
-            type="primary">导出到文件</Button></Col>
-        <Col offset={1} span={2}><Button block onClick={this.print}
-          type="primary">打印</Button></Col>
+      <Row style={{margin: '20px'}}>
+        <TButton.ExButton onClick={this.export}
+          style={{width: 140}}
+            type="primary">导出到文件</TButton.ExButton>
+        <TButton.PrintButton onClick={this.print}
+          type="primary">打印</TButton.PrintButton>
       </Row>
       <div id="printArea">
-        {
-          this.state.isSearched?(
-            <div>
-              <Table
-                current={this.state.current}
-                onChange={this.tableChange}
-                columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
-              {
-                !this.state.isPrinting&&!this.state.tableLoading&&(
-                  <div>
-                    <Histogram id="graph"
-                      title="图表对比（部门各会议室总使用时间、日均使用时间对比情况）"
-                      data={this.state.graphData}></Histogram>
-                    {
-                      this.state.exporting&&<Histogram id="graph-export"
-                        data={this.state.graphData}></Histogram>
-                    }
-                  </div>
-                )
-              }
-              {this.state.isPrinting&&(
-                <img style={{width:500}} src={this.state.printData.graph} alt=""/>
-              )}
-            </div>
-          ):(
-            <Empty description="请先搜索"></Empty>
-          )
-        }
+        <div>
+          <Table
+            current={this.state.current}
+            onChange={this.tableChange}
+            columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
+          {
+            this.state.hasSearched&&!this.state.isPrinting&&!this.state.tableLoading&&(
+              <div>
+                <Histogram id="graph"
+                  title="图表对比（部门各会议室总使用时间、日均使用时间对比情况）"
+                  data={this.state.graphData}></Histogram>
+                {
+                  this.state.exporting&&<Histogram id="graph-export"
+                    data={this.state.graphData}></Histogram>
+                }
+              </div>
+            )
+          }
+          {this.state.isPrinting&&(
+            <img style={{width:500}} src={this.state.printData.graph} alt=""/>
+          )}
+        </div>
       </div>
     </MainContainer>
   }

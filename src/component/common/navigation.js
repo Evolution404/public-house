@@ -48,13 +48,14 @@ class Sider extends Component {
     } 
   }
   onOpenChange = (openKeys) => {
+    openKeys = openKeys.filter(key => !this.state.openKeys.includes(key))
     this.setState({ openKeys })
   }
   onSelect = ({ item, key, selectedKeys })=>{
     this.setState({selectedKeys})
   }
   mapTitle = (text)=>{
-    // 传入菜单标题返回对应的title
+    // 传入菜单标题返回对应的图标
     let mapData = {
       '信息管理': <Icon type="idcard" />,
       '统计查询': <Icon type="search" />,
@@ -64,6 +65,42 @@ class Sider extends Component {
       '会议室管理': <Icon type="team" />,
       '公寓管理': <Icon type="diff" />,
       '系统管理': <Icon type="setting" />,
+    }
+      return mapData[text]
+  }
+  // 传入子菜单标题,返回对应的图标
+  mapItem = (text)=>{
+    let mapData = {
+      '信息管理-基础信息管理': <Icon type="idcard" />,
+      '信息管理-公用房列表': <Icon type="search" />,
+      '信息管理-公用房新增': <Icon type="money-collect" />,
+      '信息管理-公用房变更': <Icon type="line-chart" />,
+      '信息管理-公用房变更审核': <Icon type="delete" />,
+      '信息管理-我的公用房': <Icon type="team" />,
+      '信息管理-公用房改造': <Icon type="diff" />,
+      '信息管理-公用房改造审核': <Icon type="setting" />,
+      '统计查询-条件查询': <Icon type="diff" />,
+      '统计查询-楼宇查询': <Icon type="setting" />,
+      '核算管理-总体核算': <Icon type="team" />,
+      '核算管理-部门核算': <Icon type="diff" />,
+      '核算管理-个人核算': <Icon type="setting" />,
+      '绩效管理-数据导入': <Icon type="idcard" />,
+      '绩效管理-工作量查看': <Icon type="search" />,
+      '绩效管理-教学单位绩效': <Icon type="money-collect" />,
+      '绩效管理-科研单位绩效': <Icon type="line-chart" />,
+      '绩效管理-商业用房绩效': <Icon type="delete" />,
+      '绩效管理-实验室绩效': <Icon type="team" />,
+      '绩效管理-教室绩效': <Icon type="diff" />,
+      '会议室管理-会议室预约': <Icon type="idcard" />,
+      '会议室管理-预约审批': <Icon type="search" />,
+      '会议室管理-我的预约': <Icon type="money-collect" />,
+      '会议室管理-使用统计': <Icon type="line-chart" />,
+      '系统管理-部门管理': <Icon type="idcard" />,
+      '系统管理-参数管理': <Icon type="search" />,
+      '系统管理-楼宇管理': <Icon type="money-collect" />,
+      '系统管理-人员信息理': <Icon type="line-chart" />,
+      '系统管理-用户管理': <Icon type="delete" />,
+      '系统管理-面积补贴导入': <Icon type="team" />,
     }
       return mapData[text]
   }
@@ -85,7 +122,7 @@ class Sider extends Component {
               {
                 item.list.map((newItem, newIndex)=>(
                   <Menu.Item key={`${item.text}-${newItem.name}`}>
-                    <Link to={newItem.path}>{newItem.name}</Link>
+                    <Link to={newItem.path}>{this.mapItem(item.text+'-'+newItem.name)}{newItem.name}</Link>
                   </Menu.Item>
                 ))
               }

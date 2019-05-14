@@ -1,5 +1,7 @@
 import axios from "axios"
 import {message} from 'antd'
+import { Modal } from 'antd';
+const confirm = Modal.confirm
 let host = 'http://140.249.19.181:8910'
 if(localStorage.getItem('host'))
   host = localStorage.getItem('host')
@@ -34,6 +36,18 @@ http.interceptors.response.use(rs=>{
   return rs
   },
   err=>{
+    // 417错误码是登录过期
+    if(err.response.status===417){
+      confirm({
+        title: '返回登录界面',
+        content: '您已经长时间未操作, 点击确定返回登录界面',
+        onOk(){
+          localStorage.removeItem('userData');
+          window.location.reload()
+        }
+      })
+      return Promise.reject(err)
+    }
     message.destroy()
     if(err&&err.response&&err.response.data&&err.response.data.title){
       message.error(err.response.data.title)
@@ -51,4 +65,4 @@ let wrapper = (promise) => {
 }
 
 export default http
-export {host, wrapper}
+export {host, wrapper, domainName}

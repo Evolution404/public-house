@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Form, Row, Col, Select, Input, Button, message, Empty} from 'antd'
+import {Form, Row, Col, Select, Input, message} from 'antd'
 import moment from 'moment'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
@@ -9,6 +9,7 @@ import {DeptSelect, BuildingSelect} from '../common/select'
 import API from '../../api'
 import ReservationModal from './reservationModal'
 import {read, write} from '../stateHelper'
+import {TButton} from '../common/button'
 
 const Item = Form.Item
 const Option = Select.Option
@@ -168,7 +169,7 @@ class MyReservation extends Component{
     ]
     const { getFieldDecorator } = this.props.form
     return <MainContainer name="我的预约">
-      <Form labelCol={{span:12}} wrapperCol={{span: 12}}>
+      <Form labelCol={{span:8}} wrapperCol={{span: 12}} style={{marginTop: 50, marginBottom: 10}}>
         <Row>
           <Col span={6}>
             <Item label="部门">
@@ -212,36 +213,22 @@ class MyReservation extends Component{
             </Item>
           </Col>
         </Row>
-        <Row>
-          <Col offset={1} span={2}>
-            <Button type="primary"
-              onClick={this.search.bind(this, 1)}>最近一周</Button>
-          </Col>
-          <Col span={2}>
-            <Button type="primary"
-            onClick={this.search.bind(this, 2)}>最近一月</Button>
-          </Col>
-          <Col span={2}>
-            <Button type="primary"
-            onClick={this.search.bind(this, 3)}>最近三月</Button>
-          </Col>
-          <Col span={2}>
-            <Button type="primary"
-            onClick={this.search.bind(this, 4)}>最近半年</Button>
-          </Col>
+        <Row style={{marginLeft: '20px'}}>
+          <TButton.CalendarButton type="primary"
+            onClick={this.search.bind(this, 1)}>最近一周</TButton.CalendarButton>
+          <TButton.CalendarButton type="primary"
+          onClick={this.search.bind(this, 2)}>最近一月</TButton.CalendarButton>
+          <TButton.CalendarButton type="primary"
+          onClick={this.search.bind(this, 3)}>最近三月</TButton.CalendarButton>
+          <TButton.CalendarButton type="primary"
+          onClick={this.search.bind(this, 4)}>最近半年</TButton.CalendarButton>
         </Row>
       </Form>
       <Split/>
-      {
-        this.state.isSearched?(
-          <Table
-            current={this.state.current}
-            onChange={this.tableChange}
-            columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
-        ):(
-          <Empty description="请先搜索"></Empty>
-        )
-      }
+      <Table
+        current={this.state.current}
+        onChange={this.tableChange}
+        columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
       <ReservationModal
         request={API.retryReservation}
         refresh={this.refresh}
