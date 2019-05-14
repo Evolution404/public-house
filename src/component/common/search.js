@@ -24,7 +24,7 @@ class Search extends Component{
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
           <Col span={5}>
-            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="单位名称">
               {getFieldDecorator('deptName',{
                 initialValue: this.props.initialValue.deptName,
               })(
@@ -128,7 +128,7 @@ class ReservationAuditSearch extends Component{
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
           <Col span={5}>
-            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="单位名称">
               {getFieldDecorator('dept',{
                 initialValue: this.props.initialValue.dept
               })(

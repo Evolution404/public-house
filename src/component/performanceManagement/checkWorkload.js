@@ -25,7 +25,7 @@ class Search extends Component{
       <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
           <Col span={7}>
-            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="单位名称">
               {getFieldDecorator('dept',{
                 initialValue: this.props.initialValue,
               })(
@@ -55,7 +55,7 @@ class DisplayTable extends Component{
         sorter: true,
       },
       {
-        title: '部门',
+        title: '单位',
         dataIndex: 'bumen',
         sorter: true,
       },

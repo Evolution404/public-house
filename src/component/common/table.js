@@ -95,7 +95,7 @@ const TableUtil = {
         return 'workNum'
       case '年份':
         return 'year'
-      case '部门':
+      case '单位':
         return 'dept'
       case '位置':
         return 'location'
@@ -129,7 +129,7 @@ const TableUtil = {
         return 'buildingFloors'
       case '房间':
         return 'room'
-      case '部门名称':
+      case '单位名称':
         return 'dept'
       case '定额面积':
         return 'fixedArea'
@@ -159,7 +159,7 @@ const TableUtil = {
         return 'duty'
       case '登录账号':
         return 'loginAccount'
-      case '所属部门':
+      case '所属单位':
         return 'dept'
       case '角色':
         return 'role'

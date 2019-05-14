@@ -33,7 +33,7 @@ class Search extends Component{
             <Item label="使用性质">
               {getFieldDecorator('type',{
                 initialValue:this.props.initialValue,
-                rules:[{required:true, message:'请选择部门性质'}]})(
+                rules:[{required:true, message:'请选择单位性质'}]})(
                   <UsingNatureBrief></UsingNatureBrief>
               )}
             </Item>
@@ -54,7 +54,7 @@ class DisplayTable extends Component{
   render(){
     const columns = [
       {
-        title: '部门',
+        title: '单位',
         dataIndex: 'bumen',
         sorter: true,
       },

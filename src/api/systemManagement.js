@@ -5,7 +5,7 @@ import Map from '../routerMap'
 import {pageSize} from '../component/common/table'
 
 const deptManagement = {
-  // 部门管理
+  // 单位管理
   getDepts(type){
     let data = {}     
     if(type!=='0'){
@@ -47,7 +47,7 @@ const deptManagement = {
   },
   searchDept(values, p){
 
-    // 搜索部门, type可能是bc(部处)也可能是xy(学院)
+    // 搜索单位, type可能是bc(部处)也可能是xy(学院)
     let type = values.type
     let bumen = values.dept
     delete values.type
@@ -108,7 +108,7 @@ const deptManagement = {
      })
    }
   },
-  // 删除部门
+  // 删除单位
   deleteDept({index, type}){
     if(type==='bc'){
       return new Promise((resolve, reject)=>{
@@ -138,7 +138,7 @@ const deptManagement = {
      })
    }
   },
-  // 新增部门
+  // 新增单位
   addDept(data){
     let type = data.type
     if(type==='bc'){
@@ -170,7 +170,7 @@ const deptManagement = {
      })
    }
   },
-  // 更新部门
+  // 更新单位
   // {
   //    index: 1,
   //    其余信息
@@ -452,7 +452,7 @@ const theUserManagement = {
         //    工号: workNum
         //    姓名: name
         //    职务等级: dutyGrade
-        //    所属部门: dept
+        //    所属单位: dept
         //    科研单位: scientificResearchUnits
         //    类别: category
         // }
@@ -655,7 +655,7 @@ const userManagement = {
         //    id: xx,
         //    name: xx,
         //    loginAccount: xx, 登录账号
-        //    dept: xx,  所属部门
+        //    dept: xx,  所属单位
         //    role: xx, 角色
         // }]
         let data = {

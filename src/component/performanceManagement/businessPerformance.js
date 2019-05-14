@@ -83,7 +83,7 @@ class BusinessPerformance extends Component{
   render(){
     let columns = [
       {
-        title: '部门',
+        title: '单位',
         dataIndex: 'bumen',
         sorter: true,
       },
@@ -138,7 +138,7 @@ class BusinessPerformance extends Component{
       <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
           <Col offset={1} span={6}>
-            <Item labelCol={{span:6}} wrapperCol={{span:18}} label="部门名称">
+            <Item labelCol={{span:6}} wrapperCol={{span:18}} label="单位名称">
               {getFieldDecorator('dept',{
                 initialValue: this.state.filter.dept,
               })(

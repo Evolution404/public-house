@@ -21,9 +21,9 @@ const Item = Form.Item
 class DeptContrast1 extends Component {
   render(){
     return <PieChart id="DeptContrast1"
-      title="各部门实际公用房使用面积对比图表"
+      title="各单位实际公用房使用面积对比图表"
       data={this.props.data}
-      desc="部门"
+      desc="单位"
       ></PieChart>
   }
 }
@@ -33,7 +33,7 @@ class AcademyHouseTable extends Component{
   render(){
     const columns = [
       {
-        title: '部门',
+        title: '单位',
         dataIndex: 'bumen',
       },
       {
@@ -102,7 +102,7 @@ class PartyHouseTable extends Component{
   render(){
     const columns = [
       {
-        title: '部门名称',
+        title: '单位名称',
         dataIndex: 'bumen',
         sorter: true,
       },
@@ -397,7 +397,7 @@ class OverallAccount extends Component{
                       {
                         !this.state.isPrinting&&(
                           <Histogram id="DeptContrast3"
-                            title="各部门公用房定额面积、实际使用面积对比图表"
+                            title="各单位公用房定额面积、实际使用面积对比图表"
                             data={this.state.DeptContrast3}></Histogram>
                         )
                       }

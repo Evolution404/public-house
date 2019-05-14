@@ -91,7 +91,7 @@ class DeptSelect extends Component{
     })
     .catch(err=>{
       if(!err.response)
-        message.error('加载部门信息失败')
+        message.error('加载单位信息失败')
     })
     .finally(()=>{
       this.setState({loading: false})
@@ -256,7 +256,7 @@ class LabSelect extends Component{
         value={this.state.value}
         onChange={this.onChange}
         placeholder={(this.props.year&&this.props.dept)?
-          `${this.props.year}年${this.props.dept}`:'请先选择年份和部门'}
+          `${this.props.year}年${this.props.dept}`:'请先选择年份和单位'}
         loading={this.state.loading}>
         {
           this.state.labs.map(item=>(
@@ -275,14 +275,14 @@ class ClassroomSelect extends Component{
     value: undefined,
   }
   componentWillMount(){
-    if(this.props.year&&this.props.dept)
+    if(this.props.year&&this.props.building)
       this.getClassrooms()
   }
   getClassrooms(){
-    if(!(this.props.year&&this.props.dept))
+    if(!(this.props.year&&this.props.building))
       return
     this.setState({loading: true})
-    API.getClassrooms(this.props.year, this.props.dept)
+    API.getClassrooms(this.props.year, this.props.building)
     .then(rs=>{
       this.setState({classrooms: rs})
     })
@@ -295,9 +295,9 @@ class ClassroomSelect extends Component{
     })
   }
   componentWillReceiveProps(nextProps){
-    if(nextProps.year!==this.props.year||nextProps.dept!==this.props.dept){
+    if(nextProps.year!==this.props.year||nextProps.building!==this.props.building){
       this.setState({value: undefined})
-      this.setState({year: nextProps.year, dept: nextProps.dept},()=>{
+      this.setState({year: nextProps.year, building: nextProps.building},()=>{
         this.getClassrooms()
       })
 
@@ -314,7 +314,7 @@ class ClassroomSelect extends Component{
         value={this.state.value}
         onChange={this.onChange}
         placeholder={(this.props.year&&this.props.dept)?
-          `${this.props.year}年${this.props.dept}`:'请先选择年份和部门'}
+          `${this.props.year}年${this.props.dept}`:'请先选择年份和楼宇'}
         loading={this.state.loading}>
         {
           this.state.classrooms.map(item=>(

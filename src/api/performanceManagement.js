@@ -64,7 +64,7 @@ const checkWorkload = {
         // 处理成tableList
         // {
         //    id: 1, 序号
-        //    dept: xx, 部门
+        //    dept: xx, 单位
         //    teachingWorkLoad: xx, 教学工作量
         //    scientificWorkLoad: xx, 科研工作量
         // }
@@ -95,10 +95,10 @@ const classroomPerformance = {
       })
     })
   },
-  getClassrooms(nianfen, bumen){
+  getClassrooms(nianfen, louyu){
     return new Promise((resolve, reject)=>{
       axios.get('/tb-jiaoshi-shiyanshi-kechengxinxi/get/jiaoshi',{
-        params: {nianfen, bumen}
+        params: {nianfen, louyu}
       })
       .then(rs=>{
         resolve(rs.data)
@@ -122,7 +122,7 @@ const classroomPerformance = {
         // 处理成tableList
         // {
         //    id: 1, 序号
-        //    dept: xx, 部门
+        //    dept: xx, 单位
         //    classroom: xx, 教室
         //    courseName: xx, 课程名
         //    schoolNum: xx, 学时数
@@ -189,7 +189,7 @@ const labPerformance = {
         // 处理成tableList
         // {
         //    id: 1, 序号
-        //    dept: xx, 部门
+        //    dept: xx, 单位
         //    lab: xx, 实验室
         //    courseName: xx, 课程名
         //    schoolNum: xx, 学时数

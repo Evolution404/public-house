@@ -39,7 +39,7 @@ class PersonalInfo extends Component{
           <InfoTag data={data.workNum}/></Card.Grid>
         <Card.Grid style={gridStyle}><Label>姓名:</Label>
           <InfoTag data={data.name}/></Card.Grid>
-        <Card.Grid style={gridStyle}><Label>所属部门:</Label>
+        <Card.Grid style={gridStyle}><Label>所属单位:</Label>
           <InfoTag data={data.dept}/></Card.Grid>
         <Card.Grid style={gridStyle}><Label>职务级别:</Label>
           <InfoTag data={data.dutyGrade}/></Card.Grid>
@@ -50,7 +50,7 @@ class PersonalInfo extends Component{
           <p style={{fontSize: 16, color: css.blue}}>工号:{data.workNum}</p>
         </div>
         <div style={{color:'#a4a4a4',paddingLeft: 20, width: 400, display: 'flex', justifyContent: 'center', flexDirection: 'column'}}>
-          <p style={{fontSize: 12, paddingBottom: 10}}>部门: 
+          <p style={{fontSize: 12, paddingBottom: 10}}>单位: 
             <span style={{color: '#696969', fontSize: 15, paddingLeft: 10}}>{data.dept}</span>
           </p>
           <p style={{fontSize: 12, paddingBottom: 10}}>职务: 
@@ -69,7 +69,7 @@ class DisplayTable extends Component{
     let tableColumns = [
       [
         {
-          title: '部门',
+          title: '单位',
           dataIndex: 'dept',
           sorter: true,
         },
@@ -127,7 +127,7 @@ class DisplayTable extends Component{
       ],
       [
         {
-          title: '部门',
+          title: '单位',
           sorter: true,
           dataIndex: 'dept',
         },
@@ -175,7 +175,7 @@ class DisplayTable extends Component{
       ],
       [
         {
-          title: '部门',
+          title: '单位',
           sorter: true,
           dataIndex: 'dept',
         },
@@ -238,7 +238,7 @@ class DisplayTable extends Component{
       ],
       [
         {
-          title: '部门',
+          title: '单位',
           sorter: true,
           dataIndex: 'dept',
         },

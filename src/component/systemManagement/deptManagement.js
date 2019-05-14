@@ -42,11 +42,11 @@ class Search extends Component{
       <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
           <Col span={7}>
-            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门性质">
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="单位性质">
               {getFieldDecorator('type',{
                 initialValue: this.props.type,
-                rules:[{required:true, message:'请选择部门性质'}]})(
-                <Select placeholder="请选择部门性质">
+                rules:[{required:true, message:'请选择单位性质'}]})(
+                <Select placeholder="请选择单位性质">
                   <Option value="xy">学院</Option>
                   <Option value="bc">部处</Option>
                 </Select>
@@ -54,11 +54,11 @@ class Search extends Component{
             </Item>
           </Col>
           <Col span={7}>
-            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="单位名称">
               {getFieldDecorator('dept',{
                 initialValue: this.props.dept,
               })(
-                <Input placeholder="请输入部门名称"/>
+                <Input placeholder="请输入单位名称"/>
               )}
             </Item>
           </Col>
@@ -101,7 +101,7 @@ class DisplayTable extends Component{
           sorter: true,
         },
         {
-          title: '部门',
+          title: '单位',
           dataIndex: 'dept',
           sorter: true,
         },
@@ -134,7 +134,7 @@ class DisplayTable extends Component{
           sorter: true,
         },
         {
-          title: '部门',
+          title: '单位',
           dataIndex: 'dept',
           sorter: true,
         },
@@ -189,7 +189,7 @@ class DetailModal extends Component {
   render() {
     let data = this.props.data
     // {
-    //    dept(部门名称), zj(正局级), fj(副局级)
+    //    dept(单位名称), zj(正局级), fj(副局级)
     //    zc(正处级), fc(副处级), uc(处级以下u-under)
     //    academician(院士), tT(高端人才, t-top T-talent)
     //    eT(优秀人才 e-excellent), zg(正高级), fg(副高级)
@@ -201,9 +201,9 @@ class DetailModal extends Component {
     let content=''
     if(type==='bc'){
       content = (<div>
-        <Row><Col span={20} style={{textAlign: 'center'}}><h4>部处部门</h4></Col></Row>
+        <Row><Col span={20} style={{textAlign: 'center'}}><h4>部处单位</h4></Col></Row>
         <Row><Col span={12}>
-          <DisplayLabel label="部门名称" value={data.dept}/>
+          <DisplayLabel label="单位名称" value={data.dept}/>
         </Col></Row>
         <Row>
           <Col span={12}>
@@ -231,7 +231,7 @@ class DetailModal extends Component {
       </div>)
     }else if(type==='xy'){
       content = (<div>
-        <Row><Col span={20} style={{textAlign: 'center'}}><h4>学院部门</h4></Col></Row>
+        <Row><Col span={20} style={{textAlign: 'center'}}><h4>学院单位</h4></Col></Row>
         <Row>
           <Col span={12}>
             <DisplayLabel label="院士数" value={data.academician}/>
@@ -282,7 +282,7 @@ class DetailModal extends Component {
     }
     return (
       <Modal
-        title="部门详细信息"
+        title="单位详细信息"
         width="500px"
         visible={this.props.visible}
         closable={false}
@@ -296,7 +296,7 @@ class DetailModal extends Component {
   }
 }
 // {
-//    dept(部门名称), zj(正局级), fj(副局级)
+//    dept(单位名称), zj(正局级), fj(副局级)
 //    zc(正处级), fc(副处级), uc(处级以下u-under)
 //    academician(院士), tT(高端人才, t-top T-talent)
 //    eT(优秀人才 e-excellent), zg(正高级), fg(副高级)
@@ -321,7 +321,7 @@ class UpdateForm extends Component{
               )}
             </Item>
           </Col></Row>
-          <Row><Col style={{textAlign: 'center'}}>部处部门填写</Col></Row>
+          <Row><Col style={{textAlign: 'center'}}>部处单位填写</Col></Row>
           <Row>
             <Col offset={2} span={10}>
               <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="副校级(正局级)">
@@ -375,7 +375,7 @@ class UpdateForm extends Component{
               )}
             </Item>
           </Col></Row>
-          <Row><Col style={{textAlign: 'center'}}>学院部门填写</Col></Row>
+          <Row><Col style={{textAlign: 'center'}}>学院单位填写</Col></Row>
           <Row>
             <Col offset={2} span={10}>
               <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="院士数">
@@ -531,7 +531,7 @@ class UpdateModal extends Component {
   render() {
     return (
       <Modal
-        title="更新部门信息"
+        title="更新单位信息"
         width="600px"
         visible={this.props.visible}
         closable={false}
@@ -567,18 +567,18 @@ class AddForm extends Component{
         </Col></Row>
         <Row>
           <Col offset={2} span={10}>
-            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="部门名称">
+            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="单位名称">
               {getFieldDecorator('dept',{
-                rules: [{required: true, message:'请输入部门名称'}]
+                rules: [{required: true, message:'请输入单位名称'}]
               })(
                 <Input size="small" />
               )}
             </Item>
           </Col>
           <Col offset={2} span={10}>
-            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:10}} label="部门性质">
+            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:10}} label="单位性质">
               {getFieldDecorator('type',{
-                rules: [{required: true, message:'请选择部门性质'}]
+                rules: [{required: true, message:'请选择单位性质'}]
               })(
                 <Select onChange={this.props.typeChange} size="small">
                   <Option value="xy">学院</Option>
@@ -604,18 +604,18 @@ class AddForm extends Component{
         </Col></Row>
         <Row>
           <Col offset={2} span={10}>
-            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="部门名称">
+            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="单位名称">
               {getFieldDecorator('dept',{
-                rules: [{required: true, message:'请输入部门名称'}]
+                rules: [{required: true, message:'请输入单位名称'}]
               })(
                 <Input size="small" />
               )}
             </Item>
           </Col>
           <Col offset={2} span={10}>
-            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:10}} label="部门性质">
+            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:10}} label="单位性质">
               {getFieldDecorator('type',{
-                rules: [{required: true, message:'请选择部门性质'}]
+                rules: [{required: true, message:'请选择单位性质'}]
               })(
                 <Select onChange={this.props.typeChange} size="small">
                   <Option value="xy">学院</Option>
@@ -625,7 +625,7 @@ class AddForm extends Component{
             </Item>
           </Col>
         </Row>
-          <Row><Col style={{textAlign: 'center'}}>部处部门填写</Col></Row>
+          <Row><Col style={{textAlign: 'center'}}>部处单位填写</Col></Row>
           <Row>
             <Col offset={2} span={10}>
               <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="副校级(正局级)">
@@ -692,18 +692,18 @@ class AddForm extends Component{
         </Col></Row>
         <Row>
           <Col offset={2} span={10}>
-            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="部门名称">
+            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:12}} label="单位名称">
               {getFieldDecorator('dept',{
-                rules: [{required: true, message:'请输入部门名称'}]
+                rules: [{required: true, message:'请输入单位名称'}]
               })(
                 <Input size="small" />
               )}
             </Item>
           </Col>
           <Col offset={2} span={10}>
-            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:10}} label="部门性质">
+            <Item style={{marginBottom: '0px'}} labelCol={{span:12}} wrapperCol={{span:10}} label="单位性质">
               {getFieldDecorator('type',{
-                rules: [{required: true, message:'请选择部门性质'}]
+                rules: [{required: true, message:'请选择单位性质'}]
               })(
                 <Select onChange={this.props.typeChange} size="small">
                   <Option value="xy">学院</Option>
@@ -713,7 +713,7 @@ class AddForm extends Component{
             </Item>
           </Col>
         </Row>
-          <Row><Col style={{textAlign: 'center'}}>学院部门填写</Col></Row>
+          <Row><Col style={{textAlign: 'center'}}>学院单位填写</Col></Row>
           <Row>
             <Col offset={2} span={10}>
               <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="院士数">
@@ -867,7 +867,7 @@ class AddModal extends Component {
   render() {
     return (
       <Modal
-        title="新增部门信息"
+        title="新增单位信息"
         width="600px"
         visible={this.props.visible}
         closable={false}
@@ -987,7 +987,7 @@ class ImportModal extends Component {
     }
     return (
       <Modal
-        title="导入部门信息"
+        title="导入单位信息"
         width="600px"
         visible={this.props.visible}
         closable={false}
@@ -997,7 +997,7 @@ class ImportModal extends Component {
         cancelText="取消"
       >
         <Row>
-          <Col style={{marginTop: 5}} span={4}>部门性质:</Col>
+          <Col style={{marginTop: 5}} span={4}>单位性质:</Col>
           <Col span={12}>
             <Select onChange={this.typeChange} defaultValue='xy'>
               <Option value='xy'>学院</Option>
@@ -1079,7 +1079,7 @@ class DeptManagement extends Component{
     }
     let self = this
     confirm({
-      title: '删除部门信息',
+      title: '删除单位信息',
       content: '删除操作会造成单位信息丢失，您确定要删除单位信息吗？',
       okText:"确认",
       cancelText:"取消",
@@ -1156,7 +1156,7 @@ class DeptManagement extends Component{
       detail: this.detail,
       update: this.update,
     }
-    return <MainContainer name="部门管理">
+    return <MainContainer name="单位管理">
       <WrappedSearch type={this.state.type} dept={this.state.dept}
         onSearch={this.search}/>
       <Split/>

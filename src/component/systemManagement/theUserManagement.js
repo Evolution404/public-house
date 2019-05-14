@@ -89,12 +89,12 @@ class DisplayTable extends Component{
         sorter:true,
       },
       {
-        title: '机关部门',
+        title: '机关单位',
         dataIndex: 'dept',
         sorter:true,
       },
       {
-        title: '学院部门',
+        title: '学院单位',
         dataIndex: 'collegeDept',
         sorter:true,
       },
@@ -192,7 +192,7 @@ class AddModal extends Component {
               </Select>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='所属机关部门'>
+          <Item style={{marginBottom: '0px'}}  label='所属机关单位'>
             {getFieldDecorator('dept',)(
               <DeptSelect type="1"></DeptSelect>
             )}
@@ -243,8 +243,8 @@ class DetailModal extends Component {
           <DisplayLabel label="姓名" value={data.name}/>
           <DisplayLabel label="职称级别" value={data.proTitleLevel}/>
           <DisplayLabel label="职务级别" value={data.dutyGrade}/>
-          <DisplayLabel label="机关部门" value={data.dept}/>
-          <DisplayLabel label="学院部门" value={data.collegeDept}/>
+          <DisplayLabel label="机关单位" value={data.dept}/>
+          <DisplayLabel label="学院单位" value={data.collegeDept}/>
           <DisplayLabel label="创建时间" value={moment(data.createTime).format('YYYY-MM-DD HH:mm')}/>
           <DisplayLabel label="更新时间" value={moment(data.updateTime).format('YYYY-MM-DD HH:mm')}/>
           <DisplayLabel label="备注" value={data.note}/>
@@ -332,7 +332,7 @@ class ChangeModal extends Component {
               </Select>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='所属机关部门'>
+          <Item style={{marginBottom: '0px'}}  label='所属机关单位'>
             {getFieldDecorator('dept', {initialValue: data.dept})(
               <DeptSelect type="1"></DeptSelect>
             )}

@@ -92,8 +92,8 @@ class Import extends Component{
 class AreaSubsidiesImport extends Component{
   render(){
     return (
-      <MainContainer name="面积补贴">
-        <Import text="导入面积补贴"
+      <MainContainer name="补贴面积">
+        <Import text="导入补贴面积"
           uploadHelper={API.ULAreaSubsidies}
           templateLink={moban('mianjibutie')}
         ></Import>

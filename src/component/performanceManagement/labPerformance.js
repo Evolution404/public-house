@@ -112,7 +112,7 @@ class LabPerformance extends Component{
         sorter: true,
       },
       {
-        title: '部门',
+        title: '单位',
         dataIndex: 'bumen',
         sorter: true,
       },
@@ -156,7 +156,7 @@ class LabPerformance extends Component{
             </Item>
           </Col>
           <Col offset={1} span={5}>
-            <Item labelCol={{span:7}} wrapperCol={{span:16}} label="部门名称">
+            <Item labelCol={{span:7}} wrapperCol={{span:16}} label="单位名称">
               {getFieldDecorator('dept',{
                 initialValue: this.state.filter.dept,
               })(

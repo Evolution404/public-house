@@ -145,7 +145,7 @@ class ScientificPerformance extends Component{
             </Item>
           </Col>
           <Col offset={1} span={6}>
-            <Item labelCol={{span:6}} wrapperCol={{span:18}} label="部门名称">
+            <Item labelCol={{span:6}} wrapperCol={{span:18}} label="单位名称">
               {getFieldDecorator('dept',{
                 initialValue: this.state.filter.dept,
               })(

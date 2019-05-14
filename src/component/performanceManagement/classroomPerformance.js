@@ -5,7 +5,7 @@ import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Table, {sorterParse} from '../common/table'
 import Histogram from '../common/histogram'
-import { YearSelect, DeptSelect, ClassroomSelect } from '../common/select'
+import { YearSelect, BuildingSelect, ClassroomSelect } from '../common/select'
 import {read, write} from '../stateHelper'
 import {TButton} from '../common/button'
 import download from '../common/download'
@@ -16,7 +16,7 @@ class ClassroomPerformance extends Component{
   state = {
     // 实时搜索教室使用的临时状态
     formYear: '',
-    formDept: '',
+    formBuilding: '',
     loading: false,
     hasSearched: false,
     tableList: [],
@@ -110,7 +110,7 @@ class ClassroomPerformance extends Component{
         sorter: true,
       },
       {
-        title: '部门',
+        title: '单位',
         dataIndex: 'bumen',
         sorter: true,
       },
@@ -154,11 +154,11 @@ class ClassroomPerformance extends Component{
             </Item>
           </Col>
           <Col offset={1} span={5}>
-            <Item labelCol={{span:7}} wrapperCol={{span:16}} label="部门名称">
-              {getFieldDecorator('dept',{
+            <Item labelCol={{span:7}} wrapperCol={{span:16}} label="楼宇">
+              {getFieldDecorator('building',{
                 initialValue: this.state.filter.dept,
               })(
-                <DeptSelect onChange={formDept=>this.setState({formDept})} type="2"></DeptSelect>
+                <BuildingSelect onChange={formBuilding=>this.setState(formBuilding)}></BuildingSelect>
               )}
             </Item>
           </Col>
@@ -169,7 +169,7 @@ class ClassroomPerformance extends Component{
               })(
                 <ClassroomSelect
                   year={this.state.formYear}
-                  dept={this.state.formDept}
+                  building={this.state.formBuilding}
                 ></ClassroomSelect>
               )}
             </Item>

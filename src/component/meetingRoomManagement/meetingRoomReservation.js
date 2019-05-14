@@ -90,7 +90,7 @@ class MeetingRoomReservation extends Component{
   render(){
     let columns = [
       {
-        title: '部门',
+        title: '单位',
         dataIndex: 'dept',
         sorter: true,
       },

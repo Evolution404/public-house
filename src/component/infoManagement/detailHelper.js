@@ -170,7 +170,7 @@ class DetailHelper extends Component{
     return <div>
         <div style={{marginLeft: '10%', width: '80%'}}>
           <Row style={{marginTop: 20}}>
-            <Label label="所属部门:" value={this.props.dept}></Label>
+            <Label label="所属单位:" value={this.props.dept}></Label>
             <Label label="类型:" value={this.props.type}></Label>
             <Label label="具体用途:" value={this.props.spectificPurpose}></Label>
           </Row>

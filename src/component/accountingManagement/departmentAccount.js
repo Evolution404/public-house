@@ -259,7 +259,7 @@ class DepartmentAccount extends Component{
     this.setState({loading: true})
     if(this.state.id){
       // 党政机关一个图
-      // 学院部门两个图
+      // 学院单位两个图
       if(this.state.type==='1')
         promise = API.exportPDeptAccountDataById(this.state.id, {tubiao:this.getCanvasURL('graph')})
       else
@@ -312,7 +312,7 @@ class DepartmentAccount extends Component{
   }
   render(){
     const { getFieldDecorator } = this.props.form
-    return <MainContainer name="部门核算">
+    return <MainContainer name="单位核算">
       <Back></Back>
       <Form onSubmit={this.handleSubmit}>
         <Row>
@@ -326,21 +326,21 @@ class DepartmentAccount extends Component{
             </Item>
           </Col>
           <Col span={4}>
-            <Item labelCol={{span:12}} wrapperCol={{span:12}} label="部门类型">
+            <Item labelCol={{span:12}} wrapperCol={{span:12}} label="单位类型">
               {getFieldDecorator('type',{
-                rules: [{required: true, message: '请选择部门类型'}]
+                rules: [{required: true, message: '请选择单位类型'}]
               })(
                 <Select onChange={this.onTypeChange}>
                   <Option value="1">党政机关</Option>
-                  <Option value="2">学院部门</Option>
+                  <Option value="2">学院单位</Option>
                 </Select>
               )}
             </Item>
           </Col>
           <Col span={5}>
-            <Item labelCol={{span:8}} wrapperCol={{span:16}} label="部门名称">
+            <Item labelCol={{span:8}} wrapperCol={{span:16}} label="单位名称">
               {getFieldDecorator('dept',{
-                rules: [{required: true, message: '请选择部门'}]
+                rules: [{required: true, message: '请选择单位'}]
               })(
                 <DeptSelect type={this.state.formtype}></DeptSelect>
               )}

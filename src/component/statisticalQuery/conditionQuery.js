@@ -32,7 +32,7 @@ class DisplayTable extends Component{
     let tableColumns = [
       [
         {
-          title: '部门',
+          title: '单位',
           dataIndex: 'dept',
           sorter: true,
         },
@@ -90,7 +90,7 @@ class DisplayTable extends Component{
       ],
       [
         {
-          title: '部门',
+          title: '单位',
           dataIndex: 'dept',
           sorter: true,
         },
@@ -139,7 +139,7 @@ class DisplayTable extends Component{
       ],
       [
         {
-          title: '部门',
+          title: '单位',
           dataIndex: 'dept',
           sorter: true,
         },
@@ -203,7 +203,7 @@ class DisplayTable extends Component{
       ],
       [
         {
-          title: '部门',
+          title: '单位',
           sorter: true,
           dataIndex: 'dept',
         },

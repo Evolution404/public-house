@@ -58,12 +58,12 @@ const FileUploadAPI = {
     formData.append('module', 'jiaoshi-shiyanshi-kechengxinxi')
     return uploadHelper(formData, '/tb-jiaoshi-shiyanshi-kechengxinxi/import-excel')
   },
-  // 导入学院部门信息
+  // 导入学院单位信息
   ULXYDept(formData){
     formData.append('module', 'xueyuanbumen')
     return uploadHelper(formData, '/tb-xueyuan-bumen/import-excel')
   },
-  // 导入部处部门信息
+  // 导入部处单位信息
   ULBCDept(formData){
     formData.append('module', 'buchubumen')
     return uploadHelper(formData, '/tb-buchu-bumen/import-excel')
