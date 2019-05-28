@@ -46,7 +46,7 @@ class BuildingSelect extends Component{
       this.setState({building: rs})
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('加载楼宇信息失败')
     })
     .finally(()=>{
@@ -90,7 +90,7 @@ class DeptSelect extends Component{
       this.setState({depts: rs})
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('加载单位信息失败')
     })
     .finally(()=>{
@@ -229,7 +229,7 @@ class LabSelect extends Component{
       this.setState({labs: rs})
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('加载实验室信息失败')
     })
     .finally(()=>{
@@ -287,7 +287,7 @@ class ClassroomSelect extends Component{
       this.setState({classrooms: rs})
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('加载教室信息失败')
     })
     .finally(()=>{
@@ -313,8 +313,8 @@ class ClassroomSelect extends Component{
         allowClear
         value={this.state.value}
         onChange={this.onChange}
-        placeholder={(this.props.year&&this.props.dept)?
-          `${this.props.year}年${this.props.dept}`:'请先选择年份和楼宇'}
+        placeholder={(this.props.year&&this.props.building)?
+          `${this.props.year}年${this.props.building}`:'请先选择年份和楼宇'}
         loading={this.state.loading}>
         {
           this.state.classrooms.map(item=>(
@@ -343,7 +343,7 @@ class RoleSelect extends Component{
       this.setState({roles: rs})
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('加载角色信息失败')
     })
     .finally(()=>{

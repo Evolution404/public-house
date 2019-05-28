@@ -54,7 +54,7 @@ class MainForm extends Component{
           message.success('添加成功')
         })
         .catch(err=>{
-          if(!err.response){
+          if(!err.resolved){
             message.error('添加失败')
           }
         })
@@ -74,7 +74,7 @@ class MainForm extends Component{
     }
     return (
       <Spin spinning={this.state.loading}>
-        <Form onSubmit={this.handleSubmit}>
+        <Form style={{minWidth: 700}} onSubmit={this.handleSubmit}>
           <Item labelCol={{span:3}} wrapperCol={{span:8}} label="使用性质">
             {getFieldDecorator('usingNature', {
               getValueFromEvent: this.setType,

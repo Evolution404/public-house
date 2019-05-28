@@ -18,7 +18,6 @@ class Search extends Component{
     })
   }
   render(){
-    console.log(this.props.initialValue)
     const { getFieldDecorator } = this.props.form
     return (
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
@@ -95,10 +94,10 @@ class Search extends Component{
               {getFieldDecorator('status',{
                 initialValue: this.props.initialValue.status,
               })(
-                <Select size="small">
-                  <Option value="">所有</Option>
-                  <Option value="已租">已租</Option>
-                  <Option value="待租">待租</Option>
+                <Select size="small" allowClear>
+                  <Option value="使用中">使用中</Option>
+                  <Option value="待分配">待分配</Option>
+                  <Option value="暂借中">暂借中</Option>
                 </Select>
               )}
             </Item>
@@ -146,6 +145,7 @@ class ReservationAuditSearch extends Component{
                   <Option value="已审批">已审批</Option>
                   <Option value="未审批">未审批</Option>
                   <Option value="已驳回">已驳回</Option>
+                  <Option value="已作废">已作废</Option>
                 </Select>
               )}
             </Item>
@@ -258,8 +258,9 @@ class MyPHSearch extends Component{
               })(
                 <Select size="small">
                   <Option value="">所有</Option>
-                  <Option value="已租">已租</Option>
-                  <Option value="待租">待租</Option>
+                  <Option value="使用中">使用中</Option>
+                  <Option value="待分配">待分配</Option>
+                  <Option value="暂借中">暂借中</Option>
                 </Select>
               )}
             </Item>

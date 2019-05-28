@@ -51,7 +51,8 @@ class MyReservation extends Component{
           this.setState({tableList: rs})
         })
         .catch(err=>{
-          message.error('查询失败')
+          if(!err.resolved)
+            message.error('查询失败')
         })
         .finally(()=>{
           this.setState({tableLoading: false})
@@ -68,8 +69,8 @@ class MyReservation extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
-     message.error('加载失败')
+      if(!err.resolved)
+         message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))
   }
@@ -80,7 +81,8 @@ class MyReservation extends Component{
       this.setState({tableList: rs})
     })
     .catch(err=>{
-      message.error('刷新失败')
+      if(!err.resolved)
+        message.error('刷新失败')
     })
     .finally(()=>{
       this.setState({tableLoading: false})
@@ -93,7 +95,8 @@ class MyReservation extends Component{
       message.success('取消预约成功')
     })
     .catch(err=>{
-      message.error('取消预约失败, 请重试')
+      if(!err.resolved)
+        message.error('取消预约失败, 请重试')
     })
   }
   render(){
@@ -119,9 +122,9 @@ class MyReservation extends Component{
         sorter: true,
       },
       {
-        title: '联系电话',
+        title: '管理者办公电话',
         sorter: true,
-        dataIndex: 'phone',
+        dataIndex: 'bangongdianhua',
       },
       {
         title: '开始时间',
@@ -153,12 +156,12 @@ class MyReservation extends Component{
         title: '操作',
         render: (text, record, index)=>(
           <div>
-            <div style={{display: 'inline-block', padding: '0 10px'}}>
+            <div style={{display: 'inline-block', padding: ''}}>
               <SButton disable={record.reservationStatus==='未审批'}
                 text='再次预约'
                 onClick={this.openReservationModal.bind(this, record)}/>
             </div>
-            <div style={{display: 'inline-block', padding: '0 10px'}}>
+            <div style={{display: 'inline-block', padding: ''}}>
               <SButton disable={record.reservationStatus!=='未审批'}
                 text='取消预约'
                 onClick={this.cancleReservation.bind(this, record.id)}/>
@@ -194,7 +197,9 @@ class MyReservation extends Component{
               {getFieldDecorator('roomNum',{
                 initialValue: this.state.filter.roomNum,
               })(
-                <Input/>
+                <Input 
+                  placeholder="如:南405"
+                />
               )}
             </Item>
           </Col>
@@ -208,6 +213,7 @@ class MyReservation extends Component{
                   <Option value="已审批">已审批</Option>
                   <Option value="未审批">未审批</Option>
                   <Option value="已驳回">已驳回</Option>
+                  <Option value="已作废">已作废</Option>
                 </Select>
               )}
             </Item>

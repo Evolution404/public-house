@@ -13,6 +13,8 @@ import Split from '../common/split'
 import Table,{sorterParse}from '../common/table'
 import {BuildingSelect, FloorSelect} from '../common/select'
 import {read, write} from '../stateHelper'
+import download from '../common/download'
+
 const confirm = Modal.confirm
 const Item = Form.Item
 
@@ -99,6 +101,9 @@ class ButtonGroup extends Component{
             <Link to={Map.PHImport.path}>
               <TButton.ImButton>从文件导入</TButton.ImButton>
             </Link>
+          </div>
+          <div style={{padding: '10px', display: 'inline-block'}}>
+            <TButton.ExButton type="primary" style={{width: 140}} onClick={this.props.export}>导出到文件</TButton.ExButton>
           </div>
       </div></Router>
     )
@@ -316,7 +321,6 @@ class PHManagement extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
      message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))
@@ -341,8 +345,7 @@ class PHManagement extends Component{
          self.refresh()
        })
        .catch(err=>{
-         console.log(err)
-         if(!err.response)
+         if(!err.resolved)
            message.error('删除失败')
         })
       },
@@ -359,7 +362,6 @@ class PHManagement extends Component{
  }
  // 修改条目处理函数
  change = (index)=>{
-   console.log('change')
  }
  selectedChange = (newSelected)=>{
    this.setState({
@@ -382,6 +384,18 @@ class PHManagement extends Component{
       this.setState({tableLoading: false})
     })
   }
+  export = ()=>{
+    this.setState({tableLoading: true})
+    API.exportPHBasic(this.state.filter)
+    .then(rs=>{
+      download(rs)
+    })
+    .catch(err=>{
+      if(!err.resolved)
+        message.error('导出失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
+  }
   render(){
     let tableHelper = {
       delete: this.delete,
@@ -392,6 +406,7 @@ class PHManagement extends Component{
       delete: this.delete,
       refresh: this.refresh,
       selected: this.state.selected,
+      export: this.export,
     }
     return <MainContainer name="信息管理">
       <Search initialValue={this.state.filter} onSearch={this.search}/>

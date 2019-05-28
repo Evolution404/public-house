@@ -156,6 +156,7 @@ class DetailHelper extends Component{
           </Row>
           <Row style={{marginTop: 20}}>
             <Label label="容纳人数:" value={this.props.galleryful}></Label>
+            <Label label="使用面积:" value={this.props.useArea}></Label>
           </Row>
           <Row style={{marginTop: 20}}>
             <Col span={3}>设备配置:</Col>

@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import MainContainer from '../common/mainContainer'
-import {Input, Form, Row, Col, message, Modal} from 'antd'
+import {Input, Form, Row, Col, message, Modal, Checkbox} from 'antd'
 import {SButton} from '../common/button'
 import Split from '../common/split'
 import Table, {sorterParse}from '../common/table'
@@ -122,7 +122,7 @@ class AddModal extends Component {
         message.success('添加成功')
       })
       .catch(err=>{
-        if(!err.response)
+        if(!err.resolved)
           message.error('添加失败')
       })
     })
@@ -248,7 +248,7 @@ class ChangeModal extends Component {
         form.resetFields()
       })
       .catch(err=>{
-        if(!err.response)
+        if(!err.resolved)
           message.error('更新失败')
       })
     })
@@ -320,12 +320,16 @@ class UserManagement extends Component{
       data: {},
     },
     current: 0,
+    checkbox: false,
   }
   componentWillMount(){
     read(this)
   }
   componentWillUnmount(){
     write(this)
+  }
+  setCheckbox = e=>{
+    this.setState({checkbox: e.target.checked})
   }
   add = ()=>{
     this.setState({addmodal: {visible: true}})
@@ -344,8 +348,8 @@ class UserManagement extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
-     message.error('搜索失败')
+     if(!err.resolved)
+       message.error('搜索失败')
    })
    .finally(()=>{
       this.setState({tableLoading: false})
@@ -360,8 +364,8 @@ class UserManagement extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
-     message.error('刷新失败')
+     if(!err.resolved)
+       message.error('刷新失败')
    })
    .finally(()=>{
       this.setState({tableLoading: false})
@@ -374,6 +378,7 @@ class UserManagement extends Component{
   }
   // 删除条目处理函数
   delete = (index)=>{
+    this.setState({checkbox: false})
     if(index!==-1)
       index=[index.id]
     else{
@@ -381,19 +386,22 @@ class UserManagement extends Component{
     }
     let self = this
     confirm({
-      title: '删除人员信息',
-      content: '删除操作会造成人员信息丢失，您确定要删除人员信息吗？',
+      title: '删除用户信息',
+      content: <div>
+                <p>确定要删除用户信息吗?</p>
+                <Checkbox onChange={this.setCheckbox}>是否删除关联使用者</Checkbox>
+              </div>,
       okText:"确认",
       cancelText:"取消",
       onOk() {
-        return API.deleteUser(index)
+        return API.deleteUser(index, self.state.checkbox)
         .then(()=>{
           message.success('删除成功')
          self.refresh()
        })
        .catch(err=>{
-         console.log(err)
-         message.error('删除失败')
+         if(!err.resolved)
+           message.error('删除失败')
        })
      },
       onCancel() {},
@@ -418,8 +426,8 @@ class UserManagement extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
-     message.error('加载失败')
+     if(!err.resolved)
+       message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))
   }
@@ -441,7 +449,11 @@ class UserManagement extends Component{
         loading={this.state.tableLoading}
         onSelectedChange={this.selectedChange} {...tableHelper}/>
       <WrappedAddModal refresh={this.refresh} {...this.state.addmodal} close={this.closeAddModal}/>
-      <WrappedChangeModal refresh={this.refresh} {...this.state.changemodal} close={this.closeChangeModal}/>
+      {
+        this.state.changemodal.visible&&(
+          <WrappedChangeModal refresh={this.refresh} {...this.state.changemodal} close={this.closeChangeModal}/>
+        )
+      }
     </MainContainer>
   }
 }

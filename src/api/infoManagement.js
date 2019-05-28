@@ -59,7 +59,6 @@ const PHAdd = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -104,7 +103,6 @@ const PHAddBrief = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -129,7 +127,6 @@ const PHTransform = {
         resolve(data)
       })
       .catch(err=>{
-        console.log(err)
         reject(err)
       })
     })
@@ -303,7 +300,6 @@ const PHAudit = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -328,7 +324,6 @@ const PHAuditDetail = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -348,7 +343,6 @@ const PHAuditDetail = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -380,7 +374,6 @@ const PHAuditDetail = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -396,7 +389,6 @@ const PHChange = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
 
@@ -409,7 +401,6 @@ const PHChange = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -459,7 +450,6 @@ const PHChange = {
         })
         .catch(err=>{
           reject(err)
-          console.log(err)
         })
       })
     }else{
@@ -480,7 +470,6 @@ const PHChange = {
         })
         .catch(err=>{
           reject(err)
-          console.log(err)
         })
       })
     }
@@ -528,7 +517,6 @@ const PHChange = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
     promiseList.push(formPromise)
@@ -590,7 +578,6 @@ const PHChangeBrief = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -603,7 +590,6 @@ const PHChangeBrief = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
 
@@ -670,7 +656,24 @@ const PHList = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
+      })
+    })
+  },
+  exportConditionQuery(filter){
+    filter = {
+      ...MapF2B(filter),
+      leixing: filter.usingNature&&filter.usingNature[0],
+      shiyongxingzhi: filter.usingNature&&filter.usingNature[1],
+    }
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-gongyongfang/get/all/export-excel', {
+        params: filter,
+      })
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
       })
     })
   },
@@ -696,7 +699,6 @@ const PHList = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -712,7 +714,6 @@ const PHList = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -742,7 +743,6 @@ const basicInfoManagement = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -758,7 +758,19 @@ const basicInfoManagement = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
+      })
+    })
+  },
+  exportPHBasic(filter){
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-gongyongfang-jibenxinxi/jibenxinxiexport-excel-xls', {
+        params: MapF2B(filter),
+      })
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
       })
     })
   },
@@ -787,7 +799,6 @@ const myPH = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -802,7 +813,6 @@ const myPH = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -835,7 +845,6 @@ const PHDetailInfo = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },

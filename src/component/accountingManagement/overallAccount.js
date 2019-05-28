@@ -88,7 +88,7 @@ class AcademyHouseTable extends Component{
     ]
     return (
       <div>
-        <Row>
+        <Row style={{fontSize: 16}}>
           <Col offset={1} span={10}>学院用房</Col>
           <Col style={{textAlign: 'right'}} span={12}>单位:平米</Col>
         </Row>
@@ -134,7 +134,7 @@ class PartyHouseTable extends Component{
     ]
     return (
       <div>
-        <Row>
+        <Row style={{fontSize: 16}}>
           <Col offset={1} span={10}>党政机关用房</Col>
           <Col style={{textAlign: 'right'}} span={12}>单位:平米</Col>
         </Row>
@@ -180,7 +180,7 @@ class OverallAccount extends Component{
       this.setState({loading: true, tip: '计算核算信息中...'})
       let [err] = await wrapper(API.accountingData(year))
       if(err){
-        if(!err.response)
+        if(!err.resolved)
           message.error('核算信息失败')
         this.setInitState()
         return
@@ -264,8 +264,8 @@ class OverallAccount extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
-     message.error('加载失败')
+     if(!err.resolved)
+       message.error('加载失败')
    })
    .finally(()=>this.setState({partyHouseTableLoading: false}))
   }
@@ -278,8 +278,8 @@ class OverallAccount extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
-     message.error('加载失败')
+     if(!err.resolved)
+       message.error('加载失败')
    })
    .finally(()=>this.setState({academyHouseTableLoading: false}))
   }
@@ -296,7 +296,7 @@ class OverallAccount extends Component{
       download(rs)
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('导出失败')
     })
     .finally(()=>this.setState({loading: false}))
@@ -342,7 +342,10 @@ class OverallAccount extends Component{
             onClick={this.export}>导出到文件</TButton.ExButton>
           <TButton.PrintButton
             onClick={this.print}
-            style={{marginLeft: '20px'}} type='primary'>打印</TButton.PrintButton>
+            style={{marginLeft: '20px'}}
+            disabled={!this.state.year||(this.state.partyHouseTableList.length===0
+                                        &&this.state.academyHouseTableList.length===0)}
+            type='primary'>打印</TButton.PrintButton>
       </Row>
       {
         this.state.year?(
@@ -383,7 +386,7 @@ class OverallAccount extends Component{
                       {
                         !this.state.isPrinting&&(
                           <Histogram id="DeptContrast2"
-                            title="各学院实际总面积、人均使用面积对比图表"
+                            title="各学院实际总面积图表"
                             data={this.state.DeptContrast2}></Histogram>
                         )
                       }

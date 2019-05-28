@@ -66,7 +66,7 @@ class BasicInfo extends Component{
       this.setState({treeData: rs})
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error("加载房间号失败")
     })
   }
@@ -199,7 +199,7 @@ class MainForm extends Component{
           message.success('添加成功')
         })
         .catch(err=>{
-          if(!err.response){
+          if(!err.resolved){
             message.error('添加失败')
           }
         })
@@ -440,7 +440,7 @@ class PHTransform extends Component{
               message.success('提交改造信息成功')
             })
             .catch(err=>{
-              if(!err.response)
+              if(!err.resolved)
                 message.error('提交改造信息失败')
             })
           },

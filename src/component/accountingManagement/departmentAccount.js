@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import {Form, Select, Row, Col, Tag, Empty, message, Spin} from 'antd'
+import {Form, Select, Row, Col, Tag, Empty, message, Spin, Modal} from 'antd'
 import MainContainer from '../common/mainContainer'
 import {DeptSelect, YearSelect} from '../common/select'
 import Histogram from '../common/histogram'
@@ -31,23 +31,41 @@ class Graph extends Component{
               )
             }
             {this.props.isPrinting&&(
-              <img style={{width: 300}} src={this.props.printData.graphData} alt=""/>
+              <img style={{width: 300}} src={this.props.printData.graph} alt=""/>
             )}
           </div>
         ):(
-          <Row style={{marginTop: 50}}>
-            <Col span={12}>
-              <PieChart
-                data={graphData.pieData}
-                desc='房屋分类'
-                title="各分项实际面积对比情况" id="graph1"></PieChart>
-            </Col>
-            <Col span={12}>
-              <Histogram id="graph2"
-                title="各分项定额面积、实际面积对比情况"
-                data={graphData.hisData}></Histogram>
-            </Col>
-          </Row>
+          <div>
+            {
+              !this.props.isPrinting&&(
+                <Row style={{marginTop: 50}}>
+                  <Col span={12}>
+                    <PieChart
+                      data={graphData.pieData}
+                      desc='房屋分类'
+                      title="各分项实际面积对比情况" id="graph1"></PieChart>
+                  </Col>
+                  <Col span={12}>
+                    <Histogram id="graph2"
+                      title="各分项定额面积、实际面积对比情况"
+                      data={graphData.hisData}></Histogram>
+                  </Col>
+                </Row>
+              )
+            }
+            {
+              this.props.isPrinting&&(
+              <Row style={{marginTop: 50}}>
+                <Col span={12}>
+                  <img style={{width: 300}} src={this.props.printData.graph1} alt=""/>
+                </Col>
+                <Col span={12}>
+                  <img style={{width: 300}} src={this.props.printData.graph2} alt=""/>
+                </Col>
+              </Row>
+              )
+            }
+          </div>
         )
     return rs
   }
@@ -89,43 +107,69 @@ function Slash(){
 
 class AcademyHouse extends Component{
   render(){
+    let onCell = column=>{
+      return (record, rowIndex)=>{
+        if(rowIndex!==1)
+          return
+        if(column==='slash'||record[column]<=0)
+          return
+        return {
+          onClick: e=>{
+            // 只有实际面积绑定事件
+            this.props.openModal(column)
+          },
+          style:{
+            color: '#1890ff',
+            cursor: 'pointer',
+          }
+        }
+    }
+    }
     let columns = [
       {
         title: <Slash></Slash>,
         dataIndex: 'slash',
+        onCell:onCell('slash'),
       },
       {
         title: '办公用房(BG)',
         dataIndex: 'bangongyongfang',
+        onCell:onCell('bangongyongfang'),
       },
       {
         title: '公用用房(GY)',
         dataIndex: 'gongyongyongfang',
+        onCell:onCell('gongyongyongfang'),
       },
       {
         title: '实验实习用房(SS)',
         dataIndex: 'shiyanshixiyongfang',
+        onCell:onCell('shiyanshixiyongfang'),
       },
       {
         title: '超大设备用房补贴(CB)',
         dataIndex: 'chaodashebeibutie',
+        onCell:onCell('chaodashebeibutie'),
       },
       {
         title: '重点实验室用房补贴(ZB)',
         dataIndex: 'zhongdianshiyanshibutie',
+        onCell:onCell('zhongdianshiyanshibutie'),
       },
       {
         title: '调节用房(TJ)',
         dataIndex: 'tiaojieyongfang',
+        onCell:onCell('tiaojieyongfang'),
       },
       {
         title: '合计',
         dataIndex: 'heji',
+        onCell:onCell('heji'),
       },
     ]
     return (
       <div>
-        <Row>
+        <Row style={{fontSize: 16}}>
           <Col offset={2} span={10}>核算结果明细</Col>
           <Col offset={6} span={6}>单位:平米</Col>
         </Row>
@@ -183,6 +227,107 @@ class PartyHouse extends Component{
   }
 }
 
+class AcademyHouseDetailModal extends Component{
+  state = {
+    loading: true,
+    tableList: [],
+    current: 0,
+  }
+  componentDidMount(){
+    let promise
+    if(this.props.id){
+      promise = API.getAcademyHouseDetailTableDataById(this.props.id, this.props.column)
+    }else{
+      promise = API.getAcademyHouseDetailTableDataByInfo(this.props.info.dept, this.props.info.year,this.props.column)
+    }
+    promise.then(rs=>{
+      this.setState({tableList: rs})
+    })
+    .catch(err=>{
+      if(!err.resolved)
+        message.error("详细信息加载失败")
+    })
+    .finally(()=>this.setState({loading: false}))
+  }
+  tableChange = (p, s)=>{
+    let promise
+    if(this.props.id){
+      promise = API.getAcademyHouseDetailTableDataById(this.props.id, this.props.column, p, sorterParse({},s))
+    }else{
+      promise = API.getAcademyHouseDetailTableDataByInfo(this.props.info.dept, this.props.info.year,this.props.column,p,sorterParse({},s))
+    }
+    this.setState({loading: true})
+    promise
+    .then(rs=>{
+      this.setState({tableList: rs})
+    })
+    .catch(err=>{
+      if(!err.resolved)
+        message.error("详细信息加载失败")
+    })
+    .finally(()=>this.setState({loading: false}))
+  }
+  onOk = ()=>{
+    let promise
+    if(this.props.id){
+      promise = API.exportAcademyHouseDatailById(this.props.id, this.props.column)
+    }else{
+      promise = API.exportAcademyHouseDatailByInfo(this.props.info.dept, this.props.info.year,this.props.column)
+    }
+    this.setState({loading: true})
+    promise.then(rs=>{
+      download(rs)
+    })
+    .catch(err=>{
+      if(!err.resolved)
+        message.error("导出失败")
+    })
+    .finally(()=>this.setState({loading: false}))
+  }
+  render(){
+    const columns = [
+      {
+        title: '楼宇',
+        dataIndex: 'louyu',
+        sorter: true,
+      },
+      {
+        title: '楼层',
+        dataIndex: 'louceng',
+        sorter: true,
+      },
+      {
+        title: '房间号',
+        dataIndex: 'fangjianhao',
+        sorter: true,
+      },
+      {
+        title: '使用面积(㎡)',
+        dataIndex: 'shiyongmianji',
+        sorter: true,
+      },
+    ]
+    return (
+        <Modal
+          title="详细信息"
+          visible={this.props.visible}
+          onOk={this.onOk}
+          onCancel={this.props.close}
+          okText="导出"
+          cancelText="关闭"
+          width={800}
+        >
+          <Spin spinning={this.state.loading}>
+            <Table
+              current={this.state.current}
+              onChange={this.tableChange}
+              columns={columns} data={this.state.tableList}></Table>
+          </Spin>
+        </Modal>
+    )
+  }
+}
+
 class DepartmentAccount extends Component{
   state = {
     hasSearched: false,
@@ -197,6 +342,7 @@ class DepartmentAccount extends Component{
     id: '',
     tableData: [],
     totalData: {},
+    modalInfo: {visible: false, column:-1,id:0,info:{}},
   }
   setInitState = ()=>{
     this.setState({
@@ -224,7 +370,7 @@ class DepartmentAccount extends Component{
     })
     .catch(err=>{
       this.setInitState()
-      if(!err.response)
+      if(!err.resolved)
         message.error('加载信息失败')
     })
     .finally(()=>{this.setState({loading: false})})
@@ -241,18 +387,59 @@ class DepartmentAccount extends Component{
         })
         .catch(err=>{
           this.setInitState()
-          if(!err.response)
+          if(!err.resolved)
             message.error('加载信息失败')
         })
         .finally(()=>{this.setState({loading: false})})
       }
     })
   }
+  openModal = (column)=>{
+    if(this.state.id)
+      this.setState({modalInfo:{visible: true, column,id:this.state.id}})
+    else{
+      this.setState({modalInfo:{visible: true, column,id:0,info:{
+        dept:this.state.filter.dept,year:this.state.filter.year}}})
+    }
+  }
+  closeModal = ()=>{
+    this.setState({modalInfo:{visible: false}})
+  }
   onTypeChange = (formtype)=>{
     this.setState({formtype})
   }
   getCanvasURL = (id)=>{
     return document.querySelector(`#${id} canvas`).toDataURL().split(',')[1]
+  }
+  getCanvasURL = (id)=>{
+    return document.querySelector(`#${id} canvas`).toDataURL()
+  }
+  print = ()=>{
+    let printData
+    if(this.state.type==='1'){
+      printData = {
+        graph: this.getCanvasURL('graph'),
+      }
+    }else{
+      printData = {
+        graph1: this.getCanvasURL('graph1'),
+        graph2: this.getCanvasURL('graph2'),
+      }
+    }
+    debugger
+    this.setState({isPrinting: true, printData}, ()=>{
+      // 直接执行有可能图片没有加载完成
+      // 使用一个interval直到找到图片才开始打印
+      let interval = setInterval(()=>{
+        if(document.querySelectorAll('#printArea img').length>0){
+          clearInterval(interval)
+          window.document.body.innerHTML =
+            window.document.getElementById('printArea').innerHTML
+          window.print()
+          window.location.reload()
+        }
+      }, 100)
+    })
   }
   export = ()=>{
     let promise
@@ -275,7 +462,7 @@ class DepartmentAccount extends Component{
       download(rs)
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('导出失败')
     })
     .finally(()=>{this.setState({loading: false})})
@@ -292,7 +479,7 @@ class DepartmentAccount extends Component{
         this.setState({tableData: rs.tableData})
       })
       .catch(err=>{
-        if(!err.response)
+        if(!err.resolved)
           message.error('加载信息失败')
       })
       .finally(()=>{this.setState({tableLoading: false})})
@@ -304,7 +491,7 @@ class DepartmentAccount extends Component{
       })
       .catch(err=>{
         this.setInitState()
-        if(!err.response)
+        if(!err.resolved)
           message.error('加载信息失败')
       })
       .finally(()=>{this.setState({tableLoading: false})})
@@ -359,14 +546,22 @@ class DepartmentAccount extends Component{
           disabled={
             (this.state.type==='1'&&(Object.keys(this.state.tableData).length===0||
               this.state.tableData.tableList.length===0))||
-            (this.state.type==='2'&&this.state.tableData.length===0)
+              (this.state.type==='2'&&this.state.tableData.length===0)||
+              (this.state.id===''&&!this.state.hasSearched)
           }
           type='primary'>导出到文件</TButton.ExButton>
-        <TButton.PrintButton type='primary' block>打印</TButton.PrintButton>
+        <TButton.PrintButton
+          disabled={
+            (this.state.type==='1'&&(Object.keys(this.state.tableData).length===0||
+              this.state.tableData.tableList.length===0))||
+            (this.state.type==='2'&&this.state.tableData.length===0)||
+              (this.state.id===''&&!this.state.hasSearched)
+          }
+          type='primary' onClick={this.print} block>打印</TButton.PrintButton>
       </Row>
       {
         this.state.hasSearched?(
-          <Spin spinning={this.state.loading} tip="加载信息中">
+          <Spin id="printArea" spinning={this.state.loading} tip="加载信息中">
             <Row>
               <Col span={22}>
                 <h2 style={{textAlign: 'center'}}>
@@ -382,7 +577,7 @@ class DepartmentAccount extends Component{
                   onChange={this.tableChange}
                   tableData={this.state.tableData}></PartyHouse>
               ):(
-                <AcademyHouse tableData={this.state.tableData}></AcademyHouse>
+                <AcademyHouse openModal={this.openModal} tableData={this.state.tableData}></AcademyHouse>
               )
             }
             {
@@ -396,6 +591,11 @@ class DepartmentAccount extends Component{
           </Spin>
         ):(
           <Empty description="请先搜索"></Empty>
+        )
+      }
+      {
+        this.state.modalInfo.visible&&(
+          <AcademyHouseDetailModal close={this.closeModal} {...this.state.modalInfo}></AcademyHouseDetailModal>
         )
       }
     </MainContainer>

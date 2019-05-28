@@ -15,7 +15,6 @@ const buildingQuery = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -29,7 +28,6 @@ const buildingQuery = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  }
@@ -53,7 +51,6 @@ const conditionQuery = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  }

@@ -101,7 +101,6 @@ class ReservationAudit extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
      message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))

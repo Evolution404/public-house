@@ -83,8 +83,13 @@ const mapNameF2B = {
   createTime: 'chuangjianshijian', // 创建时间
   updateTime: 'gengxinshijian', // 更新时间
   sort: 'sort', // 排序
-  zonghetiaojiexishu: 'zonghetiaojiexishu'
-
+  zonghetiaojiexishu: 'zonghetiaojiexishu',
+  bangongdianhua: 'bangongdianhua',
+  shoujihao: 'shoujihao',
+  waiyuanxueshengshiyanshixiyongfang: 'waiyuanxueshengshiyanshixiyongfang',
+  chaodashebeiyongfangbutie: 'chaodashebeiyongfangbutie',
+  zhongdianshiyanshiyongfangbutie: 'zhongdianshiyanshiyongfangbutie',
+  tiaojieyongfang: 'tiaojieyongfang',
 }
 let mapNameB2F = {}
 for (let i in mapNameF2B){

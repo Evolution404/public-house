@@ -1,11 +1,12 @@
 import React, {Component} from 'react'
-import {message, Row, Col, Form, Input, Button, Checkbox} from 'antd'
+import {message, Row, Col, Form, Input, Button, Checkbox, Select} from 'antd'
 import MainContainer from '../common/mainContainer'
 import Split from '../common/split'
 import Upload from '../common/upload'
 import API from '../../api'
 import {BuildingSelect, FloorSelect} from '../common/select'
 import Back from '../common/back'
+const Option = Select.Option
 const {Item} = Form
 const CheckboxGroup = Checkbox.Group
 
@@ -38,7 +39,8 @@ class MainForm extends Component{
           message.success('提交成功')
         })
         .catch(err=>{
-          message.error('提交失败')
+           if(!err.resolved)
+            message.error('提交失败')
         })
       }
     })
@@ -51,7 +53,8 @@ class MainForm extends Component{
       })
       .catch(err=>{
         reject()
-        message.error('删除图片失败')
+        if(!err.resolved)
+          message.error('删除图片失败')
       })
     })
   }
@@ -62,7 +65,7 @@ class MainForm extends Component{
       { label: '是否简易房', value: 1},
     ]
     return (
-      <Form onSubmit={this.handleSubmit}>
+      <Form style={{minWidth: 950}} onSubmit={this.handleSubmit}>
         <Row>
           <Col span={8}>
             <Item labelCol={{span:9}} wrapperCol={{span:13}} label="楼宇">
@@ -94,7 +97,20 @@ class MainForm extends Component{
               )}
             </Item>
           </Col>
-          <Col span={10}>
+          <Col span={8}>
+            <Item labelCol={{span:6}} wrapperCol={{span:13, offset:1}} label="房屋状态">
+              {getFieldDecorator('status', {
+                initialValue: this.props.status
+              })(
+                <Select >
+                  <Option value="使用中">使用中</Option>
+                  <Option value="待分配">待分配</Option>
+                  <Option value="暂借中">暂借中</Option>
+                </Select>
+              )}
+            </Item>
+          </Col>
+          <Col span={8}>
             <Item labelCol={{span:3}} wrapperCol={{span:20}}>
               {getFieldDecorator('areaConfig', {
                 getValueFromEvent: this.areaConfigChange,
@@ -105,6 +121,13 @@ class MainForm extends Component{
             </Item>
           </Col>
         </Row>
+        <Item labelCol={{span:3}} wrapperCol={{span:10}} label="备注">
+          {getFieldDecorator('note', {
+            initialValue: this.props.note,
+          })(
+            <Input></Input>
+          )}
+        </Item>
         <Item labelCol={{span:3}} wrapperCol={{span:12}} label="房屋图纸">
           {getFieldDecorator('drawings', {})(
             <Upload fileList={this.props.drawings} onRemove={this.removeDrawings}></Upload>
@@ -147,18 +170,19 @@ class PHChangeBrief extends Component{
       this.setState({hasLoaded: true})
     })
     .catch(err=>{
-      message.error('加载失败')
+       if(!err.resolved)
+        message.error('加载失败')
     })
   }
   render(){
     let formInfo = this.state
-    return <MainContainer name="详细信息">
+    return <MainContainer name="基本信息修改">
       <Row>
         <Col span={2}>
           <Back></Back>
         </Col>
         <Col span={10}>
-          <h2 style={{textAlign: 'right'}}>公用房详细信息</h2>
+          <h2 style={{textAlign: 'right'}}>公用房基本信息修改</h2>
         </Col>
       </Row>
       <Split/>

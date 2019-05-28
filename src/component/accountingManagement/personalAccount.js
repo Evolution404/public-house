@@ -143,7 +143,7 @@ class PersonalAccount extends Component{
       message.success('信息核算成功')
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('核算信息失败')
     })
     .finally(()=>{this.setState({loading: false})})
@@ -156,7 +156,7 @@ class PersonalAccount extends Component{
       this.setState({tableList: rs})
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('加载核算信息失败')
     })
     .finally(()=>{this.setState({loading: false})})
@@ -170,8 +170,8 @@ class PersonalAccount extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
-     message.error('加载失败')
+     if(!err.resolved)
+       message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))
   }

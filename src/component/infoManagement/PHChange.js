@@ -135,16 +135,16 @@ class MainForm extends Component{
     let info = this.props.info
     let changeForm = {
       '1':<ScientificBuilding
-        default={info} {...this.props}></ScientificBuilding>,
+        default={info} isChange {...this.props}></ScientificBuilding>,
       '2':<LogisticsBuilding
-        default={info} {...this.props}></LogisticsBuilding>,
+        default={info} isChange {...this.props}></LogisticsBuilding>,
       '3':<BusinessBuilding
-        default={info} {...this.props}></BusinessBuilding>,
+        default={info} isChange {...this.props}></BusinessBuilding>,
       '4':<CollegePartyBuilding
-        default={info} {...this.props}></CollegePartyBuilding>,
+        default={info} isChange {...this.props}></CollegePartyBuilding>,
     }
     return (
-      <Form onSubmit={this.handleSubmit}>
+      <Form style={{minWidth: 700}} onSubmit={this.handleSubmit}>
         <Item labelCol={{span:3}} wrapperCol={{span:8}} label="使用性质">
           {getFieldDecorator('usingNature', {
             initialValue: info.usingNature,
@@ -214,7 +214,7 @@ class PHChange extends Component{
       message.success('修改成功')
     })
     .catch(err=>{
-      if(!err.response){
+      if(!err.resolved){
         message.error('修改失败')
       }
     })
@@ -229,7 +229,7 @@ class PHChange extends Component{
       this.setState({formInfo: rs, id:rs.id, hasSearched: true})
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('搜索失败')
     })
     .finally(()=>{

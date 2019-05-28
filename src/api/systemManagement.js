@@ -71,7 +71,6 @@ const deptManagement = {
        })
        .catch(err=>{
          reject(err)
-         console.log(err)
        })
      })
      // 学院
@@ -103,7 +102,6 @@ const deptManagement = {
        })
        .catch(err=>{
          reject(err)
-         console.log(err)
        })
      })
    }
@@ -120,7 +118,6 @@ const deptManagement = {
        })
        .catch(err=>{
          reject(err)
-         console.log(err)
        })
      })
    }else if(type==='xy'){
@@ -133,7 +130,6 @@ const deptManagement = {
        })
        .catch(err=>{
          reject(err)
-         console.log(err)
        })
      })
    }
@@ -151,7 +147,6 @@ const deptManagement = {
        })
        .catch(err=>{
          reject(err)
-         console.log(err)
        })
      })
 
@@ -165,7 +160,6 @@ const deptManagement = {
        })
        .catch(err=>{
          reject(err)
-         console.log(err)
        })
      })
    }
@@ -185,7 +179,6 @@ const deptManagement = {
        })
        .catch(err=>{
          reject(err)
-         console.log(err)
        })
      })
    }else if(newData.type==='xy'){
@@ -197,7 +190,6 @@ const deptManagement = {
        })
        .catch(err=>{
          reject(err)
-         console.log(err)
        })
      })
    }
@@ -214,7 +206,6 @@ const parmManagement = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -229,7 +220,6 @@ const parmManagement = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -247,7 +237,6 @@ const parmManagement = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -265,7 +254,6 @@ const parmManagement = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -324,7 +312,6 @@ const buildingManagement = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -337,7 +324,6 @@ const buildingManagement = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -351,7 +337,6 @@ const buildingManagement = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -364,14 +349,13 @@ const buildingManagement = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
 }
 
 const theUserManagement = {
-  // 使用者管理
+  // 人员信息管理
   searchPersonnel(name, p,s){
     return new Promise((resolve, reject)=>{
       axios.get('/tb-shiyongzhe/get/all', {
@@ -398,7 +382,6 @@ const theUserManagement = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -412,7 +395,6 @@ const theUserManagement = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -426,7 +408,6 @@ const theUserManagement = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -439,7 +420,6 @@ const theUserManagement = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -460,7 +440,6 @@ const theUserManagement = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -495,13 +474,13 @@ const userManagement = {
         '公用房审核': Map.PHAudit,
         '我的公用房': Map.MyPH,
       },
-      '统计查询':{
+      '公用房查询':{
         '条件查询': Map.ConditionQuery,
         '楼宇查询': Map.BuildingQuery,
       },
       '核算管理':{
         '总体核算': Map.OverallAccount,
-        '部门核算': Map.DepartmentAccount,
+        '单位核算': Map.DepartmentAccount,
         '个人核算': Map.PersonalAccount,
       },
       '绩效管理':{
@@ -528,12 +507,12 @@ const userManagement = {
         '监测统计': Map.AMonitorStatistics,
       },
       '系统管理':{
-        '部门管理': Map.DeptManagement,
+        '单位管理': Map.DeptManagement,
         '参数管理': Map.ParmManagement,
         '楼宇管理': Map.BuildingManagement,
-        '使用者管理': Map.TheUserManagement,
+        '人员信息管理': Map.TheUserManagement,
         '用户管理': Map.UserManagement,
-        '面积补贴导入': Map.AreaSubsidiesImport,
+        '补贴面积': Map.AreaSubsidiesImport,
       },
     }
     return new Promise((resolve, reject)=>{
@@ -567,7 +546,6 @@ const userManagement = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -578,7 +556,6 @@ const userManagement = {
         resolve()
       })
       .catch(err=>{
-        console.log(err)
         reject(err)
       })
     })
@@ -592,14 +569,13 @@ const userManagement = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
-  deleteUser(indexList){
+  deleteUser(indexList, deleteshiyongzhe){
     return new Promise((resolve, reject)=>{
       axios.delete('/tb-denglu-renyuan/delete',{
-        params: {ids: `[${indexList.toString()}]`}
+        params: {ids: `[${indexList.toString()}]`, deleteshiyongzhe}
       })
       .then(rs=>{
         // 成功时调用
@@ -607,7 +583,6 @@ const userManagement = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -620,7 +595,6 @@ const userManagement = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -635,7 +609,6 @@ const userManagement = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },
@@ -666,7 +639,6 @@ const userManagement = {
       })
       .catch(err=>{
         reject(err)
-        console.log(err)
       })
     })
   },

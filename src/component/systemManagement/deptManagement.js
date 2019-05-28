@@ -277,7 +277,29 @@ class DetailModal extends Component {
             <DisplayLabel label="博士后数" value={data.postdoctoral}/>
           </Col>
         </Row>
-
+        <Row>
+          <Col span={12}>
+            <DisplayLabel label="综合调节系数" value={data.zonghetiaojiexishu}/>
+          </Col>
+          <Col span={12}>
+            <DisplayLabel label="调节用房" value={data.tiaojieyongfang}/>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={18}>
+            <DisplayLabel label="外院学生实验实习用房" value={data.waiyuanxueshengshiyanshixiyongfang}/>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={18}>
+            <DisplayLabel label="超大设备用房补贴" value={data.chaodashebeiyongfangbutie}/>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={18}>
+            <DisplayLabel label="重点实验室用房补贴" value={data.zhongdianshiyanshiyongfangbutie}/>
+          </Col>
+        </Row>
       </div>)
     }
     return (
@@ -475,10 +497,52 @@ class UpdateForm extends Component{
                 )}
               </Item>
             </Col>
+            <Col offset={2} span={10}>
+              <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="调节用房">
+                {getFieldDecorator('tiaojieyongfang',{
+                  initialValue: data.tiaojieyongfang,
+                })(
+                  <Input size="small" />
+                )}
+              </Item>
+            </Col>
           </Row>
           <Row>
             <Col offset={2} span={20}>
-              <Item style={{marginBottom: '0px'}}  labelCol={{span:6}} wrapperCol={{span:18}} label="备注">
+              <Item style={{marginBottom: '0px'}}  labelCol={{span:8}} wrapperCol={{span:12}} label="外院学生实验实习用房">
+                {getFieldDecorator('waiyuanxueshengshiyanshixiyongfang',{
+                  initialValue: data.waiyuanxueshengshiyanshixiyongfang,
+                })(
+                  <Input size="small" />
+                )}
+              </Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col offset={2} span={20}>
+              <Item style={{marginBottom: '0px'}}  labelCol={{span:8}} wrapperCol={{span:12}} label="超大设备用房补贴">
+                {getFieldDecorator('chaodashebeiyongfangbutie',{
+                  initialValue:data.chaodashebeiyongfangbutie,
+                })(
+                  <Input size="small" />
+                )}
+              </Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col offset={2} span={20}>
+              <Item style={{marginBottom: '0px'}}  labelCol={{span:8}} wrapperCol={{span:12}} label="重点实验室用房补贴">
+                {getFieldDecorator('zhongdianshiyanshiyongfangbutie',{
+                  initialValue: data.zhongdianshiyanshiyongfangbutie,
+                })(
+                  <Input size="small" />
+                )}
+              </Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col offset={2} span={20}>
+              <Item style={{marginBottom: '0px'}}  labelCol={{span:8}} wrapperCol={{span:12}} label="备注">
                 {getFieldDecorator('note',{
                   initialValue: data.note,
                 })(
@@ -520,8 +584,8 @@ class UpdateModal extends Component {
         this.props.refresh()
       })
       .catch(err=>{
-        console.log(err)
-        message.error('更新失败')
+        if(!err.resolved)
+          message.error('更新失败')
       })
     })
   }
@@ -811,10 +875,44 @@ class AddForm extends Component{
                 )}
               </Item>
             </Col>
+            <Col offset={2} span={10}>
+              <Item style={{marginBottom: '0px'}}  labelCol={{span:12}} wrapperCol={{span:12}} label="调节用房">
+                {getFieldDecorator('tiaojieyongfang',)(
+                  <Input size="small" />
+                )}
+              </Item>
+            </Col>
           </Row>
           <Row>
             <Col offset={2} span={20}>
-              <Item style={{marginBottom: '0px'}}  labelCol={{span:6}} wrapperCol={{span:18}} label="备注">
+              <Item style={{marginBottom: '0px'}}  labelCol={{span:8}} wrapperCol={{span:12}} label="外院学生实验实习用房">
+                {getFieldDecorator('waiyuanxueshengshiyanshixiyongfang',)(
+                  <Input size="small" />
+                )}
+              </Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col offset={2} span={20}>
+              <Item style={{marginBottom: '0px'}}  labelCol={{span:8}} wrapperCol={{span:12}} label="超大设备用房补贴">
+                {getFieldDecorator('chaodashebeiyongfangbutie',)(
+                  <Input size="small" />
+                )}
+              </Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col offset={2} span={20}>
+              <Item style={{marginBottom: '0px'}}  labelCol={{span:8}} wrapperCol={{span:12}} label="重点实验室用房补贴">
+                {getFieldDecorator('zhongdianshiyanshiyongfangbutie',)(
+                  <Input size="small" />
+                )}
+              </Item>
+            </Col>
+          </Row>
+          <Row>
+            <Col offset={2} span={20}>
+              <Item style={{marginBottom: '0px'}}  labelCol={{span:8}} wrapperCol={{span:12}} label="备注">
                 {getFieldDecorator('note',)(
                   <Input size="small" />
                 )}
@@ -856,8 +954,8 @@ class AddModal extends Component {
         this.formRef.props.form.resetFields()
       })
       .catch(err=>{
-        console.log(err)
-        message.error('添加失败')
+        if(!err.resolved)
+          message.error('添加失败')
       })
     })
   }
@@ -912,7 +1010,7 @@ class Import extends Component{
       this.setState({
         uploading: false,
       });
-      if(!err.response){
+      if(!err.resolved){
         message.error('上传失败');
       }
     })
@@ -1060,8 +1158,8 @@ class DeptManagement extends Component{
       })
     })
     .catch(err=>{
-      console.log(err)
-      message.error('搜索失败')
+      if(!err.resolved)
+        message.error('搜索失败')
     })
     .finally(()=>this.setState({tableLoading: false}))
   }
@@ -1092,8 +1190,8 @@ class DeptManagement extends Component{
           self.refresh()
         })
         .catch(err=>{
-          console.log(err)
-          message.error('删除失败')
+          if(!err.resolved)
+            message.error('删除失败')
         })
       },
       onCancel() {},
@@ -1134,8 +1232,8 @@ class DeptManagement extends Component{
       })
     })
     .catch(err=>{
-      console.log(err)
-      message.error('加载失败')
+      if(!err.resolved)
+        message.error('加载失败')
     })
     .finally(()=>this.setState({tableLoading: false}))
   }
@@ -1146,7 +1244,8 @@ class DeptManagement extends Component{
       this.setState({tableList: rs})
     })
     .catch(err=>{
-      console.log(err)
+      if(!err.resolved)
+        message.error('刷新失败')
     })
     .finally(()=>this.setState({tableLoading: false}))
   }
@@ -1181,7 +1280,11 @@ class DeptManagement extends Component{
         </Col>
       </Row>
       <DetailModal type={this.state.type} {...this.state.detailmodal} close={this.closeDetailModal}/>
-      <UpdateModal refresh={this.refresh} type={this.state.type} {...this.state.updatemodal} close={this.closeUpdateModal}/>
+      {
+        this.state.updatemodal.visible&&(
+          <UpdateModal refresh={this.refresh} type={this.state.type} {...this.state.updatemodal} close={this.closeUpdateModal}/>
+        )
+      }
       <AddModal {...this.state.addmodal} close={this.closeAddModal}/>
       <ImportModal {...this.state.importmodal} close={this.closeImportModal}/>
     </MainContainer>

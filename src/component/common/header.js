@@ -13,7 +13,7 @@ const Item = Form.Item
 
 const commonFontStyle=css.commonFontStyle
 function Welcome(props){
-  return <span style={{...commonFontStyle, padding:"10px"}}>欢迎: <Avatar style={{
+  return <span style={{...commonFontStyle, padding:"10px"}}>欢迎 : <Avatar style={{
     width: 30, height: 30, lineHeight:'30px', margin: '0 5px',
     backgroundColor: '#efbe65'
     }} icon="user" />{props.name}</span>
@@ -42,7 +42,7 @@ class ChangePwModal extends Component {
         this.props.clear()
       })
       .catch(err=>{
-        if(!err.response)
+        if(!err.resolved)
           message.error('修改失败')
       })
     })
@@ -198,13 +198,17 @@ class Header extends Component{
       backgroundColor: '#5a9dd0',
       height: "76px",
       border: '1px solid #40bdf7',
+      position: 'fixed',
+      width: '100%',
+      top: 0,
+      zIndex:1,
     }
     let fontStyle = {
       fontSize: "23px",
       fontWeight: 700,
       color: "white",
       position: "absolute",
-      left: "280px",
+      left: "290px",
       top: "25px",
     }
     let rightStyle = {
@@ -219,6 +223,14 @@ class Header extends Component{
           marginTop: "15px",
           marginLeft: 10,
         }} src={headerPic} alt="" />
+      <span style={{
+        marginBottom: -16,
+        marginLeft: 12,
+        height: 23,
+        width: 1,
+        background: 'white',
+        display: 'inline-block',
+      }}></span>
         <span style={fontStyle}>学校公用房管理系统</span>
         <div style={rightStyle}>
           <RightInfo {...this.props} name={this.state.name}/>

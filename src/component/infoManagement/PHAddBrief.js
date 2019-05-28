@@ -144,7 +144,7 @@ class PHAddBrief extends Component{
       message.success('新增成功')
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('新增失败')
     })
     .finally(()=>{

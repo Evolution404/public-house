@@ -375,7 +375,8 @@ class PHList extends Component{
       this.setState({tableList: rs})
     })
     .catch(err=>{
-      message.error('搜索失败')
+       if(!err.resolved)
+        message.error('搜索失败')
     })
     .finally(()=>{
       this.setState({tableLoading: false})
@@ -401,8 +402,8 @@ class PHList extends Component{
          self.refresh()
        })
        .catch(err=>{
-         console.log(err)
-         message.error('删除失败')
+         if(!err.resolved)
+           message.error('删除失败')
        })
      },
       onCancel() {},
@@ -426,8 +427,8 @@ class PHList extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
-     message.error('加载失败')
+     if(!err.resolved)
+       message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))
   }
@@ -476,7 +477,8 @@ class PHList extends Component{
       // this.props.history.push(Map.PHAudit.path)
     })
     .catch(err=>{
-      message.error('上报失败')
+       if(!err.resolved)
+        message.error('上报失败')
     })
   }
   render(){

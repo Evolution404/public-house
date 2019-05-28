@@ -142,7 +142,7 @@ class PHTransformAudit extends Component{
       this.refresh()
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('审批失败')
     })
     .finally(()=>{this.setState({loading: false})})
@@ -157,7 +157,7 @@ class PHTransformAudit extends Component{
       this.setState({tableList: rs})
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('刷新失败')
     })
     .finally(()=>{this.setState({loading: false})})
@@ -169,7 +169,7 @@ class PHTransformAudit extends Component{
       this.setState({tableList: rs})
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('搜索失败')
     })
     .finally(()=>{this.setState({loading: false})})
@@ -186,7 +186,6 @@ class PHTransformAudit extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
      message.error('加载失败')
    })
    .finally(()=>this.setState({loading: false}))

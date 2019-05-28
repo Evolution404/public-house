@@ -153,7 +153,6 @@ class PHAudit extends Component{
    })
    .catch(e=>{
      message.error('获取失败, 请重试')
-     console.log(e)
    })
    .finally(()=>{this.setState({tableLoading: false})})
  }
@@ -164,8 +163,6 @@ class PHAudit extends Component{
  }
  tableChange = (p, s)=>{
    this.setState({tableLoading: true, page:p, current: p.current})
-   console.log(this.state.filter)
-   console.log(s)
    API.auditFilterPH(sorterParse(this.state.filter, s), p)
    .then(rs=>{
      this.setState({
@@ -173,7 +170,6 @@ class PHAudit extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
      message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))

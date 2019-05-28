@@ -1,12 +1,13 @@
 import React, {Component} from 'react'
 import {
-  Form, Icon, Input, Button, Checkbox, message,
+  Form, Icon, Input, Button, Checkbox, message, Spin,
 } from 'antd';
 import API from '../../api'
 import './login.css'
 
 class Login extends Component {
   state = {
+    loading: false,
     loginAccount: '',
     password: '',
     remember: false,
@@ -23,17 +24,19 @@ class Login extends Component {
    this.props.form.validateFields((err, values) => {
      if (!err) {
        this.handleRemember(values.remember, values)
+       this.setState({loading: true})
        API.loginCheck(values)    
        .then(rs=>{
           message.success('登录成功')
           this.props.login(rs)
         })
         .catch(err=>{
-          if(!err.response)
+          if(!err.resolved)
             message.error('登录失败')
         })
+        .finally(()=>this.setState({loading: false}))
       }
-    });
+    })
   }
   componentWillMount(){
     let remember = JSON.parse(localStorage.getItem('remember'))
@@ -44,6 +47,7 @@ class Login extends Component {
   render() {
     const { getFieldDecorator } = this.props.form;
     return (<div className="login-form-container">
+      <Spin spinning={this.state.loading}>
       <Form onSubmit={this.handleSubmit} className="login-form">
         <h1 style={{textAlign: 'center'}}>公用房管理系统</h1>
         <Form.Item>
@@ -69,12 +73,13 @@ class Login extends Component {
           })(
             <Checkbox>记住密码</Checkbox>
           )}
-          <a className="login-form-forgot" href='/forget'>忘记密码</a>
+          <a onClick={(e)=>{e.preventDefault();message.destroy();message.warning('请联系管理员修改密码!')}} className="login-form-forgot" href='/forget'>忘记密码</a>
           <Button type="primary" htmlType="submit" className="login-form-button">
             登录
           </Button>
         </Form.Item>
       </Form>
+      </Spin>
     </div>)
   }
 }

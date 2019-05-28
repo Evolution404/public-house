@@ -138,7 +138,7 @@ class AddModal extends Component {
         this.hideModal()
       })
       .catch(err=>{
-        if(!err.response)
+        if(!err.resolved)
           message.error('添加失败')
       })
 
@@ -202,6 +202,16 @@ class AddModal extends Component {
               <DeptSelect type="2"></DeptSelect>
             )}
           </Item>
+          <Item style={{marginBottom: '0px'}}  label='办公电话'>
+            {getFieldDecorator('bangongdianhua',)(
+              <Input></Input>
+            )}
+          </Item>
+          <Item style={{marginBottom: '0px'}}  label='手机号'>
+            {getFieldDecorator('shoujihao',)(
+              <Input></Input>
+            )}
+          </Item>
         </Form>
       </Modal>
     )
@@ -245,6 +255,8 @@ class DetailModal extends Component {
           <DisplayLabel label="职务级别" value={data.dutyGrade}/>
           <DisplayLabel label="机关单位" value={data.dept}/>
           <DisplayLabel label="学院单位" value={data.collegeDept}/>
+          <DisplayLabel label="办公电话" value={data.bangongdianhua}/>
+          <DisplayLabel label="手机号" value={data.shoujihao}/>
           <DisplayLabel label="创建时间" value={moment(data.createTime).format('YYYY-MM-DD HH:mm')}/>
           <DisplayLabel label="更新时间" value={moment(data.updateTime).format('YYYY-MM-DD HH:mm')}/>
           <DisplayLabel label="备注" value={data.note}/>
@@ -277,8 +289,7 @@ class ChangeModal extends Component {
        this.hideModal()
      })
      .catch(err=>{
-       console.log(err)
-       if(!err.response)
+       if(!err.resolved)
          message.error('更新失败')
       })
     })
@@ -342,6 +353,16 @@ class ChangeModal extends Component {
               <DeptSelect type="2"></DeptSelect>
             )}
           </Item>
+          <Item style={{marginBottom: '0px'}}  label='办公电话'>
+            {getFieldDecorator('bangongdianhua',{initialValue: data.bangongdianhua})(
+              <Input></Input>
+            )}
+          </Item>
+          <Item style={{marginBottom: '0px'}}  label='手机号'>
+            {getFieldDecorator('shoujihao',{initialValue: data.shoujihao})(
+              <Input></Input>
+            )}
+          </Item>
         </Form>
       </Modal>
     )
@@ -377,7 +398,7 @@ class Import extends Component{
       this.setState({
         uploading: false,
       })
-      if(!err.response)
+      if(!err.resolved)
         message.error('上传失败');
     })
   }
@@ -513,8 +534,8 @@ class TheUserManagement extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
-     message.error('搜索失败')
+     if(!err.resolved)
+       message.error('搜索失败')
    })
    .finally(()=>this.setState({tableLoading: false}))
   }
@@ -527,8 +548,8 @@ class TheUserManagement extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
-     message.error('刷新失败')
+     if(!err.resolved)
+       message.error('刷新失败')
    })
    .finally(()=>this.setState({tableLoading: false}))
   }
@@ -546,8 +567,8 @@ class TheUserManagement extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
-     message.error('加载失败')
+     if(!err.resolved)
+       message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))
   }
@@ -565,7 +586,7 @@ class TheUserManagement extends Component{
     let self = this
     confirm({
       title: '删除人员信息',
-      content: '删除操作会造成人员信息丢失，您确定要删除人员信息吗？',
+      content: '此人员信息对应登录账号也会删除，是否继续操作?',
       okText:"确认",
       cancelText:"取消",
       onOk() {
@@ -575,12 +596,12 @@ class TheUserManagement extends Component{
          self.refresh()
        })
        .catch(err=>{
-         console.log(err)
-         message.error('删除失败')
+         if(!err.resolved)
+           message.error('删除失败')
        })
      },
       onCancel() {},
-    });
+    })
   }
   detail = record=>{
     API.detailPersonnel(record.id)
@@ -588,8 +609,8 @@ class TheUserManagement extends Component{
      this.setState({detailmodal: {visible: true, data:rs}})
    })
    .catch(err=>{
-     console.log(err)
-     message.error('获取详细信息失败')
+     if(!err.resolved)
+       message.error('获取详细信息失败')
    })
  }
   change = record=>{
@@ -626,7 +647,11 @@ class TheUserManagement extends Component{
       <WrappedAddModal refresh={this.refresh}
         {...this.state.addmodal} close={this.closeAddModal}/>
       <DetailModal {...this.state.detailmodal} close={this.closeDetailModal}/>
-      <WrappedChangeModal refresh={this.refresh}{...this.state.changemodal} close={this.closeChangeModal}/>
+      {
+        this.state.changemodal.visible&&(
+          <WrappedChangeModal refresh={this.refresh}{...this.state.changemodal} close={this.closeChangeModal}/>
+        )
+      }
       <ImportModal refresh={this.refresh} {...this.state.importmodal} close={this.closeImportModal}/>
     </MainContainer>
   }

@@ -13,7 +13,7 @@ class MyTable extends Component{
    selected: [],
  }
  render(){
-   let propOnChange = this.props.onChange||((p)=>{console.log(p)})
+   let propOnChange = this.props.onChange||((p)=>{})
    let onChange = (p, f, s)=>{
      this.setState({selected:[]})
      if(this.props.onSelectedChange)
@@ -82,6 +82,8 @@ const TableUtil = {
         return <span style={{color:'#faad14'}}>已上报</span>
       case '已批准':
         return <span style={{color:'#008000'}}>已批准</span>
+      case '已作废':
+        return <span style={{color:'#faad14'}}>已作废</span>
       default:
         return <span style={{color:'#333'}}>{text}</span>
     }

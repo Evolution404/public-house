@@ -3,7 +3,84 @@ import {pageSize} from '../component/common/table'
 import {MapF2B} from './nameMapConfig'
 
 const departmentAccount = {
-
+  exportAcademyHouseDatailById(id, column){
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-xueyuan-yongfang-shiyong-tongji/danxiang-mianji-xiangqing/export/by-id',{
+        params: {
+          id,
+          column,
+        }
+      })
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
+  exportAcademyHouseDatailByInfo(dept, year, column){
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-xueyuan-yongfang-shiyong-tongji/danxiang-mianji-xiangqing/export/by-nianfen-bumen',{
+        params: {
+          bumen:dept, nianfen:year,
+          column,
+        }
+      })
+      .then(rs=>{
+        resolve(rs.data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
+  getAcademyHouseDetailTableDataById(id, column, p, s){
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-xueyuan-yongfang-shiyong-tongji/danxiang-mianji-xiangqing/by-id',{
+        params: {
+          id,
+          column,
+          page: p?p.current-1:0,
+          size: pageSize,
+          ...s,
+        }
+      })
+      .then(rs=>{
+        let data = {
+          tableList:rs.data,
+          total: rs.headers['x-total-count'],
+        }
+        resolve(data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
+  getAcademyHouseDetailTableDataByInfo(dept, year, column, p, s){
+    return new Promise((resolve, reject)=>{
+      axios.get('/tb-xueyuan-yongfang-shiyong-tongji/danxiang-mianji-xiangqing/by-nianfen-bumen',{
+        params: {
+          bumen:dept, nianfen:year,
+          column,
+          page: p?p.current-1:0,
+          size: pageSize,
+          ...s,
+        }
+      })
+      .then(rs=>{
+        let data = {
+          tableList:rs.data,
+          total: rs.headers['x-total-count'],
+        }
+        resolve(data)
+      })
+      .catch(err=>{
+        reject(err)
+      })
+    })
+  },
 }
 const overallAccount = {
   async accountingData(year){

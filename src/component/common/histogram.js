@@ -24,6 +24,7 @@ class Histogram extends Component{
             data: tempData,
       }
     })
+    let keyLen = Object.keys(this.props.data).length
     let option = {
       title: {
         text: this.props.title,
@@ -62,7 +63,7 @@ class Histogram extends Component{
               data: xAxisData,
               axisLabel: {  
                  interval:0,  
-                 rotate:Object.keys(this.props.data).length < 5?0:30,
+                 rotate: keyLen < 5?0:30,
               },
           }
       ],
@@ -75,6 +76,20 @@ class Histogram extends Component{
         left: '10%',  
         bottom:'25%',
       },  
+      dataZoom: [
+        {
+          show: keyLen>8,
+            realtime: true,
+            start: 0,
+            end: 100,
+        },
+        {
+            type: 'inside',
+            realtime: keyLen>8,
+            start: 0,
+            end: 100,
+        }
+      ],
       series: data,
     }
     return <ECharts id={this.props.id} option={option}></ECharts>

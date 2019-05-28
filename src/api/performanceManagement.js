@@ -41,7 +41,6 @@ const businessPerformance = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -76,7 +75,6 @@ const checkWorkload = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -138,7 +136,6 @@ const classroomPerformance = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -205,7 +202,6 @@ const labPerformance = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -260,7 +256,6 @@ const scientificPerformance = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -315,7 +310,6 @@ const teachingUnitPerformance = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },

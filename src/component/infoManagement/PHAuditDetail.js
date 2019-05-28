@@ -23,7 +23,8 @@ class PHAuditDetail extends Component{
       this.setState({...rs,hasLoaded: true, id})
     })
     .catch(err=>{
-      message.error('加载失败')
+       if(!err.resolved)
+        message.error('加载失败')
     })
   }
   opinionChange = (e)=>{
@@ -36,7 +37,8 @@ class PHAuditDetail extends Component{
       message.success('批准成功')
     })
     .catch(err=>{
-      message.error('批准失败, 请检查网络连接')
+       if(!err.resolved)
+          message.error('批准失败, 请检查网络连接')
     })
   }
   // 驳回回调
@@ -46,7 +48,8 @@ class PHAuditDetail extends Component{
       message.success('驳回成功')
     })
     .catch(err=>{
-      message.error('驳回失败, 请检查网络连接')
+       if(!err.resolved)
+        message.error('驳回失败, 请检查网络连接')
     })
   }
   render(){

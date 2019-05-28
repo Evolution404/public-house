@@ -324,7 +324,7 @@ class MyPH extends Component{
       this.setState({personnelInfo: rs})
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('获取个人信息失败')
     })
     .finally(()=>{
@@ -352,7 +352,7 @@ class MyPH extends Component{
       this.setState({tableList:rs})
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('搜索失败')
     })
     .finally(()=>{
@@ -368,7 +368,6 @@ class MyPH extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
      message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))

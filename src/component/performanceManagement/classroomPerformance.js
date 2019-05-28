@@ -77,7 +77,6 @@ class ClassroomPerformance extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
      message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))
@@ -97,7 +96,7 @@ class ClassroomPerformance extends Component{
       download(rs)
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('导出失败')
     })
     .finally(()=>this.setState({loading: false}))
@@ -158,7 +157,7 @@ class ClassroomPerformance extends Component{
               {getFieldDecorator('building',{
                 initialValue: this.state.filter.dept,
               })(
-                <BuildingSelect onChange={formBuilding=>this.setState(formBuilding)}></BuildingSelect>
+                <BuildingSelect onChange={formBuilding=>this.setState({formBuilding})}></BuildingSelect>
               )}
             </Item>
           </Col>
@@ -189,7 +188,11 @@ class ClassroomPerformance extends Component{
             Object.keys(this.state.tableList).length===0||
             this.state.tableList.tableList.length===0}
           onClick={this.export}>导出到文件</TButton.ExButton>
-        <TButton.PrintButton onClick={this.print} type='primary'>打印</TButton.PrintButton>
+        <TButton.PrintButton onClick={this.print}
+          disabled={
+            Object.keys(this.state.tableList).length===0||
+            this.state.tableList.tableList.length===0}
+          type='primary'>打印</TButton.PrintButton>
       </Row>
       <Spin spinning={this.state.loading}>
         <div id="printArea">
@@ -208,18 +211,16 @@ class ClassroomPerformance extends Component{
                   onChange={this.tableChange}
                   columns={columns} data={this.state.tableList}></Table>
                 <Row style={{marginTop: 30}}>
-                  <Col offset={1} span={12}>
                     {
                       !this.state.loading&&!this.state.isPrinting&&(
                         <Histogram id="graph"
-                          title="各教学单位使用效益、米均效益对比情况"
+                          title="各教室学时数据对比情况"
                           data={this.state.graphData}></Histogram>
                       )
                     }
                     {this.state.isPrinting&&(
-                      <img style={{width:500}} src={this.state.printData.graph} alt=""/>
+                      <img style={{width:1000}} src={this.state.printData.graph} alt=""/>
                     )}
-                  </Col>
                 </Row>
               </div>
             ):(

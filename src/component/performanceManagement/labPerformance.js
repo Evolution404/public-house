@@ -79,7 +79,6 @@ class LabPerformance extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
      message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))
@@ -99,7 +98,7 @@ class LabPerformance extends Component{
       download(rs)
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('导出失败')
     })
     .finally(()=>this.setState({loading: false}))
@@ -191,6 +190,9 @@ class LabPerformance extends Component{
             this.state.tableList.tableList.length===0}
           onClick={this.export}>导出到文件</TButton.ExButton>
         <TButton.PrintButton
+          disabled={
+            Object.keys(this.state.tableList).length===0||
+            this.state.tableList.tableList.length===0}
           onClick={this.print} type='primary'>打印</TButton.PrintButton>
       </Row>
       <div id="printArea">
@@ -210,7 +212,6 @@ class LabPerformance extends Component{
                 onChange={this.tableChange}
                 columns={columns} data={this.state.tableList}></Table>
               <Row style={{marginTop: 30}}>
-                <Col offset={1} span={12}>
                   {
                     (!this.state.isPrinting&&
                      Object.keys(this.state.graphData).length>0)&&(
@@ -222,7 +223,6 @@ class LabPerformance extends Component{
                   {this.state.isPrinting&&(
                     <img style={{width:500}} src={this.state.printData.graph} alt=""/>
                   )}
-                </Col>
               </Row>
             </div>
           ):(

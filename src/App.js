@@ -90,15 +90,15 @@ class App extends Component{
         routerList.push(router)
       }
       node = (
-        <div style={{display: 'flex', flexDirection: 'column'}}>
+        <div style={{flexDirection: 'column'}}>
             <Router>
-          <div style={{flex:1}}>
-            <Header getPersistentData={this.getPersistentData} clear={this.clearPersistenData}
+          <Header getPersistentData={this.getPersistentData} clear={this.clearPersistenData}
             name={this.state.userData.userName}/>
+          <div style={{width:'30%', maxWidth: 280, position: 'fixed', top:76,left:0, zIndex:1}}>
+            <Navigation data={this.state.navData} />
           </div>
-          <div style={{display: 'flex'}}>
+          <div style={{display: 'flex', marginTop: 76}}>
             <div style={{flex:.3, maxWidth: 280}}>
-              <Navigation data={this.state.navData} />
             </div>
             <div style={{
               margin: "25px 2%",

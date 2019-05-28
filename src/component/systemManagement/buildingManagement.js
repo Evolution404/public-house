@@ -133,7 +133,7 @@ class AddModal extends Component {
         this.props.refresh()
       })
       .catch(err=>{
-       if(!err.response)
+       if(!err.resolved)
         message.error('添加失败')
      })
    })
@@ -205,7 +205,7 @@ class UpdateModal extends Component {
         this.props.refresh()
       })
       .catch(err=>{
-       if(!err.response)
+       if(!err.resolved)
         message.error('更新失败')
      })
    })
@@ -284,7 +284,7 @@ class Import extends Component{
       this.setState({
         uploading: false,
       })
-      if(!err.response)
+      if(!err.resolved)
         message.error('上传失败');
     })
   }
@@ -400,7 +400,7 @@ class UploadModal extends Component {
         this.setState({
           uploading: false,
         })
-        if(!err.response)
+        if(!err.resolved)
           message.error('上传失败');
       })
     })
@@ -528,8 +528,7 @@ class BuildingManagement extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
-     if(!err.response)
+     if(!err.resolved)
        message.error('搜索失败')
     })
     .finally(()=>{
@@ -544,8 +543,7 @@ class BuildingManagement extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
-     if(!err.response)
+     if(!err.resolved)
        message.error('搜索失败')
     })
   }
@@ -574,8 +572,7 @@ class BuildingManagement extends Component{
          self.refresh()
        })
        .catch(err=>{
-         console.log(err)
-         if(!err.response)
+         if(!err.resolved)
            message.error('删除失败')
         })
       },
@@ -612,7 +609,6 @@ class BuildingManagement extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
      message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))
@@ -636,7 +632,11 @@ class BuildingManagement extends Component{
         loading={this.state.tableLoading}
         onSelectedChange={this.selectedChange} {...tableHelper}/>
       <WrappedAddModal refresh={this.refresh} {...this.state.addmodal} close={this.closeAddModal}/>
-      <WrappedUpdateModal refresh={this.refresh} {...this.state.updatemodal} close={this.closeUpdateModal}/>
+      {
+        this.state.updatemodal.visible&&(
+          <WrappedUpdateModal refresh={this.refresh} {...this.state.updatemodal} close={this.closeUpdateModal}/>
+        )
+      }
       <ImportModal {...this.state.importmodal} close={this.closeImportModal}/>
       <UploadModal {...this.state.uploadmodal} close={this.closeUploadModal}/>
     </MainContainer>

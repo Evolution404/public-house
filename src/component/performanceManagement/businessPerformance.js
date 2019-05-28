@@ -32,6 +32,27 @@ class BusinessPerformance extends Component{
   componentWillUnmount(){
     write(this)
   }
+  getCanvasURL = (id)=>{
+    return document.querySelector(`#${id} canvas`).toDataURL()
+  }
+  print = ()=>{
+    let printData = {
+      graph: this.getCanvasURL('graph'),
+    }
+    this.setState({isPrinting: true, printData}, ()=>{
+      // 直接执行有可能图片没有加载完成
+      // 使用一个interval直到找到图片才开始打印
+      let interval = setInterval(()=>{
+        if(document.querySelectorAll('#printArea img').length>0){
+          clearInterval(interval)
+          window.document.body.innerHTML =
+            window.document.getElementById('printArea').innerHTML
+          window.print()
+          window.location.reload()
+        }
+      }, 100)
+    })
+  }
   search = ()=>{
     this.props.form.validateFields((err, values) => {
       if (!err) {
@@ -56,7 +77,6 @@ class BusinessPerformance extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
      message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))
@@ -75,7 +95,7 @@ class BusinessPerformance extends Component{
       download(rs)
     })
     .catch(err=>{
-      if(!err.response)
+      if(!err.resolved)
         message.error('导出失败')
     })
     .finally(()=>this.setState({loading: false}))
@@ -161,9 +181,13 @@ class BusinessPerformance extends Component{
             Object.keys(this.state.tableList).length===0||
             this.state.tableList.tableList.length===0}
           onClick={this.export}>导出到文件</TButton.ExButton>
-        <TButton.PrintButton type='primary'>打印</TButton.PrintButton>
+        <TButton.PrintButton
+          disabled={
+            Object.keys(this.state.tableList).length===0||
+            this.state.tableList.tableList.length===0}
+          type='primary' onClick={this.print}>打印</TButton.PrintButton>
       </Row>
-      <Spin spinning={this.state.loading}>
+      <Spin id="printArea" spinning={this.state.loading}>
         {
           this.state.hasSearched?(
             <div>
@@ -190,6 +214,9 @@ class BusinessPerformance extends Component{
                   ></Histogram>
                 )
               }
+              {this.state.isPrinting&&(
+                <img style={{width:1000}} src={this.state.printData.graph} alt=""/>
+              )}
             </div>
           ):(
             <Empty description="请先搜索"></Empty>

@@ -64,7 +64,6 @@ class UseStatistical extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
      message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))
@@ -210,9 +209,11 @@ class UseStatistical extends Component{
       <Split/>
       <Row style={{margin: '20px'}}>
         <TButton.ExButton onClick={this.export}
+          disabled={!this.state.hasSearched}
           style={{width: 140}}
             type="primary">导出到文件</TButton.ExButton>
         <TButton.PrintButton onClick={this.print}
+          disabled={!this.state.hasSearched}
           type="primary">打印</TButton.PrintButton>
       </Row>
       <div id="printArea">

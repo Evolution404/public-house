@@ -13,6 +13,7 @@ import Table, {TableUtil, sorterParse} from '../common/table'
 import Search from '../common/search'
 import {read, write} from '../stateHelper'
 import {TButton} from '../common/button'
+import download from '../common/download'
 
 
 class DisplayTable extends Component{
@@ -284,6 +285,7 @@ class ConditionQuery extends Component{
       tableLoading: false,
       selected: [], // 被选中的数据, 数值代表的是在tableList中的位置
       current: 0,
+      filter: {},
     }
   }
   componentWillMount(){
@@ -294,7 +296,7 @@ class ConditionQuery extends Component{
   }
   search = (values)=>{
     this.setState({type: values.usingNature[0], isSearched: true, tableLoading: true, current: 1})
-    this.setState(values)
+    this.setState({...values, filter:values})
     API.listFilterPH(values)
     .then(rs=>{
       this.setState({tableList: rs})
@@ -367,10 +369,27 @@ class ConditionQuery extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
      message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))
+  }
+  print = ()=>{
+    window.document.body.innerHTML =
+      window.document.getElementById('printArea').innerHTML
+    window.print()
+    window.location.reload()
+  }
+  export = ()=>{
+    this.setState({tableLoading: true})
+    API.exportConditionQuery(this.state.filter)
+    .then(rs=>{
+      download(rs)
+    })
+    .catch(err=>{
+      if(!err.resolved)
+        message.error('导出失败')
+    })
+    .finally(()=>this.setState({tableLoading: false}))
   }
   render(){
     let filter = {
@@ -388,20 +407,24 @@ class ConditionQuery extends Component{
         onSearch={this.search}/>
       <Split/>
       <Row style={{marginBottom: 10}}>
-          <TButton.ExButton type="primary" style={{width: 140}}>导出到文件</TButton.ExButton>
-          <TButton.PrintButton type="primary">打印</TButton.PrintButton>
+          <TButton.ExButton type="primary" disabled={!this.state.filter.usingNature} style={{width: 140}} onClick={this.export}>导出到文件</TButton.ExButton>
+          <TButton.PrintButton onClick={this.print}
+            disabled={!this.state.filter.usingNature} 
+            type="primary">打印</TButton.PrintButton>
       </Row>
-      {
-        this.state.isSearched?(
-          <DisplayTable loading={this.state.tableLoading}
-            current={this.state.current}
-            onChange={this.tableChange}
-            type={this.state.type}
-            data={this.state.tableList}/>
-        ):(
-          <Empty description="请先搜索"></Empty>
-        )
-      }
+      <div id="printArea">
+        {
+          this.state.isSearched?(
+            <DisplayTable loading={this.state.tableLoading}
+              current={this.state.current}
+              onChange={this.tableChange}
+              type={this.state.type}
+              data={this.state.tableList}/>
+          ):(
+            <Empty description="请先搜索"></Empty>
+          )
+        }
+      </div>
     </MainContainer>
   }
 }

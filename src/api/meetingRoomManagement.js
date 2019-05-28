@@ -53,7 +53,6 @@ const meetingRoomReservation = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -82,7 +81,6 @@ const meetingRoomReservation = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -102,6 +100,7 @@ const myReservation = {
     // }
     let data = MapF2B(info)
     data.time = data.leixing
+    delete data.leixing
     return new Promise((resolve, reject)=>{
       axios.get('/tb-huiyishi-yuyue/get/myreservation', {
         params: {
@@ -131,7 +130,6 @@ const myReservation = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -151,7 +149,6 @@ const myReservation = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -167,7 +164,6 @@ const myReservation = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -218,7 +214,6 @@ const reservationAudit = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -234,7 +229,6 @@ const reservationAudit = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -255,7 +249,6 @@ const reservationAudit = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -313,7 +306,6 @@ const useStatistical = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -331,7 +323,6 @@ const useStatistical = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -355,7 +346,6 @@ const useStatistical = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },
@@ -371,7 +361,6 @@ const useStatistical = {
      })
      .catch(err=>{
        reject(err)
-       console.log(err)
      })
    })
  },

@@ -104,7 +104,6 @@ class CheckWorkload extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
      message.error('搜索失败')
    })
    .finally(()=>{
@@ -120,7 +119,6 @@ class CheckWorkload extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
      message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))

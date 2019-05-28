@@ -10,16 +10,20 @@ axios.defaults.withCredentials = true
 
 const http = axios.create({
     baseURL: domainName,
-    timeout: 10000,
+    timeout: 100000,
 })
 http.defaults.withCredentials = true
 http.interceptors.request.use(config=>{
+  config.headers['Cache-Control'] = 'no-cache'
   let token = localStorage.getItem("x-auth-token")
   if(token){
     config.headers['X-gongyongfangguanliApp-params'] = token
   }
   // 去除get请求中参数的空值
+  // 阻止ie的缓存问题 加一个时间戳
   if(config.method==='get'){
+    config.params = config.params||{}
+    config.params.timestamp = (new Date()).valueOf()
     for(let key in config.params){
       if(!config.params[key]&&config.params[key]!==0)
         delete config.params[key]
@@ -36,6 +40,8 @@ http.interceptors.response.use(rs=>{
   return rs
   },
   err=>{
+    // 全局打印错误信息
+    console.log(err)
     // 417错误码是登录过期
     if(err.response.status===417){
       confirm({
@@ -46,11 +52,12 @@ http.interceptors.response.use(rs=>{
           window.location.reload()
         }
       })
-      return Promise.reject(err)
+      return Promise.reject({resolved: true})
     }
     message.destroy()
     if(err&&err.response&&err.response.data&&err.response.data.title){
       message.error(err.response.data.title)
+      return Promise.reject({resolved: true})
     }
     return Promise.reject(err)
   }

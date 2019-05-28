@@ -15,7 +15,6 @@ let uploadHelper = (data, url)=>{
        resolve()
    })
    .catch(err=>{
-     console.log(err)
      reject(err)
    })
  })

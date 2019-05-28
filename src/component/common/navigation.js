@@ -58,7 +58,7 @@ class Sider extends Component {
     // 传入菜单标题返回对应的图标
     let mapData = {
       '信息管理': <Icon type="idcard" />,
-      '统计查询': <Icon type="search" />,
+      '公用房查询': <Icon type="search" />,
       '核算管理': <Icon type="money-collect" />,
       '绩效管理': <Icon type="line-chart" />,
       '动态监测': <Icon type="delete" />,
@@ -79,8 +79,8 @@ class Sider extends Component {
       '信息管理-我的公用房': <Icon type="team" />,
       '信息管理-公用房改造': <Icon type="diff" />,
       '信息管理-公用房改造审核': <Icon type="setting" />,
-      '统计查询-条件查询': <Icon type="diff" />,
-      '统计查询-楼宇查询': <Icon type="setting" />,
+      '公用房查询-条件查询': <Icon type="diff" />,
+      '公用房查询-楼宇查询': <Icon type="setting" />,
       '核算管理-总体核算': <Icon type="team" />,
       '核算管理-单位核算': <Icon type="diff" />,
       '核算管理-个人核算': <Icon type="setting" />,
@@ -98,9 +98,9 @@ class Sider extends Component {
       '系统管理-单位管理': <Icon type="idcard" />,
       '系统管理-参数管理': <Icon type="search" />,
       '系统管理-楼宇管理': <Icon type="money-collect" />,
-      '系统管理-人员信息理': <Icon type="line-chart" />,
+      '系统管理-人员信息管理': <Icon type="line-chart" />,
       '系统管理-用户管理': <Icon type="delete" />,
-      '系统管理-面积补贴导入': <Icon type="team" />,
+      '系统管理-补贴面积': <Icon type="team" />,
     }
       return mapData[text]
   }

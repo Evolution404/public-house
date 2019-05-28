@@ -31,8 +31,6 @@ class MeetingRoomReservation extends Component{
     },
     filter: {},
     values: {},
-    useDate: {},
-    startStopTime: [],
   }
   componentWillMount(){
     read(this)
@@ -49,7 +47,7 @@ class MeetingRoomReservation extends Component{
  search = ()=>{
    this.props.form.validateFields((err, values) => {
      if (!err) {
-       this.setState({tableLoading: true, isSearched: true, current: 1, values, useDate: values.useDate, startStopTime: values.startStopTime})
+       this.setState({tableLoading: true, isSearched: true, current: 1, values, useDate: values.useDate.valueOf(), startStopTime: values.startStopTime})
        let startStopTime = []
        startStopTime[0] = moment(values.useDate.format('YYYY-MM-DD')+' '+values.startStopTime[0]).valueOf()/1000
        startStopTime[1] = moment(values.useDate.format('YYYY-MM-DD')+' '+values.startStopTime[1]).valueOf()/1000
@@ -64,7 +62,7 @@ class MeetingRoomReservation extends Component{
           this.setState({tableList: rs})
         })
         .catch(err=>{
-          if(!err.response)
+          if(!err.resolved)
             message.error('搜索失败')
         })
         .finally(()=>{
@@ -82,7 +80,6 @@ class MeetingRoomReservation extends Component{
      })
    })
    .catch(err=>{
-     console.log(err)
      message.error('加载失败')
    })
    .finally(()=>this.setState({tableLoading: false}))
@@ -146,7 +143,7 @@ class MeetingRoomReservation extends Component{
     return <MainContainer name="会议室预约">
       <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
-          <Col span={6}>
+          <Col style={{minWidth: 250}} span={6}>
             <Item labelCol={{span:8}} wrapperCol={{span:15}} label="人数要求">
               {getFieldDecorator('galleryful',{
                 initialValue: this.state.values.galleryful||"0",
@@ -162,7 +159,7 @@ class MeetingRoomReservation extends Component{
               )}
             </Item>
           </Col>
-          <Col span={5}>
+          <Col style={{minWidth: 210}} span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="使用日期">
               {getFieldDecorator('useDate',{
                 initialValue: moment(this.state.values.useDate),
@@ -172,7 +169,7 @@ class MeetingRoomReservation extends Component{
               )}
             </Item>
           </Col>
-          <Col span={5}>
+          <Col style={{minWidth: 210}} span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="起止时间">
               {getFieldDecorator('startStopTime',{
                 initialValue: this.state.values.startStopTime,
@@ -188,7 +185,7 @@ class MeetingRoomReservation extends Component{
           </Col>
         </Row>
         <Row>
-          <Col span={12}>
+          <Col style={{minWidth: 500}} span={12}>
             <Item labelCol={{span:4}} wrapperCol={{span:20}} label="设备要求">
               {getFieldDecorator('deviceConfig',{
                 initialValue: this.state.values.deviceConfig,
@@ -197,10 +194,10 @@ class MeetingRoomReservation extends Component{
               )}
             </Item>
           </Col>
-          <Col offset={0} span={3}>
+          <Col style={{minWidth: 120}} offset={0} span={3}>
             <TButton.SearchButton type="primary" onClick={this.search}>搜索房间</TButton.SearchButton>
           </Col>
-          <Col span={4}>
+          <Col style={{minWidth: 130}} span={4}>
             <Route>
               <Link to={Map.MyReservation.path}>
                 <Button type="primary">历史预约信息</Button>
@@ -215,8 +212,8 @@ class MeetingRoomReservation extends Component{
         onChange={this.tableChange}
         columns={columns} loading={this.state.tableLoading} data={this.state.tableList}></Table>
       <ReservationModal
-        useDate={this.state.useDate}
-        startStopTime={this.state.startStopTime}
+        useDate={this.state.values.useDate}
+        startStopTime={this.state.values.startStopTime}
         request={API.startReservation}
         {...this.state.reservationModal} close={this.closeReservationModal} />
     </MainContainer>

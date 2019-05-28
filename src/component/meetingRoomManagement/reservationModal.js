@@ -5,7 +5,7 @@ from 'antd'
 import moment from 'moment'
 
 const rangeData = []
-for(let i=8; i < 22; i++){
+for(let i=8; i < 21; i++){
   let curData = {
     label:i+':00',
     value: (i < 10?'0':'')+i+':00',
@@ -88,9 +88,9 @@ class ReservationModal extends Component {
           <Item label="使用日期">
             {getFieldDecorator('useDate',{
               rules: [{required: true, message: '请选择使用日期'}],
-              initialValue: this.props.useDate,
+              initialValue: moment(this.props.useDate,),
             })(
-              <DatePicker disabled></DatePicker>
+              <DatePicker disabled={this.props.useDate}></DatePicker>
             )}
           </Item>
           <Item label="起止时间">
@@ -102,8 +102,15 @@ class ReservationModal extends Component {
                 options={rangeData}
                 expandTrigger="hover"
                 placeholder='请选择起止时间'
-                disabled
+                disabled={this.props.startStopTime}
               ></Cascader>
+            )}
+          </Item>
+          <Item label="办公电话">
+            {getFieldDecorator('bangongdianhua',{
+              initialValue: this.props.data.bangongdianhua,
+            })(
+              <Input disabled/>
             )}
           </Item>
           <Item label="预约用途">

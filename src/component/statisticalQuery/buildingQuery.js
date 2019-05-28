@@ -125,7 +125,6 @@ class BuildingQuery extends Component{
      }
    })
    .catch(err=>{
-     console.log(err)
      message.error('查询失败')
    })
    .finally(()=>this.setState({loading: false}))
@@ -143,8 +142,7 @@ class BuildingQuery extends Component{
        roomList: rs}})
    })
    .catch(err=>{
-     console.log(err)
-     if(!err.response)
+     if(!err.resolved)
         message.error('加载房间号信息失败')
     })
     .finally(()=>this.setState({floorsLoading: false}))

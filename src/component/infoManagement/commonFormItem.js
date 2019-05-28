@@ -73,7 +73,7 @@ class Building extends Component{
           initialValue: this.props.initialValue,
           getValueFromEvent: this.props.buildingChange,
         })(
-          <BuildingSelect></BuildingSelect>
+          <BuildingSelect disabled={this.props.isChange} style={{minWidth:120}}></BuildingSelect>
         )}
       </Item>
     )
@@ -88,7 +88,8 @@ class Floor extends Component{
         {getFieldDecorator('floor', {
           initialValue: this.props.initialValue,
         })(
-          <FloorSelect building={this.props.building}></FloorSelect>
+          <FloorSelect disabled={this.props.isChange}
+            building={this.props.building}></FloorSelect>
         )}
       </Item>
     )
@@ -102,7 +103,9 @@ class RoomNum extends Component{
         {getFieldDecorator('roomNum', {
           initialValue: this.props.initialValue,
         })(
-          <Input placeholder="如: 南405" />
+          <Input
+            disabled={this.props.isChange}
+            placeholder="如: 南405" />
         )}
       </Item>
     )
@@ -133,7 +136,8 @@ class BFR extends Component{
             building={this.state.building}></Floor>
         </Col>
         <Col span={8}>
-          <RoomNum {...this.props} initialValue={this.props.initialValue.roomNum}></RoomNum>
+          <RoomNum
+            {...this.props} initialValue={this.props.initialValue.roomNum}></RoomNum>
         </Col>
       </Row>
       
@@ -184,7 +188,7 @@ class UseArea extends Component{
         {getFieldDecorator('useArea',{
           initialValue: this.props.initialValue,
         })(
-          <Input />
+          <Input disabled={this.props.isChange} />
         )}
       </Item>
     )
@@ -200,8 +204,9 @@ class Status extends Component{
           initialValue: this.props.initialValue,
         })(
           <Select>
-            <Option value="已租">已租</Option>
-            <Option value="待租">待租</Option>
+            <Option value="使用中">使用中</Option>
+            <Option value="待分配">待分配</Option>
+            <Option value="暂借中">暂借中</Option>
           </Select>
         )}
       </Item>
@@ -310,7 +315,7 @@ class Head extends Component{
   render(){
     const { getFieldDecorator } = this.props.form
     return (
-      <Item labelCol={{span:3}} wrapperCol={{span:4}} label="负责人">
+      <Item labelCol={{span:9}} wrapperCol={{span:12}} label="负责人">
         {getFieldDecorator('head',{
           initialValue: this.props.initialValue,
         })(
@@ -324,7 +329,7 @@ class Personnel extends Component{
   render(){
     const { getFieldDecorator } = this.props.form
     return (
-      <Item labelCol={{span:9}} wrapperCol={{span:12}} label="使用者">
+      <Item labelCol={{span:3}} wrapperCol={{span:12}} label="使用者">
         {getFieldDecorator('personnel',{
           initialValue: this.props.initialValue,
         })(
@@ -476,18 +481,18 @@ class CollegePartyBuilding extends Component{
           }} ></BFR>
         )
       }
-      <Head {...this.props} initialValue={initialValue.head} ></Head>
       <Row>
+        <Col span={8}>
+          <Head {...this.props} initialValue={initialValue.head} ></Head>
+        </Col>
         <Col span={8}>
           <Manager {...this.props} initialValue={initialValue.manager} ></Manager>
         </Col>
         <Col span={8}>
           <Galleryful {...this.props} initialValue={initialValue.galleryful} ></Galleryful>
         </Col>
-        <Col span={8}>
-          <Personnel {...this.props} initialValue={initialValue.personnel} ></Personnel>
-        </Col>
       </Row>
+      <Personnel {...this.props} initialValue={initialValue.personnel} ></Personnel>
       <DeviceConfig {...this.props} initialValue={initialValue.deviceConfig} ></DeviceConfig>
       <Note {...this.props} initialValue={initialValue.note} ></Note>
     </div>

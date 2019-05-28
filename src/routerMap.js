@@ -17,7 +17,7 @@ import PHAudit from './component/infoManagement/PHAudit'
 import PHDetailInfo from './component/infoManagement/PHDetailInfo'
 import MyPH from './component/infoManagement/myPH'
 
-// 统计查询
+// 公用房查询
 import ConditionQuery from './component/statisticalQuery/conditionQuery'
 import BuildingQuery from './component/statisticalQuery/buildingQuery'
 
@@ -152,7 +152,7 @@ const routerMap = {
   },
   DepartmentAccount: {
     path:'/DepartmentAccount/:id',
-    name:'部门核算',
+    name:'单位核算',
     component: DepartmentAccount
   },
   PersonalAccount: {
@@ -242,7 +242,7 @@ const routerMap = {
   },
   DeptManagement: {
     path:'/DeptManagement',
-    name:'部门管理',
+    name:'单位管理',
     component: DeptManagement
   },
   ParmManagement: {
@@ -257,7 +257,7 @@ const routerMap = {
   },
   TheUserManagement: {
     path:'/TheUserManagement',
-    name:'使用者管理',
+    name:'人员信息管理',
     component: TheUserManagement
   },
   UserManagement: {
@@ -267,7 +267,7 @@ const routerMap = {
   },
   AreaSubsidiesImport: {
     path:'/AreaSubsidiesImport',
-    name:'面积补贴导入',
+    name:'补贴面积',
     component: AreaSubsidiesImport
   },
 }
