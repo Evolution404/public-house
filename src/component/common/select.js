@@ -91,7 +91,7 @@ class DeptSelect extends Component{
     })
     .catch(err=>{
       if(!err.resolved)
-        message.error('加载单位信息失败')
+        message.error('加载部门信息失败')
     })
     .finally(()=>{
       this.setState({loading: false})
@@ -256,7 +256,7 @@ class LabSelect extends Component{
         value={this.state.value}
         onChange={this.onChange}
         placeholder={(this.props.year&&this.props.dept)?
-          `${this.props.year}年${this.props.dept}`:'请先选择年份和单位'}
+          `${this.props.year}年${this.props.dept}`:'请先选择年份和部门'}
         loading={this.state.loading}>
         {
           this.state.labs.map(item=>(
@@ -358,6 +358,18 @@ class RoleSelect extends Component{
   }
   render(){
     let roles = this.state.roles
+    roles = [
+      {
+        id: 1,
+        juese: "admin",
+        juesemingcheng: "系统管理员",
+      },
+      {
+        id: 5,
+        juese: "putongyonghu",
+        juesemingcheng: "普通用户",
+      }
+    ]
     return (
       <Select {...this.props}
         allowClear

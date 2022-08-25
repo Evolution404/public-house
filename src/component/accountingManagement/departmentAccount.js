@@ -171,7 +171,7 @@ class AcademyHouse extends Component{
       <div>
         <Row style={{fontSize: 16}}>
           <Col offset={2} span={10}>核算结果明细</Col>
-          <Col offset={6} span={6}>单位:平米</Col>
+          <Col offset={6} span={6}>部门:平米</Col>
         </Row>
         <Row>
           <Col offset={1} span={22}>
@@ -379,11 +379,9 @@ class DepartmentAccount extends Component{
     this.props.form.validateFields((err, values)=>{
       if(!err){
         let type = values.type
-        this.setState({id: '', type, hasSearched: true, loading: true,
-                      filter: values})
         API.getDeptAccountingDataByInfo(values)
         .then(rs=>{
-          this.setState(rs)
+          this.setState({id: '', type, hasSearched: true, loading: true, filter: values, ...rs})
         })
         .catch(err=>{
           this.setInitState()
@@ -426,7 +424,6 @@ class DepartmentAccount extends Component{
         graph2: this.getCanvasURL('graph2'),
       }
     }
-    debugger
     this.setState({isPrinting: true, printData}, ()=>{
       // 直接执行有可能图片没有加载完成
       // 使用一个interval直到找到图片才开始打印
@@ -446,7 +443,7 @@ class DepartmentAccount extends Component{
     this.setState({loading: true})
     if(this.state.id){
       // 党政机关一个图
-      // 学院单位两个图
+      // 学院部门两个图
       if(this.state.type==='1')
         promise = API.exportPDeptAccountDataById(this.state.id, {tubiao:this.getCanvasURL('graph')})
       else
@@ -499,7 +496,7 @@ class DepartmentAccount extends Component{
   }
   render(){
     const { getFieldDecorator } = this.props.form
-    return <MainContainer name="单位核算">
+    return <MainContainer name="部门核算">
       <Back></Back>
       <Form onSubmit={this.handleSubmit}>
         <Row>
@@ -513,21 +510,21 @@ class DepartmentAccount extends Component{
             </Item>
           </Col>
           <Col span={4}>
-            <Item labelCol={{span:12}} wrapperCol={{span:12}} label="单位类型">
+            <Item labelCol={{span:12}} wrapperCol={{span:12}} label="部门类型">
               {getFieldDecorator('type',{
-                rules: [{required: true, message: '请选择单位类型'}]
+                rules: [{required: true, message: '请选择部门类型'}]
               })(
                 <Select onChange={this.onTypeChange}>
                   <Option value="1">党政机关</Option>
-                  <Option value="2">学院单位</Option>
+                  <Option value="2">学院部门</Option>
                 </Select>
               )}
             </Item>
           </Col>
           <Col span={5}>
-            <Item labelCol={{span:8}} wrapperCol={{span:16}} label="单位名称">
+            <Item labelCol={{span:8}} wrapperCol={{span:16}} label="部门名称">
               {getFieldDecorator('dept',{
-                rules: [{required: true, message: '请选择单位'}]
+                rules: [{required: true, message: '请选择部门'}]
               })(
                 <DeptSelect type={this.state.formtype}></DeptSelect>
               )}

@@ -127,6 +127,7 @@ const PHTransform = {
         resolve(data)
       })
       .catch(err=>{
+        console.log(err)
         reject(err)
       })
     })
@@ -638,7 +639,7 @@ const PHImport = {
 }
 
 const PHList = {
-  // 公用房列表
+  // 部门公用房
 
   //上报公用房记录
   reportPH(data){
@@ -677,7 +678,7 @@ const PHList = {
       })
     })
   },
-  // 公用房列表的搜索接口
+  // 部门公用房的搜索接口
   listFilterPH(filter, p){
     filter = {
       ...MapF2B(filter),
@@ -686,6 +687,7 @@ const PHList = {
       page: p?p.current-1:0,
       size: pageSize,
     }
+    console.log(filter)
     return new Promise((resolve, reject)=>{
       axios.get('/tb-gongyongfang/get/all', {
         params: filter,

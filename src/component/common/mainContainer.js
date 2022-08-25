@@ -1,22 +1,18 @@
 import React, {Component} from 'react'
+import { Breadcrumb, Icon } from 'antd'
 import css from '../../cssConfig'
 
 class MainContainer extends Component{
   render(){
     return <div>
-      <div style={{width: "114px",
-        height: "37px",
-        backgroundColor: "#5a9dd0",
-        ...css.commonFontStyle,
-        fontSize: "13px",
-        lineHeight: "37px",
-        textAlign: "center",
-        marginLeft: "20px",
-        boxSizing: "border-box",
-        borderRadius: "5px 5px 0 0",
-      }}>{this.props.name}</div>
+      <Breadcrumb style={{marginBottom: 20}}>
+        <Breadcrumb.Item href="">
+          <Icon type="home" />
+        </Breadcrumb.Item>
+        <Breadcrumb.Item>{this.props.name.replace('公用房', '房屋')}</Breadcrumb.Item>
+      </Breadcrumb>
       <div style={{
-        ...css.borderLight,
+        border: '2px solid #001529',
         borderRadius: 5,
       }}>
         <div style={{padding: '10px 20px',

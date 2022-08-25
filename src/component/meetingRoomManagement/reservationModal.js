@@ -70,7 +70,20 @@ class ReservationModal extends Component {
       }
     })
   }
-
+  validatePhone = (rule, value, callback) => {
+      let phone=value.replace(/\s/g, "");//去除空格
+      //校验手机号，号段主要有(不包括上网卡)：130~139、150~153，155~159，180~189、170~171、    176~178。14号段为上网卡专属号段
+      let regs = /^((13[0-9])|(17[0-1,6-8])|(15[^4,\\D])|(18[0-9]))\d{8}$/;
+      if(value.length === 0){
+          callback();
+      }else{
+          if(!regs.test(phone)){
+              callback([new Error('手机号输入不合法')]);
+          }else{
+              callback();
+          }
+     }
+  }
   render() {
     const { getFieldDecorator } = this.props.form
     return (
@@ -122,7 +135,10 @@ class ReservationModal extends Component {
           </Item>
           <Item label="联系电话">
             {getFieldDecorator('phone',{
-              rules: [{required: true, message: '请输入联系电话'}]
+              rules: [
+                {required: true, message: '请输入联系电话'},
+                {validator: this.validatePhone},
+              ]
             })(
               <Input/>
             )}

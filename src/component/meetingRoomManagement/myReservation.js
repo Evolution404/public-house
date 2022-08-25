@@ -102,7 +102,7 @@ class MyReservation extends Component{
   render(){
     let columns = [
       {
-        title: '房屋单位',
+        title: '房屋部门',
         dataIndex: 'dept',
         sorter: true,
       },
@@ -175,7 +175,7 @@ class MyReservation extends Component{
       <Form labelCol={{span:8}} wrapperCol={{span: 12}} style={{marginTop: 50, marginBottom: 10}}>
         <Row>
           <Col span={6}>
-            <Item label="单位">
+            <Item label="部门">
               {getFieldDecorator('dept',{
                 initialValue: this.state.filter.dept,
               })(

@@ -54,9 +54,6 @@ class MainForm extends Component{
                     )}
                   </Item>
                 </Col>
-                <Col offset={1} span={3} style={{marginTop: 12}}>
-                  <span>(请输入0-1的小数)</span>
-                </Col>
                 <Col offset={1} span={2}>
                   <TButton.ConfirmButton style={{marginTop: '5px'}}
                     onClick={this.submit.bind(this, i.id)}

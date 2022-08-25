@@ -103,7 +103,7 @@ class BusinessPerformance extends Component{
   render(){
     let columns = [
       {
-        title: '单位',
+        title: '部门',
         dataIndex: 'bumen',
         sorter: true,
       },
@@ -158,7 +158,7 @@ class BusinessPerformance extends Component{
       <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
           <Col offset={1} span={6}>
-            <Item labelCol={{span:6}} wrapperCol={{span:18}} label="单位名称">
+            <Item labelCol={{span:6}} wrapperCol={{span:18}} label="部门名称">
               {getFieldDecorator('dept',{
                 initialValue: this.state.filter.dept,
               })(
@@ -191,7 +191,7 @@ class BusinessPerformance extends Component{
         {
           this.state.hasSearched?(
             <div>
-              <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>公用房使用效益</div>
+              <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>房屋使用效益</div>
               <div style={{display: 'flex',
                 fontSize: '15px',
                 fontWeight: '500',
@@ -209,7 +209,7 @@ class BusinessPerformance extends Component{
               {
                 (!this.state.loading&&!this.state.isPrinting)&&(
                   <Histogram id="graph"
-                    title={(this.state.dept?"本":"各")+"单位各商业用房面积、使用效益、米均效益对比情况"}
+                    title={(this.state.dept?"本":"各")+"部门各商业用房面积、使用效益、米均效益对比情况"}
                     data={this.state.graphData}
                   ></Histogram>
                 )

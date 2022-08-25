@@ -32,7 +32,7 @@ class SearchForm extends Component{
     return (
       <Form onSubmit={this.handleSubmit} style={{marginTop: 50}}><Row>
           <Col span={5}>
-            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="单位名称">
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
               {getFieldDecorator('deptName',{
                 initialValue: this.props.initialValue.deptName,
               })(
@@ -41,10 +41,10 @@ class SearchForm extends Component{
             </Item>
           </Col>
           <Col span={5}>
-            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="使用性质">
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="房屋类型">
               {getFieldDecorator('usingNature',{
                 initialValue: this.props.initialValue.usingNature,
-                rules: [{required: true, message: '请选择使用性质'}]
+                rules: [{required: true, message: '请选择房屋类型'}]
               })(
                 <UsingNature></UsingNature>
               )}
@@ -81,7 +81,7 @@ class DisplayTable extends Component{
   render(){
     const columns = [
       {
-        title: '单位',
+        title: '部门',
         dataIndex: 'dept',
         sorter: true,
       },

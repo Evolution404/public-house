@@ -118,7 +118,7 @@ class TeachingUnitPerformance extends Component{
         sorter: true,
       },
       {
-        title: '公用房面积',
+        title: '房屋面积',
         dataIndex: 'gongyongfangmianji',
         sorter: true,
       },
@@ -129,7 +129,7 @@ class TeachingUnitPerformance extends Component{
       },
     ]
     const { getFieldDecorator } = this.props.form
-    return <MainContainer name="教学单位绩效">
+    return <MainContainer name="教学部门绩效">
       <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
           <Col span={4}>
@@ -143,7 +143,7 @@ class TeachingUnitPerformance extends Component{
             </Item>
           </Col>
           <Col offset={1} span={6}>
-            <Item labelCol={{span:6}} wrapperCol={{span:18}} label="单位名称">
+            <Item labelCol={{span:6}} wrapperCol={{span:18}} label="部门名称">
               {getFieldDecorator('dept',{
                 initialValue: this.state.filter.dept,
               })(
@@ -176,7 +176,7 @@ class TeachingUnitPerformance extends Component{
         {
           this.state.hasSearched?(
             <div id="printArea">
-              <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>教学单位公用房使用效益</div>
+              <div style={{fontSize: '18px', textAlign: 'center', padding:'20px 0'}}>教学部门房屋使用效益</div>
               <Table
                 loading={this.state.tableLoading}
                 current={this.state.current}
@@ -186,7 +186,7 @@ class TeachingUnitPerformance extends Component{
                   {
                     (!this.state.loading&&!this.state.isPrinting)&&(
                       <Histogram id="graph"
-                        title="各教学单位使用效益对比情况"
+                        title="各教学部门使用效益对比情况"
                         data={this.state.graphData}></Histogram>
                     )
                   }

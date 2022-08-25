@@ -61,8 +61,8 @@ class MainForm extends Component{
   render(){
     const { getFieldDecorator } = this.props.form
     const checkboxOption = [
-      { label: '是否地下室', value: 0},
-      { label: '是否简易房', value: 1},
+      { label: '地下室', value: 0},
+      { label: '平房', value: 1},
     ]
     return (
       <Form style={{minWidth: 950}} onSubmit={this.handleSubmit}>
@@ -128,11 +128,6 @@ class MainForm extends Component{
             <Input></Input>
           )}
         </Item>
-        <Item labelCol={{span:3}} wrapperCol={{span:12}} label="房屋图纸">
-          {getFieldDecorator('drawings', {})(
-            <Upload fileList={this.props.drawings} onRemove={this.removeDrawings}></Upload>
-          )}
-        </Item>
         <Row>
           <Col offset={12} span={4}>
             <Button type='primary' htmlType='submit'>提交变更</Button>
@@ -182,7 +177,7 @@ class PHChangeBrief extends Component{
           <Back></Back>
         </Col>
         <Col span={10}>
-          <h2 style={{textAlign: 'right'}}>公用房基本信息修改</h2>
+          <h2 style={{textAlign: 'right'}}>房屋基本信息修改</h2>
         </Col>
       </Row>
       <Split/>

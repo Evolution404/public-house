@@ -152,7 +152,7 @@ const routerMap = {
   },
   DepartmentAccount: {
     path:'/DepartmentAccount/:id',
-    name:'单位核算',
+    name:'部门核算',
     component: DepartmentAccount
   },
   PersonalAccount: {
@@ -172,12 +172,12 @@ const routerMap = {
   },
   TeachingUnitPerformance: {
     path:'/TeachingUnitPerformance',
-    name:'教学单位绩效',
+    name:'教学部门绩效',
     component: TeachingUnitPerformance
   },
   ScientificPerformance: {
     path:'/ScientificPerformance',
-    name:'科研单位绩效',
+    name:'科研部门绩效',
     component: ScientificPerformance
   },
   BusinessPerformance: {
@@ -242,7 +242,7 @@ const routerMap = {
   },
   DeptManagement: {
     path:'/DeptManagement',
-    name:'单位管理',
+    name:'部门管理',
     component: DeptManagement
   },
   ParmManagement: {

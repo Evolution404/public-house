@@ -48,7 +48,7 @@ class Sider extends Component {
     } 
   }
   onOpenChange = (openKeys) => {
-    openKeys = openKeys.filter(key => !this.state.openKeys.includes(key))
+    //openKeys = openKeys.filter(key => !this.state.openKeys.includes(key))
     this.setState({ openKeys })
   }
   onSelect = ({ item, key, selectedKeys })=>{
@@ -82,12 +82,12 @@ class Sider extends Component {
       '公用房查询-条件查询': <Icon type="diff" />,
       '公用房查询-楼宇查询': <Icon type="setting" />,
       '核算管理-总体核算': <Icon type="team" />,
-      '核算管理-单位核算': <Icon type="diff" />,
+      '核算管理-部门核算': <Icon type="diff" />,
       '核算管理-个人核算': <Icon type="setting" />,
       '绩效管理-数据导入': <Icon type="idcard" />,
       '绩效管理-工作量查看': <Icon type="search" />,
-      '绩效管理-教学单位绩效': <Icon type="money-collect" />,
-      '绩效管理-科研单位绩效': <Icon type="line-chart" />,
+      '绩效管理-教学部门绩效': <Icon type="money-collect" />,
+      '绩效管理-科研部门绩效': <Icon type="line-chart" />,
       '绩效管理-商业用房绩效': <Icon type="delete" />,
       '绩效管理-实验室绩效': <Icon type="team" />,
       '绩效管理-教室绩效': <Icon type="diff" />,
@@ -95,7 +95,7 @@ class Sider extends Component {
       '会议室管理-预约审批': <Icon type="search" />,
       '会议室管理-我的预约': <Icon type="money-collect" />,
       '会议室管理-使用统计': <Icon type="line-chart" />,
-      '系统管理-单位管理': <Icon type="idcard" />,
+      '系统管理-部门管理': <Icon type="idcard" />,
       '系统管理-参数管理': <Icon type="search" />,
       '系统管理-楼宇管理': <Icon type="money-collect" />,
       '系统管理-人员信息管理': <Icon type="line-chart" />,
@@ -106,9 +106,40 @@ class Sider extends Component {
   }
 
   render() {
+    console.log('navigation')
+    console.log(this.props.data)
+    let data = this.props.data.filter(item=>{
+      if(item.text==='绩效管理')
+        return false
+      item.list = item.list.filter(i=>{
+        if(!i)
+          return false
+        if(i.name==='人员信息管理')
+          return false
+        if(i.name==='补贴面积')
+          return false
+        if(i.name==='我的公用房')
+          return false
+        if(i.name==='公用房变更审核')
+          return false
+        if(i.name==='公用房改造审核')
+          return false
+        if(i.name==='使用统计')
+          return false
+        if(i.name==='个人核算')
+          return false
+        /*if(i.name==='单位核算')
+          return false
+        if(i.name==='公用房变更')
+          return false*/
+        return true
+      })
+      return true
+    })
     return (
       <Router>
       <Menu
+        theme="dark"
         mode="inline"
         openKeys={this.state.openKeys}
         selectedKeys={this.state.selectedKeys}
@@ -117,12 +148,12 @@ class Sider extends Component {
         style={{ width: '100%', height: '100vh'}}
       >
         {
-          this.props.data.map((item, index)=>(
-            <SubMenu key={item.text} title={<span>{this.mapTitle(item.text)}<span>{item.text}</span></span>}>
+          data.map((item, index)=>(
+            <SubMenu key={item.text} title={<span>{this.mapTitle(item.text)}<span>{item.text.replace('公用房', '房屋').replace('会议室', '房间预约').replace('系统管理', '全局设置').replace('核算管理','系统统计').replace('信息管理', '房屋设置')}</span></span>}>
               {
                 item.list.map((newItem, newIndex)=>(
                   <Menu.Item key={`${item.text}-${newItem.name}`}>
-                    <Link to={newItem.path}>{this.mapItem(item.text+'-'+newItem.name)}{newItem.name}</Link>
+                    <Link to={newItem.path}>{this.mapItem(item.text+'-'+newItem.name)}{newItem.name.replace('公用房', '房屋').replace('会议室', '房间').replace('个人','学院').replace('核算', '统计').replace('信息管理', '房屋设置').replace('改造', '合并拆分')}</Link>
                   </Menu.Item>
                 ))
               }

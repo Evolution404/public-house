@@ -2,7 +2,7 @@ import axios from "axios"
 import {message} from 'antd'
 import { Modal } from 'antd';
 const confirm = Modal.confirm
-let host = 'http://140.249.19.181:8910'
+let host = document.location.protocol+'//'+window.location.host
 if(localStorage.getItem('host'))
   host = localStorage.getItem('host')
 const domainName = host+'/api/gongyongfang'

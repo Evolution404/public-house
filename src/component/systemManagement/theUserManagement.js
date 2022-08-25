@@ -69,7 +69,7 @@ class DisplayTable extends Component{
   render(){
     let columns = [
       {
-        title: '工号',
+        title: '学号',
         dataIndex: 'workNum',
         sorter:true,
       },
@@ -78,7 +78,7 @@ class DisplayTable extends Component{
         dataIndex: 'name',
         sorter:true,
       },
-      {
+      /*{
         title: '职称级别',
         dataIndex: 'proTitleLevel',
         sorter:true,
@@ -87,17 +87,17 @@ class DisplayTable extends Component{
         title: '职务级别',
         dataIndex: 'dutyGrade',
         sorter:true,
-      },
+      },*/
       {
-        title: '机关单位',
+        title: '部门',
         dataIndex: 'dept',
         sorter:true,
       },
-      {
-        title: '学院单位',
+      /*{
+        title: '学院部门',
         dataIndex: 'collegeDept',
         sorter:true,
-      },
+      },*/
     ]
     columns.push({
       title: '操作',
@@ -158,7 +158,7 @@ class AddModal extends Component {
         cancelText="取消"
       >
         <Form labelCol={{span:8}} wrapperCol={{span:16}} labelAlign='left'>
-          <Item style={{marginBottom: '0px'}} label='工号'>
+          <Item style={{marginBottom: '0px'}} label='学号'>
             {getFieldDecorator('workNum', )(
               <Input/>
             )}
@@ -168,6 +168,8 @@ class AddModal extends Component {
               <Input/>
             )}
           </Item>
+          {
+            /*
           <Item style={{marginBottom: '0px'}}  label='职务级别'>
             {getFieldDecorator('dutyGrade', )(
               <Select>
@@ -192,17 +194,20 @@ class AddModal extends Component {
               </Select>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='所属机关单位'>
+          <Item style={{marginBottom: '0px'}}  label='所属机关部门'>
             {getFieldDecorator('dept',)(
               <DeptSelect type="1"></DeptSelect>
             )}
           </Item>
+
+              */
+          }
           <Item style={{marginBottom: '0px'}}  label='所属学院'>
             {getFieldDecorator('collegeDept',)(
               <DeptSelect type="2"></DeptSelect>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='办公电话'>
+          <Item style={{marginBottom: '0px'}}  label='电话'>
             {getFieldDecorator('bangongdianhua',)(
               <Input></Input>
             )}
@@ -249,13 +254,10 @@ class DetailModal extends Component {
             <Button key='1' type="primary" onClick={this.hideModal}>确定</Button>
           ]}
       >
-          <DisplayLabel label="工号" value={data.workNum}/>
+          <DisplayLabel label="学号" value={data.workNum}/>
           <DisplayLabel label="姓名" value={data.name}/>
-          <DisplayLabel label="职称级别" value={data.proTitleLevel}/>
-          <DisplayLabel label="职务级别" value={data.dutyGrade}/>
-          <DisplayLabel label="机关单位" value={data.dept}/>
-          <DisplayLabel label="学院单位" value={data.collegeDept}/>
-          <DisplayLabel label="办公电话" value={data.bangongdianhua}/>
+          <DisplayLabel label="学院" value={data.collegeDept}/>
+          <DisplayLabel label="电话" value={data.bangongdianhua}/>
           <DisplayLabel label="手机号" value={data.shoujihao}/>
           <DisplayLabel label="创建时间" value={moment(data.createTime).format('YYYY-MM-DD HH:mm')}/>
           <DisplayLabel label="更新时间" value={moment(data.updateTime).format('YYYY-MM-DD HH:mm')}/>
@@ -309,7 +311,7 @@ class ChangeModal extends Component {
         cancelText="取消"
       >
         <Form labelCol={{span:8}} wrapperCol={{span:16}} labelAlign='left'>
-          <Item style={{marginBottom: '0px'}} label='工号'>
+          <Item style={{marginBottom: '0px'}} label='学号'>
             {getFieldDecorator('workNum', {initialValue: data.workNum})(
               <Input/>
             )}
@@ -319,41 +321,43 @@ class ChangeModal extends Component {
               <Input/>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='职务级别'>
-            {getFieldDecorator('dutyGrade', {initialValue:data.dutyGrade})(
-              <Select>
-                <Option value='副校级(正局级)'>副校级(正局级)</Option>
-                <Option value='副校级(副局级)'>副校级(副局级)</Option>
-                <Option value='正处级'>正处级</Option>
-                <Option value='副处级'>副处级</Option>
-                <Option value='处级以下'>处级以下</Option>
-              </Select>
-            )}
-          </Item>
-          <Item style={{marginBottom: '0px'}}  label='职称级别'>
-            {getFieldDecorator('proTitleLevel', {initialValue: data.proTitleLevel})(
-              <Select>
-                <Option value='院士'>院士</Option>
-                <Option value='高端人才'>高端人才</Option>
-                <Option value='优秀人才'>优秀人才</Option>
-                <Option value='正高级职称'>正高级职称</Option>
-                <Option value='副高级职称'>副高级职称</Option>
-                <Option value='中级职称'>中级职称</Option>
-                <Option value='其他'>其他</Option>
-              </Select>
-            )}
-          </Item>
-          <Item style={{marginBottom: '0px'}}  label='所属机关单位'>
-            {getFieldDecorator('dept', {initialValue: data.dept})(
-              <DeptSelect type="1"></DeptSelect>
-            )}
-          </Item>
+          {
+            /*<Item style={{marginBottom: '0px'}}  label='职务级别'>
+              {getFieldDecorator('dutyGrade', {initialValue:data.dutyGrade})(
+                <Select>
+                  <Option value='副校级(正局级)'>副校级(正局级)</Option>
+                  <Option value='副校级(副局级)'>副校级(副局级)</Option>
+                  <Option value='正处级'>正处级</Option>
+                  <Option value='副处级'>副处级</Option>
+                  <Option value='处级以下'>处级以下</Option>
+                </Select>
+              )}
+            </Item>
+            <Item style={{marginBottom: '0px'}}  label='职称级别'>
+              {getFieldDecorator('proTitleLevel', {initialValue: data.proTitleLevel})(
+                <Select>
+                  <Option value='院士'>院士</Option>
+                  <Option value='高端人才'>高端人才</Option>
+                  <Option value='优秀人才'>优秀人才</Option>
+                  <Option value='正高级职称'>正高级职称</Option>
+                  <Option value='副高级职称'>副高级职称</Option>
+                  <Option value='中级职称'>中级职称</Option>
+                  <Option value='其他'>其他</Option>
+                </Select>
+              )}
+            </Item>
+            <Item style={{marginBottom: '0px'}}  label='所属机关部门'>
+              {getFieldDecorator('dept', {initialValue: data.dept})(
+                <DeptSelect type="1"></DeptSelect>
+              )}
+            </Item>*/
+          }
           <Item style={{marginBottom: '0px'}}  label='所属学院'>
             {getFieldDecorator('collegeDept', {initialValue: data.collegeDept})(
               <DeptSelect type="2"></DeptSelect>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='办公电话'>
+          <Item style={{marginBottom: '0px'}}  label='电话'>
             {getFieldDecorator('bangongdianhua',{initialValue: data.bangongdianhua})(
               <Input></Input>
             )}

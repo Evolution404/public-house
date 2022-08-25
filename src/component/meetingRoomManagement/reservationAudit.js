@@ -172,11 +172,11 @@ class ReservationAudit extends Component{
   }
   render(){
     let columns = [
-      {
-        title: '房屋单位',
+      /*{
+        title: '房屋部门',
         dataIndex: 'dept',
         sorter: true,
-      },
+      },*/
       {
         title: '楼宇',
         dataIndex: 'building',

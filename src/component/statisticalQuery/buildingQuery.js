@@ -12,7 +12,13 @@ import API from '../../api'
 import {host} from '../../api/apiConfig'
 import {read, write} from '../stateHelper'
 import {TButton} from '../common/button'
+import MapChart from '../common/mapChart'
 const Item = Form.Item
+
+let position = {
+  'M楼':{lng: 122.086642, lat: 37.536864},
+  'N楼': {lng:122.088328, lat:37.542129},
+}
 
 class Search extends Component{
   handleSubmit = (e) => {
@@ -162,6 +168,11 @@ class BuildingQuery extends Component{
         {this.state.imgData.length>0?(
           <div>
               <h2>{this.state.buildingName}</h2>
+              <Row>
+                <Col span={20} offset={2}>
+                  <MapChart position={position[this.state.buildingName]} id="mapchart"></MapChart>
+                </Col>
+              </Row>
               <ImgDisplay floorClick={this.floorClick} data={this.state.imgData}></ImgDisplay>
           </div>
         ):(

@@ -32,6 +32,7 @@ class Histogram extends Component{
           fontSize: 15,
         },
       },
+      color: ['#003366', '#006699', '#4cabce', '#e5323e'],
       tooltip: {
           trigger: 'axis',
           axisPointer: {

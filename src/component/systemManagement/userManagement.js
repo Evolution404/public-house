@@ -62,21 +62,21 @@ class ButtonGroup extends Component{
 class DisplayTable extends Component{
   render(){
     const columns = [
-      {
+      /*{
         title: '用户名称',
         dataIndex: 'userName',
         sorter: true,
-      },
+      },*/
       {
         title: '登录账号',
         dataIndex: 'loginAccount',
         sorter: true,
       },
-      {
-        title: '工号',
+      /*{
+        title: '学号',
         dataIndex: 'workNum',
         sorter: true,
-      },
+      },*/
       {
         title: '角色',
         dataIndex: 'role',
@@ -202,9 +202,9 @@ class AddModal extends Component {
               <Input type='password'  onBlur={this.handleConfirmBlur}/>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='工号'>
+          <Item style={{marginBottom: '0px'}}  label='学号'>
             {getFieldDecorator('workNum', {
-              rules: [{required: true, message: '请输入工号'}]
+              rules: [{required: true, message: '请输入学号'}]
             })(
               <Input></Input>
             )}
@@ -282,9 +282,9 @@ class ChangeModal extends Component {
               <Input/>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='工号'>
+          <Item style={{marginBottom: '0px'}}  label='学号'>
             {getFieldDecorator('workNum', {
-              rules: [{required: true, message: '请输入工号'}],
+              rules: [{required: true, message: '请输入学号'}],
               initialValue: data.workNum})(
               <Input></Input>
             )}
@@ -356,7 +356,7 @@ class UserManagement extends Component{
     })
   }
   refresh = ()=>{
-    this.setState({tableLoading: true}, this.state.page)
+    this.setState({tableLoading: true, ...this.state.page})
     API.searchUser(this.state.userName)
     .then(rs=>{
       this.setState({

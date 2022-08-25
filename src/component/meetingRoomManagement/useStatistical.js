@@ -122,7 +122,7 @@ class UseStatistical extends Component{
   render(){
     let columns = [
       {
-        title: '单位',
+        title: '部门',
         dataIndex: 'dept',
         sorter: true,
       },
@@ -164,9 +164,9 @@ class UseStatistical extends Component{
       <Form labelCol={{span:8}} wrapperCol={{span: 16}} style={{marginTop: 50}}>
         <Row>
           <Col span={6}>
-            <Item label="单位名称">
+            <Item label="部门名称">
               {getFieldDecorator('dept',{
-                rules:[{required: true, message: '请选择单位'}]
+                rules:[{required: true, message: '请选择部门'}]
               })(
                 <DeptSelect></DeptSelect>
               )}
@@ -226,7 +226,7 @@ class UseStatistical extends Component{
             this.state.hasSearched&&!this.state.isPrinting&&!this.state.tableLoading&&(
               <div>
                 <Histogram id="graph"
-                  title="图表对比（单位各会议室总使用时间、日均使用时间对比情况）"
+                  title="图表对比（部门各会议室总使用时间、日均使用时间对比情况）"
                   data={this.state.graphData}></Histogram>
                 {
                   this.state.exporting&&<Histogram id="graph-export"

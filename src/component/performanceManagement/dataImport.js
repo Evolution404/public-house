@@ -94,12 +94,12 @@ class DataImport extends Component{
   render(){
     let infoList = [
       {
-        text: '导入教学单位工作量',
+        text: '导入教学部门工作量',
         uploadHelper: API.ULTeachingUnitWorkLoad,
         templateLink: moban('jiaoxuedanweigongzuoliang'),
       },
       {
-        text: '导入科研单位工作量',
+        text: '导入科研部门工作量',
         uploadHelper: API.ULScientificUnitWorkLoad,
         templateLink: moban('keyantuanduigongzuoliang'),
       },

@@ -21,7 +21,7 @@ class ButtonGroup extends Component{
       <Router><div style={{marginTop: '10px'}}>
           <div style={{padding: '10px', display: 'inline-block'}}>
             <Link to={Map.PHAdd.path}>
-              <TButton.AddButton>新增公用房</TButton.AddButton>
+              <TButton.AddButton>新增房屋</TButton.AddButton>
             </Link>
           </div>
           <div style={{padding: '10px', display: 'inline-block'}}>
@@ -58,11 +58,11 @@ class DisplayTable extends Component{
   render(){
     let tableColumns = [
       [
-        {
-          title: '单位',
+        /*{
+          title: '部门',
           dataIndex: 'dept',
           sorter: true,
-        },
+        },*/
         {
           title: '楼宇',
           dataIndex: 'building',
@@ -83,44 +83,44 @@ class DisplayTable extends Component{
           dataIndex: 'useArea',
           sorter: true,
         },
-        {
+        /*{
           title: '具体用途',
           dataIndex: 'spectificPurpose',
-        },
+        },*/
         {
-          title: '科研团队',
+          title: '科研用途',
           dataIndex: 'scientificTeam',
         },
-        {
+        /*{
           title: '年收入(元)',
           dataIndex: 'annualIncome',
           sorter: true,
-        },
-        {
+        },*/
+        /*{
           title: '审批状态',
           dataIndex: 'auditStatus',
           sorter: true,
           render: (text)=>(
             TableUtil.mapColor(text)
           )
-        },
-        {
+        },*/
+        /*{
           title: '租金单价(元/㎡)',
           dataIndex: 'rentPrice',
           sorter: true,
-        },
-        {
+        },*/
+        /*{
           title: '租金类型',
           dataIndex: 'rentType',
           sorter: true,
-        },
+        },*/
       ],
       [
-        {
-          title: '单位',
+        /*{
+          title: '部门',
           dataIndex: 'dept',
           sorter: true,
-        },
+        },*/
         {
           title: '楼宇',
           dataIndex: 'building',
@@ -141,35 +141,35 @@ class DisplayTable extends Component{
           dataIndex: 'useArea',
           sorter: true,
         },
-        {
+        /*{
           title: '具体用途',
           dataIndex: 'spectificPurpose',
           sorter: true,
-        },
-        {
+        },*/
+        /*{
           title: '状态',
           dataIndex: 'status',
           sorter: true,
-        },
-        {
+        },*/
+        /*{
           title: '审批状态',
           dataIndex: 'auditStatus',
           sorter: true,
           render: (text)=>(
             TableUtil.mapColor(text)
           )
-        },
-        {
+        },*/
+        /*{
           title: '备注',
           dataIndex: 'note',
-        },
+        },*/
       ],
       [
-        {
-          title: '单位',
+        /*{
+          title: '部门',
           dataIndex: 'dept',
           sorter: true,
-        },
+        },*/
         {
           title: '楼宇',
           dataIndex: 'building',
@@ -190,11 +190,11 @@ class DisplayTable extends Component{
           dataIndex: 'useArea',
           sorter: true,
         },
-        {
+        /*{
           title: '具体用途',
           dataIndex: 'spectificPurpose',
           sorter: true,
-        },
+        },*/
         {
           title: '年收入(元)',
           dataIndex: 'annualIncome',
@@ -205,35 +205,35 @@ class DisplayTable extends Component{
           dataIndex: 'status',
           sorter: true,
         },
-        {
+        /*{
           title: '审批状态',
           dataIndex: 'auditStatus',
           sorter: true,
           render: (text)=>(
             TableUtil.mapColor(text)
           )
-        },
+        },*/
         {
           title: '租金单价(元/㎡)',
           sorter: true,
           dataIndex: 'rentPrice',
         },
-        {
+        /*{
           title: '租金类型',
           sorter: true,
           dataIndex: 'rentType',
-        },
-        {
+        },*/
+        /*{
           title: '备注',
           dataIndex: 'note',
-        },
+        },*/
       ],
       [
-        {
-          title: '单位',
+        /*{
+          title: '部门',
           sorter: true,
           dataIndex: 'dept',
-        },
+        },*/
         {
           title: '楼宇',
           sorter: true,
@@ -249,23 +249,23 @@ class DisplayTable extends Component{
           sorter: true,
           dataIndex: 'roomNum',
         },
-        {
+        /*{
           title: '具体用途',
           sorter: true,
           dataIndex: 'spectificPurpose',
-        },
-        {
+        },*/
+        /*{
           title: '审批状态',
           dataIndex: 'auditStatus',
           sorter: true,
           render: (text)=>(
             TableUtil.mapColor(text)
           )
-        },
-        {
+        },*/
+        /*{
           title: '备注',
           dataIndex: 'note',
-        },
+        },*/
       ],
     ]
     let getChangeButton = (record)=>{
@@ -316,9 +316,6 @@ class DisplayTable extends Component{
               <Link to={Map.PHDetailInfo.path.replace(':id', `${this.props.type}-${record.id}`)}>
                 <SButton text='详细'/> 
               </Link>
-            </div>
-            <div style={{display: 'inline-block', padding: '0 5px'}}>
-                <SButton onClick={this.props.report.bind(this, record)} disable={record.auditStatus!=='未上报'} text='上报'/>
             </div>
             <div style={{display: 'inline-block', padding: '0 5px'}}>
               {
@@ -498,7 +495,7 @@ class PHList extends Component{
       personnel: this.state.personnel,
       buildingName: this.state.buildingName,
      roomNum: this.state.roomNum,
-     status: this.state.status,
+     houseStatus: this.state.houseStatus,
    }
    return <MainContainer name="公用房列表">
      <Search

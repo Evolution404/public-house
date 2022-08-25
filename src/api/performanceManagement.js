@@ -63,7 +63,7 @@ const checkWorkload = {
         // 处理成tableList
         // {
         //    id: 1, 序号
-        //    dept: xx, 单位
+        //    dept: xx, 部门
         //    teachingWorkLoad: xx, 教学工作量
         //    scientificWorkLoad: xx, 科研工作量
         // }
@@ -120,7 +120,7 @@ const classroomPerformance = {
         // 处理成tableList
         // {
         //    id: 1, 序号
-        //    dept: xx, 单位
+        //    dept: xx, 部门
         //    classroom: xx, 教室
         //    courseName: xx, 课程名
         //    schoolNum: xx, 学时数
@@ -186,7 +186,7 @@ const labPerformance = {
         // 处理成tableList
         // {
         //    id: 1, 序号
-        //    dept: xx, 单位
+        //    dept: xx, 部门
         //    lab: xx, 实验室
         //    courseName: xx, 课程名
         //    schoolNum: xx, 学时数
@@ -208,7 +208,7 @@ const labPerformance = {
 
 }
 const scientificPerformance = {
-  // 科研单位绩效
+  // 科研部门绩效
   exportScientificPerformance(data){
     return new Promise((resolve, reject)=>{
       axios.post('/tb-keyantuandui-keyangongzuoliang/export-excel-xls', data)
@@ -239,7 +239,7 @@ const scientificPerformance = {
         // 处理成tableList
         // {
         //    id: 1, 序号
-        //    scientificUnit: xx, 科研单位
+        //    scientificUnit: xx, 科研部门
         //    scientificWorkLoad: xx, 科研工作量
         //    specificationPoints: xx, 规范管理分
         //    PHArea: xx, 公用房面积
@@ -261,7 +261,7 @@ const scientificPerformance = {
  },
 }
 const teachingUnitPerformance = {
-  // 教学单位绩效
+  // 教学部门绩效
 
   exportTeachingUnitPerformance(data){
     return new Promise((resolve, reject)=>{
@@ -274,7 +274,7 @@ const teachingUnitPerformance = {
       })
     })
   },
-  // 搜索教学单位公用房使用效益
+  // 搜索教学部门公用房使用效益
   searchTeachingUnitPHUsePerformance(info, p){
     // {
     //    year: xx,

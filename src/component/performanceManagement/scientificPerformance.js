@@ -99,7 +99,7 @@ class ScientificPerformance extends Component{
   render(){
     let columns = [
       {
-        title: '科研单位',
+        title: '科研部门',
         dataIndex: 'keyantuandui',
         sorter: true,
       },
@@ -114,7 +114,7 @@ class ScientificPerformance extends Component{
         sorter: true,
       },
       {
-        title: '公用房面积(㎡)',
+        title: '房屋面积(㎡)',
         dataIndex: 'gongyongfangmianji',
         sorter: true,
       },
@@ -125,7 +125,7 @@ class ScientificPerformance extends Component{
       },
     ]
     const { getFieldDecorator } = this.props.form
-    return <MainContainer name="科研单位绩效">
+    return <MainContainer name="科研部门绩效">
       <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
           <Col span={4}>
@@ -139,7 +139,7 @@ class ScientificPerformance extends Component{
             </Item>
           </Col>
           <Col offset={1} span={6}>
-            <Item labelCol={{span:6}} wrapperCol={{span:18}} label="单位名称">
+            <Item labelCol={{span:6}} wrapperCol={{span:18}} label="部门名称">
               {getFieldDecorator('dept',{
                 initialValue: this.state.filter.dept,
               })(
@@ -183,7 +183,7 @@ class ScientificPerformance extends Component{
                   {
                     (!this.state.loading&&!this.state.isPrinting)&&(
                       <Histogram id="graph"
-                        title="各科研单位使用效益对比情况"
+                        title="各科研部门使用效益对比情况"
                         data={this.state.graphData}></Histogram>
                     )
                   }

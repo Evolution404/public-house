@@ -40,6 +40,12 @@ function LButton({onClick, text, disable}) {
 function SButton({onClick, text, disable}) {
   if(disable)
     return <span></span>
+  if(text==='X删除')
+    return <Icon onClick={onClick} type="delete" />
+  if(text==='修改'||text==='修改查看'||text==='变更'||text==='更新')
+    return <Icon onClick={onClick} type="edit" />
+  if(text==='详细')
+    return <Icon onClick={onClick} type="search" />
   return (
     <MyButton
       onClick={onClick}
@@ -62,13 +68,15 @@ function DelButton(props){
 }
 // 导入
 function ImButton(props){
-  return <Button {...props} type="primary">
-    <Icon type="import"></Icon>{props.children}</Button>
+  /*return <Button {...props} type="primary">
+    <Icon type="import"></Icon>{props.children}</Button>*/
+   return <div></div>
 }
 // 导出
 function ExButton(props){
-  return <Button {...props} type="primary">
-    <Icon type="export"></Icon>{props.children}</Button>
+  /*return <Button {...props} type="primary">
+    <Icon type="export"></Icon>{props.children}</Button>*/
+   return <div></div>
 }
 // 搜索
 function SearchButton(props){
@@ -82,13 +90,15 @@ function RefreshButton(props){
 }
 // 打印
 function PrintButton(props){
-  return <Button {...props} type="primary">
-    <Icon type="printer"></Icon>{props.children}</Button>
+  /*return <Button {...props} type="primary">
+    <Icon type="printer"></Icon>{props.children}</Button>*/
+   return <div></div>
 }
 // 上传
 function UploadButton(props){
-  return <Button {...props} type="primary">
-    <Icon type="upload"></Icon>{props.children}</Button>
+  /*return <Button {...props} type="primary">
+    <Icon type="upload"></Icon>{props.children}</Button>*/
+   return <div></div>
 }
 // 保存
 function SaveButton(props){

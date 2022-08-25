@@ -76,7 +76,7 @@ class DisplayTable extends Component{
         dataIndex: 'buildingFloors',
         sorter:true,
       },
-      {
+      /*{
         title:'建筑面积',
         dataIndex: 'buildingArea',
         sorter:true,
@@ -89,7 +89,7 @@ class DisplayTable extends Component{
       {
         title:'备注',
         dataIndex: 'note',
-      },
+      },*/
     ]
     columns.push({
       title: '操作',
@@ -101,9 +101,6 @@ class DisplayTable extends Component{
           </div>
           <div style={{display: 'inline-block', padding: '0 10px'}}>
             <SButton onClick={this.props.update.bind(this,record)} text='修改'/>
-          </div>
-          <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton onClick={this.props.uploadPic.bind(this,record)} text='上传平面图'/>
           </div>
         </div>
       )
@@ -162,7 +159,7 @@ class AddModal extends Component {
               <Input/>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='建筑年代'>
+          <Item style={{marginBottom: '0px'}}  label='坐标'>
             {getFieldDecorator('buildingTime', )(
               <Input/>
             )}
@@ -235,7 +232,7 @@ class UpdateModal extends Component {
               <Input/>
             )}
           </Item>
-          <Item style={{marginBottom: '0px'}}  label='建筑年代'>
+          <Item style={{marginBottom: '0px'}}  label='坐标'>
             {getFieldDecorator('buildingTime', {initialValue: data.buildingTime})(
               <Input/>
             )}

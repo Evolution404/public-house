@@ -24,10 +24,10 @@ class Dept extends Component{
   render(){
     const { getFieldDecorator } = this.props.form
     return (
-      <Item labelCol={{span:3}} wrapperCol={{span:10}} label="所属单位">
+      <Item labelCol={{span:3}} wrapperCol={{span:10}} label="所属部门">
         {getFieldDecorator('dept',{
           initialValue: this.props.initialValue,
-          rules: [{required: true, message:"请选择单位"}]
+          rules: [{required: true, message:"请选择部门"}]
         })(
           <DeptSelect></DeptSelect>
         )}
@@ -404,13 +404,6 @@ class LogisticsBuilding extends Component{
             <UseArea {...this.props}
               initialValue={initialValue.useArea} ></UseArea>
           </Col>
-          <Col span={8}>
-            <Manager {...this.props} initialValue={initialValue.manager} ></Manager>
-          </Col>
-          <Col span={8}>
-            <Galleryful {...this.props}
-              initialValue={initialValue.galleryful} ></Galleryful>
-          </Col>
         </Row>
         <Note {...this.props}
           initialValue={initialValue.note} ></Note>
@@ -481,18 +474,6 @@ class CollegePartyBuilding extends Component{
           }} ></BFR>
         )
       }
-      <Row>
-        <Col span={8}>
-          <Head {...this.props} initialValue={initialValue.head} ></Head>
-        </Col>
-        <Col span={8}>
-          <Manager {...this.props} initialValue={initialValue.manager} ></Manager>
-        </Col>
-        <Col span={8}>
-          <Galleryful {...this.props} initialValue={initialValue.galleryful} ></Galleryful>
-        </Col>
-      </Row>
-      <Personnel {...this.props} initialValue={initialValue.personnel} ></Personnel>
       <DeviceConfig {...this.props} initialValue={initialValue.deviceConfig} ></DeviceConfig>
       <Note {...this.props} initialValue={initialValue.note} ></Note>
     </div>

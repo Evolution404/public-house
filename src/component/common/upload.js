@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import { Upload, Icon, Modal, message} from 'antd'
 import {host} from '../../api/apiConfig'
+const confirm = Modal.confirm
 
 // 必传onRemove 参数是图片的id 向后台发请求
 // 可选fileList, 默认展示的图片
@@ -40,25 +41,36 @@ class MyUpload extends Component{
       message.error('暂不支持删除')
       return false
     }
+    let props = this.props
+    let self = this
     if(file.url&&this.props.onRemove){
       return new Promise((resolve, reject)=>{
-        this.props.onRemove(file.uid)
-        .then(()=>{
-          this.setState((state) => {
-              const index = state.fileList.indexOf(file)
-              const newFileList = state.fileList.slice()
-              newFileList.splice(index, 1);
-              if(this.props.defaultIsFile)
-                this.props.onChange(newFileList)
-              else
-                this.props.onChange(newFileList.map(i=>i['originFileObj']))
-              return {
-                fileList: newFileList,
-            }
-          })
-          resolve()
+        confirm({
+          title: '确定要删除吗?',
+          okText: '确定',
+          cancelText: '取消',
+          onOk() {
+            props.onRemove(file.uid)
+            .then(()=>{
+              self.setState((state) => {
+                  const index = state.fileList.indexOf(file)
+                  const newFileList = state.fileList.slice()
+                  newFileList.splice(index, 1);
+                  if(props.defaultIsFile)
+                    props.onChange(newFileList)
+                  else
+                    props.onChange(newFileList.map(i=>i['originFileObj']))
+                  return {
+                    fileList: newFileList,
+                }
+              })
+              resolve()
+            })
+            .catch(()=>{reject()})
+          },
+          onCancel() {
+          },
         })
-        .catch(()=>{reject()})
       })
     }
     this.setState((state) => {

@@ -109,7 +109,7 @@ class ClassroomPerformance extends Component{
         sorter: true,
       },
       {
-        title: '单位',
+        title: '部门',
         dataIndex: 'bumen',
         sorter: true,
       },

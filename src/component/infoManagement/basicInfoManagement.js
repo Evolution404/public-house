@@ -87,7 +87,7 @@ class ButtonGroup extends Component{
       <Router><div style={{marginTop: '10px'}}>
           <div style={{padding: '10px', display: 'inline-block'}}>
             <Link to={Map.PHAddBrief.path}>
-              <TButton.AddButton>新增公用房</TButton.AddButton>
+              <TButton.AddButton>新增房屋</TButton.AddButton>
             </Link>
           </div>
           <div style={{padding: '10px', display: 'inline-block'}}>
@@ -132,10 +132,10 @@ class DisplayTable extends Component{
         dataIndex: 'useArea',
         sorter: true,
       },
-      {
+      /*{
         title: '备注',
         dataIndex: 'note',
-      },
+      },*/
     ]
     columns.push({
       title: '操作',
@@ -151,9 +151,6 @@ class DisplayTable extends Component{
                 <SButton onClick={this.props.change.bind(this,record)} text='修改查看'/> 
               </Link>
             </Router>
-          </div>
-          <div style={{display: 'inline-block', padding: '0 10px'}}>
-            <SButton onClick={this.props.upload.bind(this,record)} text='上传图纸'/>
           </div>
         </div>
       )

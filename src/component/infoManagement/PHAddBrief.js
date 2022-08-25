@@ -16,7 +16,7 @@ function Title(){
   return (
     <Row>
       <Col>
-        <div style={{fontSize:'20px', textAlign:'right'}}>新增公用房</div>
+        <div style={{fontSize:'20px', textAlign:'right'}}>新增房屋</div>
       </Col>
     </Row>
   )
@@ -55,8 +55,8 @@ class MainForm extends Component{
   render(){
     const { getFieldDecorator } = this.props.form
     const checkboxOption = [
-      { label: '是否地下室', value: 0},
-      { label: '是否简易房', value: 1},
+      { label: '地下室', value: 0},
+      { label: '平房', value: 1},
     ]
     return (
       <Form onSubmit={this.handleSubmit}>
@@ -112,11 +112,6 @@ class MainForm extends Component{
             </Item>
           </Col>
         </Row>
-        <Item labelCol={{span:3}} wrapperCol={{span:12}} label="房屋照片">
-          {getFieldDecorator('housePic', )(
-            <Upload></Upload>
-          )}
-        </Item>
         <Row>
           <Col offset={6} span={4}>
             <Button type='primary' htmlType='submit'>保存</Button>

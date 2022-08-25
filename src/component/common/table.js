@@ -33,8 +33,8 @@ class MyTable extends Component{
     // 设置对齐方式为居中
     let columns = this.props.columns.map((d, key)=>({...d, align: 'center'}))
     let pagination = {
+      simple:true,
       total,
-      showTotal: (total, range) => `共${total}条  显示${range[0]} ~ ${range[1]}条`,
       pageSize,
       defaultCurrent: 1,
     }
@@ -93,15 +93,15 @@ const TableUtil = {
     switch(c){
       case '序号':
         return 'id'
-      case '工号':
+      case '学号':
         return 'workNum'
       case '年份':
         return 'year'
-      case '单位':
+      case '部门':
         return 'dept'
       case '位置':
         return 'location'
-      case '使用性质':
+      case '房屋类型':
         return 'usingNature'
       case '使用者':
         return 'personnel'
@@ -131,7 +131,7 @@ const TableUtil = {
         return 'buildingFloors'
       case '房间':
         return 'room'
-      case '单位名称':
+      case '部门名称':
         return 'dept'
       case '定额面积':
         return 'fixedArea'
@@ -161,7 +161,7 @@ const TableUtil = {
         return 'duty'
       case '登录账号':
         return 'loginAccount'
-      case '所属单位':
+      case '所属部门':
         return 'dept'
       case '角色':
         return 'role'

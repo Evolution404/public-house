@@ -18,7 +18,7 @@ function Title(){
   return (
     <Row>
       <Col>
-        <div style={{fontSize:'20px', textAlign:'right'}}>新增公用房</div>
+        <div style={{fontSize:'20px', textAlign:'right'}}>新增房屋</div>
       </Col>
     </Row>
   )
@@ -75,10 +75,10 @@ class MainForm extends Component{
     return (
       <Spin spinning={this.state.loading}>
         <Form style={{minWidth: 700}} onSubmit={this.handleSubmit}>
-          <Item labelCol={{span:3}} wrapperCol={{span:8}} label="使用性质">
+          <Item labelCol={{span:3}} wrapperCol={{span:8}} label="房屋类型">
             {getFieldDecorator('usingNature', {
               getValueFromEvent: this.setType,
-              rules:[{required: true, message:'请选择使用性质'}]
+              rules:[{required: true, message:'请选择房屋类型'}]
             })(
               <UsingNature changeOnSelect={false}></UsingNature>
             )}
@@ -89,18 +89,11 @@ class MainForm extends Component{
                 {
                   changeForm[this.state.type]
                 }
-                <Item labelCol={{span:3}} label="房屋照片">
-                  {
-                    getFieldDecorator('housePic', )(
-                      <Upload></Upload>
-                    )
-                  }
-                </Item>
               </div>
             ):(
               <Row>
                 <Col offset={6}>
-                  <Empty style={{marginBottom: 20}} description="请先选择使用性质"></Empty>
+                  <Empty style={{marginBottom: 20}} description="请先选择房屋类型"></Empty>
                 </Col>
               </Row>
             )
@@ -108,7 +101,7 @@ class MainForm extends Component{
           <Row>
             <Col offset={10}>
               <Row>
-                <TButton.ConfirmButton type='primary' htmlType='submit'>提交审核</TButton.ConfirmButton>
+                <TButton.ConfirmButton type='primary' htmlType='submit'>提交</TButton.ConfirmButton>
                 <TButton.ResetButton type='primary' onClick={this.reset}>重置</TButton.ResetButton>
               </Row>
             </Col>

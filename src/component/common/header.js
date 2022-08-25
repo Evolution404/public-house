@@ -13,10 +13,11 @@ const Item = Form.Item
 
 const commonFontStyle=css.commonFontStyle
 function Welcome(props){
-  return <span style={{...commonFontStyle, padding:"10px"}}>欢迎 : <Avatar style={{
+  /*return <span style={{...commonFontStyle, padding:"10px"}}>欢迎 : <Avatar style={{
     width: 30, height: 30, lineHeight:'30px', margin: '0 5px',
     backgroundColor: '#efbe65'
-    }} icon="user" />{props.name}</span>
+    }} icon="user" />{props.name}</span>*/
+   return <span style={{...commonFontStyle, padding:"10px"}}>{props.name}</span>
 }
 
 class ChangePwModal extends Component {
@@ -139,7 +140,6 @@ class ChangePW extends Component{
         onClick={this.showModal}
         style={{...commonFontStyle,
           cursor: 'pointer', padding:"10px"}}>
-          <img src={changePw} style={{width: 30, height: 30}} alt=""/>
           修改密码</span>
 
         <WrappedChangePwModal
@@ -169,7 +169,6 @@ class Exit extends Component{
   }
   render(){
     return <span onClick={this.exit} style={{...commonFontStyle, cursor: 'pointer',padding:"10px"}}>
-      <img style={{width: 30, height: 30, marginRight: 5}} src={exit} alt=""/>
     退出登录</span>
   }
 }
@@ -195,9 +194,10 @@ class Header extends Component{
   }
   render(){
     let styleDiv = {
-      backgroundColor: '#5a9dd0',
+      //backgroundColor: '#7b7a7a',
+      backgroundColor: '#001529',
       height: "76px",
-      border: '1px solid #40bdf7',
+      //border: '1px solid #40bdf7',
       position: 'fixed',
       width: '100%',
       top: 0,
@@ -231,7 +231,7 @@ class Header extends Component{
         background: 'white',
         display: 'inline-block',
       }}></span>
-        <span style={fontStyle}>学校公用房管理系统</span>
+        <span style={fontStyle}>房屋管理系统</span>
         <div style={rightStyle}>
           <RightInfo {...this.props} name={this.state.name}/>
         </div>

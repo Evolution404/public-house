@@ -49,7 +49,7 @@ class Login extends Component {
     return (<div className="login-form-container">
       <Spin spinning={this.state.loading}>
       <Form onSubmit={this.handleSubmit} className="login-form">
-        <h1 style={{textAlign: 'center'}}>公用房管理系统</h1>
+        <h1 style={{textAlign: 'center'}}>房屋管理系统</h1>
         <Form.Item>
           {getFieldDecorator('loginAccount', {
             initialValue: this.state.loginAccount,

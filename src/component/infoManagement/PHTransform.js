@@ -20,6 +20,19 @@ const confirm = Modal.confirm
 
 class RoomSelect extends Component{
   render(){
+    console.log(this.props.treeData)
+    this.props.treeData.forEach(i=>{
+      let type = i.title
+      if(type==='产业商业用房')
+        type=''
+      else if(type==='科研用房')
+        type='实验用房'
+      else if(type==='后勤保障公共用房')
+        type='学生用房'
+      else if(type==='学院党政机关用房')
+        type='教师用房'
+      i.title=type
+    })
     return (
       <TreeSelect
         {...this.props}
@@ -129,13 +142,13 @@ class BasicInfo extends Component{
         </Row>
         <Row>
           <Col offset={2} span={8}>
-            <Item label="改造目标房间数">
+            <Item label="目标房间数">
               {
                 getFieldDecorator('targetNum',{
                   initialValue: initialValue.targetNum,
-                  rules: [{required: true, message: '请输入改造目标房间数'}]
+                  rules: [{required: true, message: '请输入目标房间数'}]
                 })(
-                  <Input placeholder="请输入改造目标房间数"></Input>
+                  <Input placeholder="请输入目标房间数"></Input>
                 )
               }
             </Item>
@@ -229,11 +242,11 @@ class MainForm extends Component{
     return (
       <Spin spinning={this.state.loading}>
         <Form onSubmit={this.handleSubmit}>
-          <Item labelCol={{span:3}} wrapperCol={{span:8}} label="使用性质">
+          <Item labelCol={{span:3}} wrapperCol={{span:8}} label="房屋类型">
             {getFieldDecorator('usingNature', {
               initialValue: info.usingNature,
               getValueFromEvent: this.setType,
-              rules:[{required: true, message:'请选择使用性质'}]
+              rules:[{required: true, message:'请选择房屋类型'}]
             })(
               <UsingNature changeOnSelect={false}></UsingNature>
             )}
@@ -248,7 +261,7 @@ class MainForm extends Component{
             ):(
               <Row>
                 <Col offset={0}>
-                  <Empty style={{marginBottom: 20}} description="请先选择使用性质"></Empty>
+                  <Empty style={{marginBottom: 20}} description="请先选择房屋类型"></Empty>
                 </Col>
               </Row>
             )
@@ -316,8 +329,8 @@ class RoomInfo extends Component{
     const {getFieldDecorator} = this.props.form
     const initialValue = this.props.initialValue
     const checkboxOption = [
-      { label: '是否地下室', value: 0},
-      { label: '是否简易房', value: 1},
+      { label: '地下室', value: 0},
+      { label: '平房', value: 1},
     ]
     return (
       <Spin spinning={this.state.loading}>
@@ -389,13 +402,6 @@ class RoomInfo extends Component{
               <Input></Input>
             )}
           </Item>
-          <Item labelCol={{span:3}} wrapperCol={{span:12}} label="房屋照片">
-            {getFieldDecorator('housePic', {
-              initialValue: initialValue.housePic||[],
-            })(
-              <Upload defaultIsFile></Upload>
-            )}
-          </Item>
         </Form>
         <MainForm
           prev={this.prev}
@@ -432,16 +438,16 @@ class PHTransform extends Component{
       let self = this
       this.setState({stepData}, ()=>{
         confirm({
-          title: '确认要提交改造信息吗?',
-          content: '点击确认后改造信息将提交给管理员审核',
+          title: '确认要提交信息吗?',
+          content: '点击确认后信息将被提交',
           onOk() {
             API.transformSubmit(self.state.stepData)
             .then(rs=>{
-              message.success('提交改造信息成功')
+              message.success('提交信息成功')
             })
             .catch(err=>{
               if(!err.resolved)
-                message.error('提交改造信息失败')
+                message.error('提交信息失败')
             })
           },
           onCancel() {},
@@ -455,7 +461,7 @@ class PHTransform extends Component{
     const { current } = this.state
     let steps = [
       {
-        title: '填写改造基本信息',
+        title: '填写基本信息',
         content: 
         <BasicInfo initialValue={this.state.stepData[0]||{}}
           setData={this.setData}></BasicInfo>,
@@ -463,7 +469,7 @@ class PHTransform extends Component{
     ]
     if(this.state.current===0){
       steps.push({
-        title: '填写改造后房屋信息',
+        title: '填写变更后房屋信息',
       })
     }else{
       for(let i=0;i < this.state.targetNum;i++){
@@ -479,7 +485,7 @@ class PHTransform extends Component{
       }
     }
     return (
-      <MainContainer name="公用房改造">
+      <MainContainer name="公用房合并拆分">
         <Row style={{margin: '20px 0'}}>
           <Col offset={1} span={22}>
             <Steps current={current}>

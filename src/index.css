@@ -36,7 +36,27 @@ input{
 .ant-cascader-picker-label{
   z-index:1;
 }
-.ant-btn-primary{
+button:not(.ant-btn){
+  background-color:#e6a23c!important;
+}
+.ant-table-thead>tr>th{
+  background:#50aca2!important;
+  color: #fff!important;
+  border-bottom-width: 0!important;
+  text-align: center!important;
+  height: 2.2rem!important;
+}
+.ant-table-tbody>tr>td{
+  background:#e5efeb!important;
+  color: #333!important;
+  border-bottom-width: 0!important;
+  text-align: center!important;
+  height: 2.2rem!important;
+}
+.ant-table-bordered .ant-table-thead > tr > th, .ant-table-bordered .ant-table-tbody > tr > td{
+  border: 1px solid #ccc;
+}
+/*.ant-btn-primary{
   background-color: #5a9dd0;
   border-color: #5a9dd0;
 }
@@ -51,4 +71,4 @@ input{
 .ant-row>.ant-btn{
   margin: 0 15px;
   width:105px;
-}
+}*/

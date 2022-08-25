@@ -40,9 +40,9 @@ const meetingRoomReservation = {
         // 处理成tableList
         // {
         //    id: 1, 序号
-        //    dept: xx, 单位
+        //    dept: xx, 部门
         //    location: xx, 位置
-        //    usingNature: xx, 使用性质
+        //    usingNature: xx, 房屋类型
         //    state: xx, 状态
         // }
         let data = {
@@ -93,7 +93,7 @@ const myReservation = {
   // 搜索我的预约
   searchMyReservation(info, p){
     // info = {
-    //    houseDept: xx, 房屋单位名称
+    //    houseDept: xx, 房屋部门名称
     //    buildingName: xx, 楼宇名称
     //    roomNum: xx, 房间号
     //    reservationStatus: xx, 预约状态
@@ -114,7 +114,7 @@ const myReservation = {
         // {
         //    id: 1, 序号
         //    time: xx, 时间
-        //    houseDept: xx, 房屋单位
+        //    houseDept: xx, 房屋部门
         //    location: xx, 位置
         //    reservationPerson: xx, 预约人
         //    phone: xx, 联系电话
@@ -175,8 +175,8 @@ const reservationAudit = {
   // 搜索预约审批信息
   searchReservationAudit(info, p){
     // info = {
-    //    deptName: xx, 单位名称
-    //    usingNature: xx, 使用性质
+    //    deptName: xx, 部门名称
+    //    usingNature: xx, 房屋类型
     //    auditStatus: xx, 审批状态
     //    user: xx, 使用者
     //    buildingName: xx, 楼宇名称
@@ -197,7 +197,7 @@ const reservationAudit = {
         // {
         //    id: 1, 序号
         //    time: xx, 时间
-        //    dept: xx, 房屋单位
+        //    dept: xx, 房屋部门
         //    building: xx, 楼宇
         //    floor: xx, 楼层
         //    roomNum: xx, 房间号
@@ -260,7 +260,7 @@ const useStatistical = {
   // 搜索使用统计
   searchUseStatistical(info, p){
     // info = {
-    //    deptName: xx, 单位名称
+    //    deptName: xx, 部门名称
     //    building: xx, 楼宇
     //    roomNum: xx, 房间号
     //    startStopTime: xx, 起止时间
@@ -280,7 +280,7 @@ const useStatistical = {
         // 需要的tableList结构
         // {
         //    id: 1, 序号
-        //    dept: xx, 单位
+        //    dept: xx, 部门
         //    meetingRoom: xx, 会议室
         //    totalUseTime: xx, 总使用时间
         //    avgDailyUseTime: xx, 日均使用时间

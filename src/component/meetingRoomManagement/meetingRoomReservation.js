@@ -87,7 +87,7 @@ class MeetingRoomReservation extends Component{
   render(){
     let columns = [
       {
-        title: '单位',
+        title: '部门',
         dataIndex: 'dept',
         sorter: true,
       },
@@ -106,25 +106,20 @@ class MeetingRoomReservation extends Component{
         dataIndex: 'roomNum',
         sorter: true,
       },
-      {
+      /*{
         title: '管理者',
         dataIndex: 'manager',
-      },
-      {
+      },*/
+      /*{
         title: '审批状态',
         dataIndex: 'auditStatus',
         sorter: true,
         render: text=>TableUtil.mapColor(text)
-      },
+      },*/
       {
         title: '操作',
         render: (text, record, index)=>(
           <div>
-            <div style={{display: 'inline-block', padding: '0 10px'}}>
-              <Route><Link to={Map.PHDetailInfo.path.replace(':id', '4-'+record.id)}>
-                  <SButton text='详细'/>
-              </Link></Route>
-            </div>
             <div style={{display: 'inline-block', padding: '0 10px'}}>
               <SButton onClick={this.openReservationModal.bind(this, record)} text='开始预约'/>
             </div>
@@ -140,7 +135,7 @@ class MeetingRoomReservation extends Component{
       { label: '麦克风', value: '麦克风' },
       { label: '电脑', value: '电脑' },
     ]
-    return <MainContainer name="会议室预约">
+    return <MainContainer name="房屋预约">
       <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
           <Col style={{minWidth: 250}} span={6}>

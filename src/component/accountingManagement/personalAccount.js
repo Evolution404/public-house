@@ -41,7 +41,7 @@ class Search extends Component{
             </Item>
           </Col>
           <Col span={6}>
-            <Item labelCol={{span: 7}} wrapperCol={{span: 14}} label="工号">
+            <Item labelCol={{span: 7}} wrapperCol={{span: 14}} label="学号">
               {getFieldDecorator('gonghaoSearch',{
                 initialValue:this.props.initialValue.gonghaoSearch,
               })(
@@ -54,7 +54,7 @@ class Search extends Component{
               onClick={this.search}
               type="primary">查询结果</TButton.SearchButton></Col>
           <Col span={6}>
-            <Item labelCol={{span: 7}} wrapperCol={{span: 14}} label="工号">
+            <Item labelCol={{span: 7}} wrapperCol={{span: 14}} label="学号">
               {getFieldDecorator('gonghao',{
                 initialValue:this.props.initialValue.gonghao,
               })(
@@ -83,7 +83,7 @@ class DisplayTable extends Component{
         sorter: true,
       },
       {
-        title: '工号',
+        title: '学号',
         dataIndex: 'gonghao',
         sorter: true,
       },

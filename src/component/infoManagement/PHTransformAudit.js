@@ -30,10 +30,10 @@ class Search extends Component{
       <Form labelCol={{span:12}} wrapperCol={{span:12}} style={{marginTop: 50}}>
         <Row>
           <Col span={6}>
-            <Item label="使用性质">
+            <Item label="房屋类型">
               {getFieldDecorator('type',{
                 initialValue:this.props.initialValue,
-                rules:[{required:true, message:'请选择单位性质'}]})(
+                rules:[{required:true, message:'请选择部门性质'}]})(
                   <UsingNatureBrief></UsingNatureBrief>
               )}
             </Item>
@@ -54,7 +54,7 @@ class DisplayTable extends Component{
   render(){
     const columns = [
       {
-        title: '单位',
+        title: '部门',
         dataIndex: 'bumen',
         sorter: true,
       },

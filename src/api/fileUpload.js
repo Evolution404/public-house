@@ -37,12 +37,12 @@ const FileUploadAPI = {
     formData.append('module', 'jibenxinxi-tupian')
     return uploadHelper(formData, '/tb-gongyongfang-jibenxinxi-tupian/upload-img')
   },
-  // 上传教学单位工作量
+  // 上传教学部门工作量
   ULTeachingUnitWorkLoad(formData){
     formData.append('module', 'keyan-gongyongfang')
     return uploadHelper(formData, '/tb-jiaoxue-keyan-gongzuoliang/import-excel')
   },
-  // 上传科研单位工作量
+  // 上传科研部门工作量
   ULScientificUnitWorkLoad(formData){
     formData.append('module', 'keyantuandui-keyangongzuoliang')
     return uploadHelper(formData, '/tb-keyantuandui-keyangongzuoliang/import-excel')
@@ -57,12 +57,12 @@ const FileUploadAPI = {
     formData.append('module', 'jiaoshi-shiyanshi-kechengxinxi')
     return uploadHelper(formData, '/tb-jiaoshi-shiyanshi-kechengxinxi/import-excel')
   },
-  // 导入学院单位信息
+  // 导入学院部门信息
   ULXYDept(formData){
     formData.append('module', 'xueyuanbumen')
     return uploadHelper(formData, '/tb-xueyuan-bumen/import-excel')
   },
-  // 导入部处单位信息
+  // 导入部处部门信息
   ULBCDept(formData){
     formData.append('module', 'buchubumen')
     return uploadHelper(formData, '/tb-buchu-bumen/import-excel')

@@ -94,10 +94,10 @@ class Import extends Component{
         <Form>
           <Row style={{marginTop: 15}}>
             <Col span={8}>
-              <Item labelCol={{span:10}} wrapperCol={{span:10}} label='使用性质'>
+              <Item labelCol={{span:10}} wrapperCol={{span:10}} label='房屋类型'>
                 {
                   getFieldDecorator('usingNature',{
-                    rules: [{required: true, message:'请选择使用性质'}]
+                    rules: [{required: true, message:'请选择房屋类型'}]
                   })(
                     <UsingNatureBrief onChange={this.usingNatureChange}></UsingNatureBrief>
                   )
@@ -145,7 +145,7 @@ class PHImport extends Component{
           <Back></Back>
         </Col>
         <Col span={10}>
-          <h2 style={{textAlign:'right'}}>导入公用房信息</h2>
+          <h2 style={{textAlign:'right'}}>导入房屋信息</h2>
         </Col>
       </Row>
       <Split></Split>

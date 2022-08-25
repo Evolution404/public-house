@@ -109,7 +109,7 @@ class PHImport extends Component{
           <Back></Back>
         </Col>
         <Col span={10}>
-          <h2 style={{textAlign: 'right'}}>导入公用房信息</h2>
+          <h2 style={{textAlign: 'right'}}>导入房屋信息</h2>
         </Col>
       </Row>
       <Split></Split>

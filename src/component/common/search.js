@@ -23,7 +23,7 @@ class Search extends Component{
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
           <Col span={5}>
-            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="单位名称">
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
               {getFieldDecorator('deptName',{
                 initialValue: this.props.initialValue.deptName,
               })(
@@ -32,10 +32,10 @@ class Search extends Component{
             </Item>
           </Col>
           <Col span={5}>
-            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="使用性质">
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="房屋类型">
               {getFieldDecorator('usingNature',{
                 initialValue: this.props.initialValue.usingNature,
-                rules: [{required: true, message: '请选择使用性质'}]
+                rules: [{required: true, message: '请选择房屋类型'}]
               })(
                 <UsingNature size="small"/>
               )}
@@ -53,17 +53,6 @@ class Search extends Component{
                   <Option value="已上报">已上报</Option>
                   <Option value="已驳回">已驳回</Option>
                 </Select>
-              )}
-            </Item>
-          </Col>
-          <Col span={5}>
-            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="使用者">
-              {getFieldDecorator('personnel',{
-                initialValue: this.props.initialValue.personnel,
-              })(
-                <Input
-                  placeholder="请输入使用者姓名"
-                  size="small"></Input>
               )}
             </Item>
           </Col>
@@ -91,8 +80,8 @@ class Search extends Component{
           </Col>
           <Col span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="房屋状态">
-              {getFieldDecorator('status',{
-                initialValue: this.props.initialValue.status,
+              {getFieldDecorator('houseStatus',{
+                initialValue: this.props.initialValue.houseStatus,
               })(
                 <Select size="small" allowClear>
                   <Option value="使用中">使用中</Option>
@@ -127,7 +116,7 @@ class ReservationAuditSearch extends Component{
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
           <Col span={5}>
-            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="单位名称">
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="部门名称">
               {getFieldDecorator('dept',{
                 initialValue: this.props.initialValue.dept
               })(
@@ -205,10 +194,10 @@ class MyPHSearch extends Component{
       <Form onSubmit={this.handleSubmit} style={{marginTop:'30px'}}>
         <Row>
           <Col span={5}>
-            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="使用性质">
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="房屋类型">
               {getFieldDecorator('usingNature',{
                 initialValue: this.props.initialValue.usingNature,
-                rules: [{required: true, message: '请选择使用性质'}]
+                rules: [{required: true, message: '请选择房屋类型'}]
               })(
                 <UsingNature size="small"/>
               )}
@@ -253,7 +242,7 @@ class MyPHSearch extends Component{
           </Col>
           <Col span={5}>
             <Item labelCol={{span:10}} wrapperCol={{span:14}} label="房屋状态">
-              {getFieldDecorator('status',{
+              {getFieldDecorator('houseStatus',{
                 initialValue: this.props.initialValue.houseStatus,
               })(
                 <Select size="small">

@@ -4,7 +4,7 @@ const Option = Select.Option
 const options = [
   {
     value: '1',
-    label: '科研用房',
+    label: '实验用房',
     children: [
       {
         value: '科研用房',
@@ -18,20 +18,8 @@ const options = [
   },
   {
     value: '2',
-    label: '后勤保障公共用房',
+    label: '学生用房',
     children: [
-      {
-        value: '值班室',
-        label: '值班室',
-      },
-      {
-        value: '储藏室',
-        label: '储藏室',
-      },
-      {
-        value: '物业及工勤人员用房',
-        label: '物业及工勤人员用房',
-      },
       {
         value: '开水间',
         label: '开水间',
@@ -39,30 +27,6 @@ const options = [
       {
         value: '卫生间',
         label: '卫生间',
-      },
-      {
-        value: '配电室',
-        label: '配电室',
-      },
-      {
-        value: '消防监控配套用房',
-        label: '消防监控配套用房',
-      },
-      {
-        value: '警备值班用房',
-        label: '警备值班用房',
-      },
-      {
-        value: '水泵房等配套用房',
-        label: '水泵房等配套用房',
-      },
-      {
-        value: '其他后勤配套用房',
-        label: '其他后勤配套用房',
-      },
-      {
-        value: '职工（党员）活动室',
-        label: '职工（党员）活动室',
       },
       {
         value: '各类学生用房',
@@ -77,48 +41,6 @@ const options = [
         label: '专用教室',
       },
       {
-        value: '多媒体办公室',
-        label: '多媒体办公室',
-      },
-      {
-        value: '教师休息室',
-        label: '教师休息室',
-      },
-      {
-        value: '展览室',
-        label: '展览室',
-      },
-      {
-        value: '其他',
-        label: '其他',
-      },
-    ],
-  },
-  {
-    value: '3',
-    label: '产业商业用房',
-    children: [
-      {
-        value: '商铺',
-        label: '商铺',
-      },
-      {
-        value: '厂房',
-        label: '厂房',
-      },
-      {
-        value: '宾馆用房',
-        label: '宾馆用房',
-      },
-      {
-        value: '酒店用房',
-        label: '酒店用房',
-      },
-      {
-        value: '研究用房',
-        label: '研究用房',
-      },
-      {
         value: '其他',
         label: '其他',
       },
@@ -126,7 +48,7 @@ const options = [
   },
   {
     value: '4',
-    label: '学院党政机关用房',
+    label: '教师用房',
     children: [
       {
         value: '行政办公室',
@@ -151,38 +73,6 @@ const options = [
       {
         value: '信息网络用房',
         label: '信息网络用房',
-      },
-      {
-        value: '各类学生用房',
-        label: '各类学生用房',
-      },
-      {
-        value: '专用教室',
-        label: '专用教室',
-      },
-      {
-        value: '接待室',
-        label: '接待室',
-      },
-      {
-        value: '档案室',
-        label: '档案室',
-      },
-      {
-        value: '机要保密室',
-        label: '机要保密室',
-      },
-      {
-        value: '文印室',
-        label: '文印室',
-      },
-      {
-        value: '展览室',
-        label: '展览室',
-      },
-      {
-        value: '职工（党员）活动室',
-        label: '职工（党员）活动室',
       },
       {
         value: '报告厅',

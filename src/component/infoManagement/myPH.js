@@ -35,11 +35,11 @@ class PersonalInfo extends Component{
     let data = this.props.data
     return (
       /*<Card style={{marginBottom: 10, border:0}} >
-        <Card.Grid style={gridStyle}><Label>工号:</Label>
+        <Card.Grid style={gridStyle}><Label>学号:</Label>
           <InfoTag data={data.workNum}/></Card.Grid>
         <Card.Grid style={gridStyle}><Label>姓名:</Label>
           <InfoTag data={data.name}/></Card.Grid>
-        <Card.Grid style={gridStyle}><Label>所属单位:</Label>
+        <Card.Grid style={gridStyle}><Label>所属部门:</Label>
           <InfoTag data={data.dept}/></Card.Grid>
         <Card.Grid style={gridStyle}><Label>职务级别:</Label>
           <InfoTag data={data.dutyGrade}/></Card.Grid>
@@ -47,10 +47,10 @@ class PersonalInfo extends Component{
       <div style={{backgroundColor: '#f2f2f2', height: 120, padding: 20, paddingLeft: '3%',display: 'flex'}}>
         <div style={{ width: 300, display: 'flex', justifyContent: 'center', flexDirection: 'column', borderRight: '1px solid #a4a4a4'}}>
           <p style={{fontSize: 20, paddingBottom: 10}}>{data.name}</p>
-          <p style={{fontSize: 16, color: css.blue}}>工号:{data.workNum}</p>
+          <p style={{fontSize: 16, color: css.blue}}>学号:{data.workNum}</p>
         </div>
         <div style={{color:'#a4a4a4',paddingLeft: 20, width: 400, display: 'flex', justifyContent: 'center', flexDirection: 'column'}}>
-          <p style={{fontSize: 12, paddingBottom: 10}}>单位: 
+          <p style={{fontSize: 12, paddingBottom: 10}}>部门: 
             <span style={{color: '#696969', fontSize: 15, paddingLeft: 10}}>{data.dept}</span>
           </p>
           <p style={{fontSize: 12, paddingBottom: 10}}>职务: 
@@ -69,7 +69,7 @@ class DisplayTable extends Component{
     let tableColumns = [
       [
         {
-          title: '单位',
+          title: '部门',
           dataIndex: 'dept',
           sorter: true,
         },
@@ -127,7 +127,7 @@ class DisplayTable extends Component{
       ],
       [
         {
-          title: '单位',
+          title: '部门',
           sorter: true,
           dataIndex: 'dept',
         },
@@ -175,7 +175,7 @@ class DisplayTable extends Component{
       ],
       [
         {
-          title: '单位',
+          title: '部门',
           sorter: true,
           dataIndex: 'dept',
         },
@@ -238,7 +238,7 @@ class DisplayTable extends Component{
       ],
       [
         {
-          title: '单位',
+          title: '部门',
           sorter: true,
           dataIndex: 'dept',
         },

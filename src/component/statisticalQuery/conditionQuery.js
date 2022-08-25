@@ -33,7 +33,7 @@ class DisplayTable extends Component{
     let tableColumns = [
       [
         {
-          title: '单位',
+          title: '部门',
           dataIndex: 'dept',
           sorter: true,
         },
@@ -91,7 +91,7 @@ class DisplayTable extends Component{
       ],
       [
         {
-          title: '单位',
+          title: '部门',
           dataIndex: 'dept',
           sorter: true,
         },
@@ -125,14 +125,14 @@ class DisplayTable extends Component{
           dataIndex: 'status',
           sorter: true,
         },
-        {
+        /*{
           title: '审批状态',
           dataIndex: 'auditStatus',
           sorter: true,
           render: (text)=>(
             TableUtil.mapColor(text)
           )
-        },
+        },*/
         {
           title: '备注',
           dataIndex: 'note',
@@ -140,7 +140,7 @@ class DisplayTable extends Component{
       ],
       [
         {
-          title: '单位',
+          title: '部门',
           dataIndex: 'dept',
           sorter: true,
         },
@@ -179,14 +179,14 @@ class DisplayTable extends Component{
           dataIndex: 'status',
           sorter: true,
         },
-        {
+        /*{
           title: '审批状态',
           dataIndex: 'auditStatus',
           sorter: true,
           render: (text)=>(
             TableUtil.mapColor(text)
           )
-        },
+        },*/
         {
           title: '租金单价(元/㎡)',
           sorter: true,
@@ -204,7 +204,7 @@ class DisplayTable extends Component{
       ],
       [
         {
-          title: '单位',
+          title: '部门',
           sorter: true,
           dataIndex: 'dept',
         },
@@ -228,14 +228,14 @@ class DisplayTable extends Component{
           sorter: true,
           dataIndex: 'spectificPurpose',
         },
-        {
+        /*{
           title: '审批状态',
           dataIndex: 'auditStatus',
           sorter: true,
           render: (text)=>(
             TableUtil.mapColor(text)
           )
-        },
+        },*/
         {
           title: '备注',
           dataIndex: 'note',

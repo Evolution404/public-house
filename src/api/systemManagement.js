@@ -5,7 +5,7 @@ import Map from '../routerMap'
 import {pageSize} from '../component/common/table'
 
 const deptManagement = {
-  // 单位管理
+  // 部门管理
   getDepts(type){
     let data = {}     
     if(type!=='0'){
@@ -47,7 +47,7 @@ const deptManagement = {
   },
   searchDept(values, p){
 
-    // 搜索单位, type可能是bc(部处)也可能是xy(学院)
+    // 搜索部门, type可能是bc(部处)也可能是xy(学院)
     let type = values.type
     let bumen = values.dept
     delete values.type
@@ -92,7 +92,7 @@ const deptManagement = {
           // 处理成tableList
           // {
           //    id: 1, 序号
-          //    companyName: 1, 单位名称
+          //    companyName: 1, 部门名称
           //    undergraduates: 1,  本科生
           //    masterDegree: 1,  硕士
           //    doctor: 1,  博士
@@ -106,7 +106,7 @@ const deptManagement = {
      })
    }
   },
-  // 删除单位
+  // 删除部门
   deleteDept({index, type}){
     if(type==='bc'){
       return new Promise((resolve, reject)=>{
@@ -134,7 +134,7 @@ const deptManagement = {
      })
    }
   },
-  // 新增单位
+  // 新增部门
   addDept(data){
     let type = data.type
     if(type==='bc'){
@@ -164,7 +164,7 @@ const deptManagement = {
      })
    }
   },
-  // 更新单位
+  // 更新部门
   // {
   //    index: 1,
   //    其余信息
@@ -371,7 +371,7 @@ const theUserManagement = {
         //    id: xx,
         //    name: xx,
         //    duty: xx,  职务
-        //    monad: xx,  单位
+        //    monad: xx,  部门
         //    guideNum: xx,  指导研究生数量
         // }
         let data = {
@@ -429,11 +429,11 @@ const theUserManagement = {
       .then(rs=>{
         // 处理成需要使用者信息
         // {
-        //    工号: workNum
+        //    学号: workNum
         //    姓名: name
         //    职务等级: dutyGrade
-        //    所属单位: dept
-        //    科研单位: scientificResearchUnits
+        //    所属部门: dept
+        //    科研部门: scientificResearchUnits
         //    类别: category
         // }
         resolve(MapB2F(rs.data))
@@ -480,14 +480,14 @@ const userManagement = {
       },
       '核算管理':{
         '总体核算': Map.OverallAccount,
-        '单位核算': Map.DepartmentAccount,
+        '部门核算': Map.DepartmentAccount,
         '个人核算': Map.PersonalAccount,
       },
       '绩效管理':{
         '数据导入': Map.DataImport,
         '工作量查看': Map.CheckWorkload,
-        '教学单位绩效': Map.TeachingUnitPerformance,
-        '科研单位绩效': Map.ScientificPerformance,
+        '教学部门绩效': Map.TeachingUnitPerformance,
+        '科研部门绩效': Map.ScientificPerformance,
         '商业用房绩效': Map.BusinessPerformance,
         '实验室绩效': Map.LabPerformance,
         '教室绩效': Map.ClassroomPerformance,
@@ -532,6 +532,9 @@ const userManagement = {
           rs.list= item['zicaidan'].map(zicaidan=>{
             return listName2Component[item['fucaidanmingcheng']][zicaidan['caidanmingcheng']]
           })
+          rs.list = rs.list.filter(i=>{
+            return i
+          })
           return rs
         })
         returnData.userData = {}
@@ -542,6 +545,8 @@ const userManagement = {
         returnData.userData.token = rs.data['token']
         returnData.userData.id= rs.data['id']
         returnData.userData.workNum= rs.data['gonghao']
+        console.log('---')
+        console.log(returnData.navData)
         resolve(returnData)
       })
       .catch(err=>{
@@ -628,7 +633,7 @@ const userManagement = {
         //    id: xx,
         //    name: xx,
         //    loginAccount: xx, 登录账号
-        //    dept: xx,  所属单位
+        //    dept: xx,  所属部门
         //    role: xx, 角色
         // }]
         let data = {

@@ -38,9 +38,9 @@ class Search extends Component{
       <Form onSubmit={this.handleSubmit} style={{marginTop:'50px'}}>
         <Row>
           <Col span={5}>
-            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="使用性质">
+            <Item labelCol={{span:10}} wrapperCol={{span:14}} label="房屋类型">
               {getFieldDecorator('type',{
-                rules: [{required: true, message: '请选择使用性质'}]
+                rules: [{required: true, message: '请选择房屋类型'}]
               })(
                 <UsingNatureBrief></UsingNatureBrief>
               )}
@@ -145,11 +145,11 @@ class MainForm extends Component{
     }
     return (
       <Form style={{minWidth: 700}} onSubmit={this.handleSubmit}>
-        <Item labelCol={{span:3}} wrapperCol={{span:8}} label="使用性质">
+        <Item labelCol={{span:3}} wrapperCol={{span:8}} label="房屋类型">
           {getFieldDecorator('usingNature', {
             initialValue: info.usingNature,
             getValueFromEvent: this.setType,
-            rules:[{required: true, message:'请选择使用性质'}]
+            rules:[{required: true, message:'请选择房屋类型'}]
           })(
             <UsingNature changeOnSelect={false}></UsingNature>
           )}
@@ -157,18 +157,6 @@ class MainForm extends Component{
         {
           changeForm[this.state.type]
         }
-        <Item labelCol={{span:3}} wrapperCol={{span:12}} label="房屋照片">
-          {getFieldDecorator('housePic', {
-          })(
-            <Upload fileList={info.housePic}
-              onRemove={this.removeHousePic}></Upload>
-          )}
-        </Item>
-        <Item labelCol={{span:3}} wrapperCol={{span:12}} label="批准文书">
-          {getFieldDecorator('approvalDocument', {})(
-            <Upload onRemove={this.removeApprovalDocument} fileList={info.approvalDocument}></Upload>
-          )}
-        </Item>
         <Row>
           <Col offset={12} span={4}>
             <TButton.SaveButton type='primary' htmlType='submit'>提交变更</TButton.SaveButton>
@@ -187,7 +175,7 @@ class PHChange extends Component{
     id: '',  // 1-11 -前面是类型,后面是房屋id
     type: '',
     hasSearched: false,
-    // 是否是从公用房列表跳转过来的
+    // 是否是从部门公用房跳转过来的
     isJump: false,
     loading: false,
     formInfo: {},
@@ -242,7 +230,7 @@ class PHChange extends Component{
       <Spin spinning={this.state.loading}>
         {
           !this.state.isJump?(
-            <WrappedSearch onSearch={this.search}/>
+            <div></div>
           ):(
             <Back></Back>
           )
@@ -258,7 +246,7 @@ class PHChange extends Component{
               </Col>
             </Row>
           ):(
-            <Empty description="请先搜索"></Empty>
+            <Empty description="请先使用房屋列表搜索"></Empty>
           )
         }
       </Spin>

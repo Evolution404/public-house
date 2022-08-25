@@ -106,7 +106,7 @@ class App extends Component{
             }}>
                 <div>
                   <Route exact path='/'
-                    render={()=>(<Redirect  to={RouterMap.MyPH.path} />)}></Route>
+                    render={()=>(<Redirect  to={RouterMap.MeetingRoomReservation.path} />)}></Route>
                   
                   {routerList}
                 </div>

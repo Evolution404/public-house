@@ -342,7 +342,7 @@ const personalAccount = {
     })
   },
   searchPersonnelAccountingInfo(values, p){
-    // 不需要工号
+    // 不需要学号
     values.gonghao = values.gonghaoSearch
     delete values.gonghaoSearch
     values = {

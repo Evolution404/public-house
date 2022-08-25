@@ -52,12 +52,12 @@ class PHDetailInfo extends Component{
    return (
      <MainContainer name="详细信息">
        <Spin spinning={this.state.infoLoading} tip="加载中...">
-          <Row>
+          <Row style={{marginBottom: -20}}>
             <Col span={2}>
               <Back></Back>
             </Col>
             <Col span={9}>
-              <h2 style={{textAlign: 'right'}}>公用房详细信息</h2>
+              <h2 style={{textAlign: 'right'}}>房屋详细信息</h2>
             </Col>
             <Col offset={6} span={2}><Button onClick={this.print}
               type="primary">打印</Button></Col>
